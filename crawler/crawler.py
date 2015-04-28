@@ -9,7 +9,7 @@ import progressbar
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 ACIXSTORE = 'as7c6glo9o4iqeudcif4rbo002'
-YS = '103|10'
+YS = '103|20'
 cond = 'a'
 auth_num = '125'
 
@@ -47,8 +47,8 @@ def tr_2_class_info(tr):
         'teacher': trim_td(tds[5]),
         'limit': trim_td(tds[6]),
         'note': trim_td(tds[7]),
-        'object': trim_td(tds[8]),
-        'prerequisite': trim_td(tds[9])
+        'object': trim_td(tds[9]),
+        'prerequisite': trim_td(tds[10])
     }
     return class_info
 
