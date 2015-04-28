@@ -6,6 +6,7 @@ import requests
 import sys
 import traceback
 import progressbar
+from data_center.models import *
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 ACIXSTORE = 'as7c6glo9o4iqeudcif4rbo002'
@@ -52,23 +53,45 @@ def tr_2_class_info(tr):
     }
     return class_info
 
-progress = progressbar.ProgressBar()
-class_infos = []
+"""
+from crawler.crawler import *
+initial_db()
+"""
+def initial_db():
+    progress = progressbar.ProgressBar()
+    class_infos = []
 
-for cou_code in progress(cou_codes):
-    html = cou_code_2_html(cou_code)
-    soup = bs4.BeautifulSoup(html, 'html.parser')
-    trs = soup.find_all('tr')
-    trs = [tr for tr in trs if 'class3' in tr['class'] and len(tr.find_all('td')) > 1]
-    for tr in trs:
-        try:
-            class_info = tr_2_class_info(tr)
-            class_infos.append(class_info)
-        except :
-            print 'QAQ, what can I do?'
-            print traceback.format_exc()
+    for cou_code in progress(cou_codes):
+        html = cou_code_2_html(cou_code)
+        soup = bs4.BeautifulSoup(html, 'html.parser')
+        trs = soup.find_all('tr')
+        trs = [tr for tr in trs if 'class3' in tr['class'] and len(tr.find_all('td')) > 1]
+        for tr in trs:
+            try:
+                class_info = tr_2_class_info(tr)
+                class_infos.append(class_info)
+                if not class_info['credit']:
+                    class_info['credit'] = '0'
+                if not class_info['limit']:
+                    class_info['limit'] = '0'
+                Course.objects.filter(title=class_info['title']).delete()
+                Course.objects.create(
+                    no=class_info['no'],
+                    title=class_info['title'],
+                    credit=int(class_info['credit']),
+                    time=class_info['time'],
+                    room=class_info['room'],
+                    teacher=class_info['teacher'],
+                    limit=int(class_info['limit']),
+                    note=class_info['note'],
+                    object=class_info['object'],
+                    prerequisite=class_info['prerequisite'] != ''
+                )
+            except :
+                print 'QAQ, what can I do?'
+                print traceback.format_exc()
 
-f = open('result.txt', 'w')
-f.write(json.dumps(class_infos ,ensure_ascii=False, indent=2))
-f.close()
+    f = open('result.txt', 'w')
+    f.write(json.dumps(class_infos ,ensure_ascii=False, indent=2))
+    f.close()
 

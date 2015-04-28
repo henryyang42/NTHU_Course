@@ -1,3 +1,9 @@
+# Django
+migrations
+
+# DB
+db.sqlite3
+
 # Garbage
 .DS_Store
 

@@ -12,3 +12,6 @@ class Course(models.Model):
     credit          = models.IntegerField()
     limit           = models.IntegerField()
     prerequisite    = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.no
