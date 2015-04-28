@@ -1,0 +1,4 @@
+beautifulsoup4==4.3.2
+Django==1.7.4
+progressbar==2.3
+requests==2.5.3
