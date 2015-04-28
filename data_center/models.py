@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Course(models.Model):
     """Course database schema"""
@@ -15,3 +16,11 @@ class Course(models.Model):
 
     def __str__(self):
         return self.no
+
+class Schedule(models.Model):
+    """Many2ManySchedule"""
+    owner = models.ForeignKey(User)
+    select_course = models.ManyToManyField(Course, blank=True)
+
+    def __str__(self):
+        return "%s - %d" % (self.owner, self.id)
