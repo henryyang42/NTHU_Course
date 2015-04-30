@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title_block %}
+<title>NTHU Course by ISeaTeL</title>
+{% endblock title_block %}
+{% block body_block %}
+<div class="homepage">
+  <!-- Featured -->
+  <div id="featured">
+    <div class="container">
+      <header>
+        <h2>隆重與您介紹嶄新的選課系統</h2>
+        <span class="byline">&ldquo;在體驗過不友善的選課系統，為了改善不便，我們投入並專注在開發取代方案。&rdquo;</span>
+      </header>
+      <p>我們是<strong>ISeaTeL</strong>，由一群熱血的工程師所組成的團隊。</p>
+      <p>雖然目前的成員都是清華大學三年級，但是具有改善現有問題並革新不友善系統的慾望。</p>
+      <p>這是我們的第一個作品，選課預排系統，有鑒於校務資訊系統的選課預排不只介面上不美觀，在操作上更是讓人直搖頭。</p>
+      <p>因此，我們決心要改變這樣的系統，帶給大家更便利方便的服務。</p>
+      <hr />
+      <div class="row">
+        <section class="4u">
+          <span class="pennant"><span class="fa fa-briefcase"></span></span>
+          <h3>Maecenas luctus lectus</h3>
+          <p>Curabitur sit amet nulla. Nam in massa. Sed vel tellus. Curabitur sem urna, consequat vel, suscipit in, mattis placerat, nulla. Sed ac leo.</p>
+          <a href="#" class="button button-style1">Read More</a>
+        </section>
+        <section class="4u">
+          <span class="pennant"><span class="fa fa-lock"></span></span>
+          <h3>Maecenas luctus lectus</h3>
+          <p>Donec ornare neque ac sem. Mauris aliquet. Aliquam sem leo, vulputate sed, convallis at, ultricies quis, justo. Donec magna.</p>
+          <a href="#" class="button button-style1">Read More</a>
+        </section>
+        <section class="4u">
+          <span class="pennant"><span class="fa fa-globe"></span></span>
+          <h3>Maecenas luctus lectus</h3>
+          <p>Curabitur sit amet nulla. Nam in massa. Sed vel tellus. Curabitur sem urna, consequat vel, suscipit in, mattis placerat, nulla. Sed ac leo.</p>
+          <a href="#" class="button button-style1">Read More</a>
+        </section>
+      </div>
+    </div>
+  </div>
+  <!-- Main -->
+  <div id="main">
+    <div id="content" class="container">
+      <div class="row">
+        <section class="3u">
+          <a href="https://github.com/hydai" class="image full"><img src="{% static 'images/hydai.jpg' %}" alt=""></a>
+          <header>
+            <h2>hydai</h2>
+          </header>
+          <p>架構規劃，全端開發者</p>
+        </section>
+        <section class="3u">
+          <a href="https://github.com/henryyang42" class="image full"><img src="{% static 'images/henryyang42.jpg' %}" alt=""></a>
+          <header>
+            <h2>henry</h2>
+          </header>
+          <p>後端開發者</p>
+        </section>
+        <section class="3u">
+          <a href="https://github.com/leVirve" class="image full"><img src="{% static 'images/salas.jpg' %}" alt=""></a>
+          <header>
+            <h2>Salas</h2>
+          </header>
+          <p>前端開發者</p>
+        </section>
+        <section class="3u">
+          <a href="hiring.html" class="image full"><img src="{% static 'images/hiring.png' %}" alt=""></a>
+          <header>
+            <h2>還有您</h2>
+          </header>
+          <p>正在招募新血，歡迎與我們聯繫</p>
+        </section>
+      </div>
+    </div>
+  </div>
+  <!-- Tweet -->
+  <!--
+    <div id="tweet">
+        <div class="container">
+            <section>
+                <blockquote>&ldquo;在體驗過不友善的選課系統，為了改善不便，我們投入並專注在開發取代方案。&rdquo;</blockquote>
+            </section>
+        </div>
+    </div>
+-->
+  <!-- /Tweet -->
+</div>
+{% endblock body_block %}

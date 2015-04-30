@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title_block %}
+<title>NTHU Course - Donate</title>
+{% endblock title_block %}
+{% block body_block %}
+<!-- Main -->
+<div id="main">
+  <div id="content" class="container">
+    <section>
+      <header>
+        <h2>贊助計畫</h2>
+        <span class="byline">若覺得這計劃對您有幫助，歡迎自由贊助支持我們</span>
+      </header>
+      <p>我們是群熱血的工程師，雖然是學生的角色，但我們相信對周遭事物的改進，就是值得奮鬥的方向。</p>
+      <p>在運行這個計畫的過程中，絕對不是零成本的作業程序，好比說伺服器的維護與整體的開發時程。因此，非常歡迎您願意且有能力的透過贊助來回饋本計畫。</p>
+      <p>我們承諾並將公開所有贊助明細，以確保所有的資源能實際的被投入在此計畫中。</p>
+    </section>
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+      <input type="hidden" name="cmd" value="_s-xclick">
+      <input type="hidden" name="hosted_button_id" value="JD2RMUDB3ERA2">
+      <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal － 更安全、更簡單的線上付款方式！">
+      <img alt="" border="0" src="https://www.paypalobjects.com/zh_TW/i/scr/pixel.gif" width="1" height="1">
+    </form>
+  </div>
+</div>
+<!-- /Main -->
+{% endblock body_block %}
