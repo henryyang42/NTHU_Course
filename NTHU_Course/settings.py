@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'autocomplete_light',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +40,7 @@ INSTALLED_APPS = (
     'index',
     'data_center',
     'crawler',
+    'search',
 )
 
 MIDDLEWARE_CLASSES = (
