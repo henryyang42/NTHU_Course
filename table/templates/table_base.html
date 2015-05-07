@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+    Linear by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+
+<head>
+  {% block title_block %}
+  <title>NTHU Course - Time Table</title>
+  {% endblock title_block %}
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700,500,900' rel='stylesheet' type='text/css'>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  {% include 'autocomplete_light/static.html' %}
+  <script src="{% static 'js/skel.min.js' %}"></script>
+  <script src="{% static 'js/skel-panels.min.js' %}"></script>
+  <script src="{% static 'js/init.js' %}"></script>
+  <script src="{% static 'js/search.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/skel-noscript.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/style.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/style-desktop.min.css' %}" />
+  {% block include_block %}
+  {% endblock include_block %}
+</head>
+
+<body>
+  <!-- Header -->
+  <div id="header">
+    <div id="nav-wrapper">
+      <!-- Nav -->
+      <nav id="nav">
+        <ul>
+          <li class="active"><a href="/">關於我們</a></li>
+          <li>
+            <form class="navbar-form">
+              <div class="form-group">
+                <input id="courseSearch" type="text" class="form-control" placeholder="查詢課程">
+              </div>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <!-- Header -->
+  {% block body_block %}
+  <!-- Main -->
+  <div id="main">
+    <div id="content" class="container">
+      <section>
+        <header>
+          <h2>ERROR 404 - 程式錯誤！</h2>
+          <span class="byline">您偶然碰上程式的一場謬誤，如同湖水偶然遇見詩人的一片雲</span>
+          <span class="byline">所以，請跟著我們<a href="index.html">重新開始</a></span>
+        </header>
+      </section>
+    </div>
+  </div>
+  <!-- /Main -->
+  {% endblock body_block %}
+</body>
+
+</html>
