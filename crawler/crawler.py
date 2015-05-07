@@ -41,7 +41,7 @@ def trim_syllabus(ACIXSTORE, soup):
             a['href'] = host + a['href']
 
     syllabus = ''.join(map(str, soup.body.contents))
-
+    syllabus = syllabus.replace('</br></br></br></br></br>', '')
     return syllabus
 
 def syllabus_2_html(ACIXSTORE, course):
@@ -54,6 +54,8 @@ def syllabus_2_html(ACIXSTORE, course):
             decode('big5', 'ignore').encode('utf8', 'ignore')
         soup = bs4.BeautifulSoup(html, 'html.parser')
         trs = soup.find_all('table')[0].find_all('tr')
+        for i in range(2, 5):
+            trs[i].find_all('td')[1]['colspan'] = 5
         course.chi_title = trs[2].find_all('td')[1].get_text()
         course.eng_title = trs[3].find_all('td')[1].get_text()
         course.teacher = trs[4].find_all('td')[1].get_text()
@@ -88,7 +90,7 @@ def initial_db(ACIXSTORE, auth_num):
     class_infos = []
     total_collected = 0
     fail = 0
-    for cou_code in progress(cou_codes):
+    for cou_code in progress(cou_codes[2:3]):
         html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
         soup = bs4.BeautifulSoup(html, 'html.parser')
         trs = soup.find_all('tr')

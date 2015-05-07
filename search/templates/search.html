@@ -1,6 +1,8 @@
 {% if courses %}
   {% for course in courses %}
-  <a class="block choice" href="#">{{ course.no }} - {{ course.chi_title }} {{ course.eng_title|truncatechars:30 }}</a>
+  <a class="block choice" href="{% url 'syllabus' course.id %}">
+    {{ course.no }} - {{ course.chi_title }} {{ course.eng_title|truncatechars:30 }}
+  </a>
   {% endfor %}
 {% else %}
   No match found.

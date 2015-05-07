@@ -2,5 +2,6 @@ from django.conf.urls import patterns, url
 import views
 
 urlpatterns = patterns('',
-    url(r'^', views.search),
+    url(r'^$', views.search),
+    url(r'^syllabus/(?P<id>\d+)/$', views.syllabus, name='syllabus'),
 )
