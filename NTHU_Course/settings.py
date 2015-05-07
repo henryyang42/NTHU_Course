@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'data_center',
     'crawler',
     'search',
+    'table',
 )
 
 MIDDLEWARE_CLASSES = (
