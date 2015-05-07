@@ -1,3 +1,7 @@
-{% for course in courses %}
-<a class="block choice" href="#">{{ course.no }} - {{ course.title }}</a>
-{% endfor %}
+{% if courses %}
+  {% for course in courses %}
+  <a class="block choice" href="#">{{ course.no }} - {{ course.title|truncatechars:30 }}</a>
+  {% endfor %}
+{% else %}
+  No match found.
+{% endif %}
