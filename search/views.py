@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course
 from django.db.models import Q
-from django.http import HttpResponse
 
 # Create your views here.
 
@@ -21,4 +20,4 @@ def search(request):
 
 def syllabus(request, id):
     course = get_object_or_404(Course, id=id)
-    return HttpResponse(course.syllabus)
+    return render(request, 'syllabus.html', {'course': course})

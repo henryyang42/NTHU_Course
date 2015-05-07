@@ -1,0 +1,18 @@
+<style>
+.class1 {  background-color: #6699ff; font-size: 10pt; color: #ffffff}
+.class2 {  background-color: #f0f8ff; font-size: 10pt; color: #000099}
+.class3 {  background-color: #ffffee; font-size: 10pt; color: #000099}
+.class4 {  background-color: #ffffee; font-size: 14pt; color: #000099}
+.center {
+  width: -moz-fit-content;
+  width: -webkit-fit-content;
+  width: fit-content;
+  margin: auto;
+  padding: 15px;
+}
+</style>
+
+<div class="jumbotron center">
+  <center><h2>大綱 Syllabus</h2></center>
+  {{ course.syllabus|safe|escape }}
+</div>

@@ -145,7 +145,7 @@ NTHUCourse.Autocomplete = function(input) {
   However, you may want the autocomplete to behave like a select. If you
   want that a simple click shows the autocomplete, set this to 0.
    */
-  this.minimumCharacters = 2;
+  this.minimumCharacters = 1;
 
   /*
   In a perfect world, we would hide the autocomplete when the input looses
@@ -156,7 +156,7 @@ NTHUCourse.Autocomplete = function(input) {
   When the input looses focus, wait for this number of milliseconds before
   hiding the autocomplete.
    */
-  this.hideAfter = 500;
+  this.hideAfter = 10000;
 
   /*
   The server should have a URL that takes the input value, and responds
@@ -424,6 +424,8 @@ NTHUCourse.Autocomplete.prototype.show = function(html) {
   if (!this.box.is(':visible')) {
     this.box.css('display', 'block');
   }
+  $('.ajax-popup-link').magnificPopup({type: 'ajax'});
+
 }
 
 // This function is in charge of the opposite.
@@ -674,6 +676,10 @@ $(function() {
     url: '/search'
   }).input.bind('selectChoice', function(e, choice, autocomplete) {
     // When a choice is selected, open it.
-    window.location.href = choice.attr('href');
+    //window.location.href = choice.attr('href');
+    $('.ajax-popup-link').magnificPopup({
+      type: 'ajax',
+      src: choice.attr('href')
+    }).magnificPopup('open');
   });
 })

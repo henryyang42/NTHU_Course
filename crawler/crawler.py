@@ -90,7 +90,7 @@ def initial_db(ACIXSTORE, auth_num):
     class_infos = []
     total_collected = 0
     fail = 0
-    for cou_code in progress(cou_codes[2:3]):
+    for cou_code in progress(cou_codes):
         html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
         soup = bs4.BeautifulSoup(html, 'html.parser')
         trs = soup.find_all('tr')
