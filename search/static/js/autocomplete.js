@@ -680,6 +680,6 @@ $(function() {
     $('.ajax-popup-link').magnificPopup({
       type: 'ajax',
       src: choice.attr('href')
-    }).magnificPopup('open');
+    });
   });
 })
