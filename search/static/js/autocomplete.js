@@ -424,7 +424,9 @@ NTHUCourse.Autocomplete.prototype.show = function(html) {
   if (!this.box.is(':visible')) {
     this.box.css('display', 'block');
   }
-  $('.ajax-popup-link').magnificPopup({type: 'ajax'});
+  $('.ajax-popup-link').magnificPopup({
+    type: 'ajax'
+  });
 
 }
 
@@ -676,10 +678,11 @@ $(function() {
     url: '/search'
   }).input.bind('selectChoice', function(e, choice, autocomplete) {
     // When a choice is selected, open it.
-    //window.location.href = choice.attr('href');
-    $('.ajax-popup-link').magnificPopup({
-      type: 'ajax',
-      src: choice.attr('href')
-    });
+    $.magnificPopup.open({
+      items: {
+        src: choice.attr('href')
+      },
+      type: 'ajax'
+    }, 0);
   });
 })
