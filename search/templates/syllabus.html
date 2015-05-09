@@ -1,7 +1,7 @@
 <style>
-.class1 {  background-color: #6699ff; font-size: 10pt; color: #ffffff}
-.class2 {  background-color: #f0f8ff; font-size: 10pt; color: #000099}
-.class3 {  background-color: #ffffee; font-size: 10pt; color: #000099}
+.class1 {  background-color: #6699ff; font-size: 11pt; color: #ffffff; line-height: 2em}
+.class2 {  background-color: #f0f0f0; font-size: 10pt; color: #333}
+.class3 {  background-color: #ffffee; font-size: 10pt; color: #333; vertical-align: middle; text-align: center}
 .class4 {  background-color: #ffffee; font-size: 14pt; color: #000099}
 .center {
   width: -moz-fit-content;
@@ -10,9 +10,27 @@
   margin: auto;
   padding: 15px;
 }
+.jumbotron {background-color: #fff}
+.jumbotron table:nth-of-type(2),
+.jumbotron table:nth-of-type(3),
+.jumbotron table:nth-of-type(1) tbody tr:nth-child(3),
+.jumbotron table:nth-of-type(1) tbody tr:nth-child(4) {display: none}
+.jumbotron tr:nth-of-type(1) td {padding: 3px 25px}
+.jumbotron table:nth-of-type(4) tr:nth-of-type(2) td {padding: 25px; padding-bottom: 0}
 </style>
 
 <div class="jumbotron center">
-  <center><h2>大綱 Syllabus</h2></center>
+  <center><h2>{{ course.chi_title }}</h2><h4>{{ course.eng_title }}</h4></center>
   {{ course.syllabus|safe|escape }}
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    var tr = $(".jumbotron table:nth-of-type(1) tbody"),
+        td5 = tr.find("tr:nth-child(5)"),
+        td6 = tr.find("tr:nth-child(6)"),
+        tmp = td5.html();
+    td5.html(td6.html());
+    td6.html(tmp);
+  })
+</script>
