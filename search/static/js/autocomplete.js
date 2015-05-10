@@ -228,7 +228,8 @@ NTHUCourse.Autocomplete.prototype.refresh = function() {
   // Set the new current value.
   this.value = this.getQuery();
 
-  this.fetch();
+  if(this.value.length > 1)
+    this.fetch();
 }
 
 // Return true if the data for this query has changed from last query.

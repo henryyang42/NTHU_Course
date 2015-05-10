@@ -8,11 +8,11 @@
   color: red;
 }
 
-.btn-table {
+.table-btn {
   float: right;
   margin: 3px;
 }
-.text-table {
+.table-text {
   margin: 3px;
 }
 
@@ -25,7 +25,7 @@
   <div class="container">
     <div class="row">
       {% verbatim %}
-      <table class="table table-bordered table-hover">
+      <table class="table table-bordered table-hover search-table">
         <thead>
           <tr>
             <td colspan="3">
@@ -48,8 +48,8 @@
               <br>{{ course.eng_title }}</td>
             <td>{{ course.credit }}</td>
             <td>{{ course.time }}<span ng-hide="free(course)" class="red"> (衝堂)</span>
-              <a class="btn btn-primary btn-table" ng-click="add(course)">加選</a>
-              <a class="btn btn-info btn-table ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+              <a class="btn btn-primary table-btn" ng-click="add(course)">加選</a>
+              <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
             </td>
           </tr>
         </tbody>
@@ -67,7 +67,7 @@
           <tr ng-repeat="row in '1234n5678abc' ">
             <td><center>{{ row }}</center></td>
             <td ng-repeat="col in 'MTWRFS' ">
-              <div ng-repeat="course in added_course | courseInThatTime:col+row " class="text-table">
+              <div ng-repeat="course in added_course | courseInThatTime:col+row " class="table-text">
                 {{ course.chi_title }}<br>
                 {{ course.room }}
               </div>
@@ -101,8 +101,8 @@
             </td>
             <td>{{ course.credit }}</td>
             <td>{{ course.time }}
-              <a class="btn btn-danger btn-table" ng-click="del(course)">退選</a>
-              <a class="btn btn-info btn-table ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+              <a class="btn btn-danger table-btn" ng-click="del(course)">退選</a>
+              <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
             </td>
           </tr>
         </tbody>

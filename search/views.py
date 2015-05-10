@@ -16,7 +16,7 @@ def search(request):
         Q(eng_title__icontains=q) |
         Q(chi_title__icontains=q) |
         Q(teacher__icontains=q)
-    ).distinct()[:50].values('id', 'no', 'eng_title', 'chi_title', 'note',
+    ).distinct().values('id', 'no', 'eng_title', 'chi_title', 'note',
     'object', 'time', 'teacher', 'room', 'credit', 'prerequisite')
 
     return HttpResponse(json.dumps(list(courses), cls=DjangoJSONEncoder))
