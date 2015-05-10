@@ -1,31 +1,27 @@
-{% extends 'table_base.html' %}
-{% load static %}
-
-{% block title_block %}
+{% extends 'table_base.html' %} {% load static %} {% block title_block %}
 <title>NTHU Course - Todo List</title>
-{% endblock title_block %}
-
-{% block include_block %}
+{% endblock title_block %} {% block include_block %}
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <style type="text/css">
 .red {
   color: red;
 }
+
 .btn-table {
   float: right;
   margin: 3px;
 }
+.text-table {
+  margin: 3px;
+}
+
 </style>
-
-{% endblock include_block %}
-
-{% block body_block %}
+{% endblock include_block %} {% block body_block %}
 <!-- Main -->
 <script type="text/javascript">
-  </script>
+</script>
 <div id="main">
-
   <div class="container">
     <div class="row">
       {% verbatim %}
@@ -48,181 +44,72 @@
         </thead>
         <tbody>
           <tr ng-repeat="course in query">
-            <td>{{ course.chi_title }}<br>{{ course.eng_title }}</td>
+            <td>{{ course.chi_title }}
+              <br>{{ course.eng_title }}</td>
             <td>{{ course.credit }}</td>
-            <td>{{ course.time }}
+            <td>{{ course.time }}<span ng-hide="free(course)" class="red"> (衝堂)</span>
               <a class="btn btn-primary btn-table" ng-click="add(course)">加選</a>
               <a class="btn btn-info btn-table ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
             </td>
           </tr>
         </tbody>
       </table>
-      {% endverbatim %}
+
       <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2">
         <thead>
           <tr>
-            <th><center></center></th>
-            <th><center>M</center></th>
-            <th><center>T</center></th>
-            <th><center>W</center></th>
-            <th><center>R</center></th>
-            <th><center>F</center></th>
-            <th><center>S</center></th>
+            <th ng-repeat="col in '#MTWRFS' ">
+              <center>{{ col }}</center>
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>n</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>6</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>7</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>8</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>9</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>a</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>b</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-          </tr>
-          <tr>
-            <td>c</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
-            <td>X</td>
+          <tr ng-repeat="row in '1234n5678abc' ">
+            <td><center>{{ row }}</center></td>
+            <td ng-repeat="col in 'MTWRFS' ">
+              <div ng-repeat="course in added_course | courseInThatTime:col+row " class="text-table">
+                {{ course.chi_title }}<br>
+                {{ course.room }}
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
-    </div>
-    {% verbatim %}
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <td colspan="3">
-            <center>
-              <h4>
+
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <td colspan="3">
+              <center>
+                <h4>
                 您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
               </h4>
-            </center>
-          </td>
-        </tr>
-        <tr>
-          <th>Class Name</th>
-          <th>Credit</th>
-          <th>Course Time</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="course in added_course">
-          <td>{{ course.chi_title }}<br>{{ course.eng_title }}</td>
-          <td>{{ course.credit }}</td>
-          <td>{{ course.time }}
-            <a class="btn btn-danger btn-table" ng-click="del(course)">退選</a>
-            <a class="btn btn-info btn-table ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    {% endverbatim %}
+              </center>
+            </td>
+          </tr>
+          <tr>
+            <th>Class Name</th>
+            <th>Credit</th>
+            <th>Course Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="course in added_course">
+            <td>
+              {{ course.chi_title }}
+              <br>{{ course.eng_title }}
+            </td>
+            <td>{{ course.credit }}</td>
+            <td>{{ course.time }}
+              <a class="btn btn-danger btn-table" ng-click="del(course)">退選</a>
+              <a class="btn btn-info btn-table ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      {% endverbatim %}
+    </div>
   </div>
 </div>
-
 <!-- /Main -->
 {% endblock body_block %}

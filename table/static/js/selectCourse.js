@@ -1,5 +1,16 @@
 var moduleNTHUCourse = angular.module("ModuleNTHUCourse", []);
 
+moduleNTHUCourse.filter('courseInThatTime', function() {
+  return function(input, time) {
+    var out = [];
+    for (var i in input) {
+      if (input[i].time.indexOf(time) >= 0)
+        out.push(input[i]);
+    }
+    return out;
+  };
+});
+
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.query = [];
   $scope.added_course = [];
@@ -16,15 +27,20 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     }
   }
 
-  function p(c, type) {
-    time = c.time.match(/.{1,2}/g);
+  function timeTable(c, type) {
+    var time = c.time.match(/.{1,2}/g);
+    var table = $scope.time_table;
     for (i in time) {
-      if (type == 'add')
-        $scope.time_table[time[i]] = 1;
-      else if (type == 'del')
-        delete $scope.time_table[time[i]];
-      else if (type == 'free') {
-        if ($scope.time_table[time[i]])
+      if (type == 'add') {
+        if (!table[time[i]])
+          table[time[i]] = 0;
+        table[time[i]]++;
+      } else if (type == 'del') {
+        table[time[i]]--;
+        if (!table[time[i]])
+          delete table[time[i]];
+      } else if (type == 'free') {
+        if (table[time[i]])
           return false;
       }
     }
@@ -46,26 +62,31 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     var c = $scope.added_course[i];
     $scope.credit += c.credit;
     $scope.course_ct++;
-    p(c, 'add');
+    timeTable(c, 'add');
   }
 
   $scope.add = function(c) {
-    var course = jQuery.extend(true, {}, c);
-    $scope.added_course.push(course);
+    timeTable(c, 'add');
+    $scope.added_course.push(c);
     $scope.credit += c.credit;
     $scope.course_ct++;
     del_course($scope.query, c);
   }
 
   $scope.del = function(c) {
-    p(c, 'del');
+    timeTable(c, 'del');
     $scope.credit -= c.credit;
     $scope.course_ct--;
     del_course($scope.added_course, c);
   }
 
   $scope.free = function(c) {
-    return p(c, 'free');
+    return timeTable(c, 'free');
+  }
+
+  $scope.ass = function(c) {
+    console.log(c)
+    return true;
   }
 
   var updateChange = function() {
