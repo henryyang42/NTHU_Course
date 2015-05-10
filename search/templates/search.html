@@ -1,9 +1,0 @@
-{% if courses %}
-  {% for course in courses %}
-  <a class="ajax-popup-link block choice" href="{% url 'syllabus' course.id %}">
-    {{ course.no }} - {{ course.chi_title }} {{ course.eng_title|truncatechars:30 }}
-  </a>
-  {% endfor %}
-{% else %}
-  No match found.
-{% endif %}

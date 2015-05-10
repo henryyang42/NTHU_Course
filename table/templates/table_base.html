@@ -5,7 +5,7 @@
     templated.co @templatedco
     Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
 -->
-<html>
+<html ng-app="ModuleNTHUCourse">
 
 <head>
   {% block title_block %}
@@ -15,10 +15,12 @@
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700,500,900' rel='stylesheet' type='text/css'>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
   <script src="{% static 'js/autocomplete.js' %}"></script>
   <script src="{% static 'js/skel.min.js' %}"></script>
   <script src="{% static 'js/skel-panels.min.js' %}"></script>
   <script src="{% static 'js/init.js' %}"></script>
+  <script src="{% static 'js/selectCourse.js' %}"></script>
   <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css" />
   <link rel="stylesheet" href="{% static 'css/skel-noscript.min.css' %}" />
   <link rel="stylesheet" href="{% static 'css/style.min.css' %}" />
@@ -28,7 +30,7 @@
   {% endblock include_block %}
 </head>
 
-<body>
+<body ng-controller="CourseCtrl">
   <!-- Header -->
   <div id="header">
     <div id="nav-wrapper">
