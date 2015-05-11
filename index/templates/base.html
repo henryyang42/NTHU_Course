@@ -21,7 +21,6 @@
   <link rel="stylesheet" href="{% static 'css/skel-noscript.min.css' %}" />
   <link rel="stylesheet" href="{% static 'css/style.min.css' %}" />
   <link rel="stylesheet" href="{% static 'css/style-desktop.min.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/search.css' %}" />
 </head>
 
 <body>
@@ -32,16 +31,9 @@
       <nav id="nav">
         <ul>
           <li class="active"><a href="/">關於我們</a></li>
-          <li><a href="404.html">選課預排系統</a></li>
+          <li><a href="table.html">選課預排系統</a></li>
           <li><a href="todo-list.html">許願池</a></li>
           <li><a href="donate.html">贊助計畫</a></li>
-          <li>
-              <form class="navbar-form">
-                <div class="form-group">
-                  <input id="courseSearch" type="text" class="form-control" placeholder="查詢課程">
-                </div>
-              </form>
-          </li>
         </ul>
       </nav>
     </div>
@@ -56,17 +48,7 @@
   <!-- Header -->
   {% block body_block %}
   <!-- Main -->
-  <div id="main">
-    <div id="content" class="container">
-      <section>
-        <header>
-          <h2>ERROR 404 - 程式錯誤！</h2>
-          <span class="byline">您偶然碰上程式的一場謬誤，如同湖水偶然遇見詩人的一片雲</span>
-          <span class="byline">所以，請跟著我們<a href="index.html">重新開始</a></span>
-        </header>
-      </section>
-    </div>
-  </div>
+
   <!-- /Main -->
   {% endblock body_block %}
   <!-- Footer -->
