@@ -33,7 +33,8 @@
             <td colspan="3">
               <center>
                 <h4>
-                  課程查詢結果
+                  課程查詢結果<span ng-show="filtered.length>0"> (共{{ filtered.length }}筆)</span>
+                  <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
                 </h4>
               </center>
             </td>
@@ -45,7 +46,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="course in query | showQuery:added_course">
+          <tr ng-repeat="course in filtered = (query | showQuery:added_course)">
             <td>{{ course.chi_title }}
               <br>{{ course.eng_title }}</td>
             <td>{{ course.credit }}</td>

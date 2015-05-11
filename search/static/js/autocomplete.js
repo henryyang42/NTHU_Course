@@ -70,6 +70,9 @@ able to override any variable or function in it on a case-per-case basis.
 However, overriding is the job of the jQuery plugin so the procedure is
 described there.
 */
+
+var scope;
+
 NTHUCourse.Autocomplete = function(input) {
   /*
   The text input element that should have an autocomplete.
@@ -223,13 +226,23 @@ NTHUCourse.Autocomplete.prototype.inputKeypress = function(e) {
 
 }
 
+// This function is in charge of angularjs model change.
+NTHUCourse.Autocomplete.prototype.refreshScope = function(e) {
+  scope.query = e;
+  scope.$apply();
+}
+
 // Proxy fetch(), with some sanity checks.
 NTHUCourse.Autocomplete.prototype.refresh = function() {
   // Set the new current value.
   this.value = this.getQuery();
 
-  if(this.value.length > 1)
+  if (this.value.length == 0) {
+    this.refreshScope([]);
+  }
+  else if (this.value.length > 1) {
     this.fetch();
+  }
 }
 
 // Return true if the data for this query has changed from last query.
@@ -285,9 +298,9 @@ NTHUCourse.Autocomplete.prototype.fetchComplete = function(jqXHR, textStatus) {
 
   if (this.xhr == jqXHR) this.xhr = false;
   if (textStatus == 'abort') return;
-  var scope = angular.element('[ng-controller=CourseCtrl]').scope();
-  scope.query = JSON.parse(jqXHR.responseText);
-  scope.$apply();
+
+  this.refreshScope(JSON.parse(jqXHR.responseText));
+
 }
 
 $.fn.NTHUCourseAutocomplete = function(overrides) {
@@ -344,6 +357,7 @@ $.fn.NTHUCourseAutocomplete = function(overrides) {
 };
 
 $(function() {
+  scope = angular.element('[ng-controller=CourseCtrl]').scope();
   $('#courseSearch').NTHUCourseAutocomplete({
     url: '/search'
   });
