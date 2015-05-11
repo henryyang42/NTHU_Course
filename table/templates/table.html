@@ -45,7 +45,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="course in query">
+          <tr ng-repeat="course in query | showQuery:added_course">
             <td>{{ course.chi_title }}
               <br>{{ course.eng_title }}</td>
             <td>{{ course.credit }}</td>

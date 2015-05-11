@@ -11,6 +11,21 @@ moduleNTHUCourse.filter('courseInThatTime', function() {
   };
 });
 
+moduleNTHUCourse.filter('showQuery', function() {
+  return function(input, added_course) {
+    var out = [], ids = [];
+    for (var i in added_course)
+      ids.push(added_course[i].id);
+
+    for (var i in input) {
+      if (ids.indexOf(input[i].id) < 0)
+        out.push(input[i]);
+    }
+    return out;
+  };
+});
+
+
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.query = [];
   $scope.added_course = [];
@@ -71,6 +86,8 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.credit += c.credit;
     $scope.course_ct++;
     del_course($scope.query, c);
+    // Increase hit
+    $.get('/search/hit/'+c.id);
   }
 
   $scope.del = function(c) {
