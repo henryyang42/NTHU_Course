@@ -245,26 +245,10 @@ NTHUCourse.Autocomplete.prototype.refresh = function() {
   }
 }
 
-// Return true if the data for this query has changed from last query.
-NTHUCourse.Autocomplete.prototype.hasChanged = function() {
-  for (var key in this.data) {
-    if (!key in this.lastData || this.data[key] != this.lastData[key]) {
-      return true;
-    }
-  }
-  return false;
-}
-
 // Manage requests to this.url.
 NTHUCourse.Autocomplete.prototype.fetch = function() {
   // Add the current value to the data dict.
   this.data[this.queryVariable] = this.value;
-
-  // Ensure that this request is different from the previous one
-  if (!this.hasChanged()) {
-    // Else show the same box again.
-    return;
-  }
 
   this.lastData = {};
   for (var key in this.data) {
