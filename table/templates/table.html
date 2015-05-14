@@ -33,7 +33,7 @@
             <td colspan="3">
               <center>
                 <h4>
-                  課程查詢結果<span ng-show="filtered.length>0"> (共{{ filtered.length }}筆)</span>
+                  課程查詢結果<span ng-show="filtered.length>0"> (共{{ total_result }}筆)</span>
                   <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
                 </h4>
               </center>
@@ -55,6 +55,7 @@
               <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
             </td>
           </tr>
+          <a id="moreCourses" href="#">下一頁</a>
         </tbody>
       </table>
 

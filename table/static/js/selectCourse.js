@@ -25,7 +25,6 @@ moduleNTHUCourse.filter('showQuery', function() {
   };
 });
 
-
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.query = [];
   $scope.added_course = [];

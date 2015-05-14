@@ -136,6 +136,8 @@ NTHUCourse.Autocomplete = function(input) {
   avoids double fetching the same autocomplete.
    */
   this.lastData = {};
+
+  this.next_page = 1;
 }
 
 /*
@@ -228,7 +230,9 @@ NTHUCourse.Autocomplete.prototype.inputKeypress = function(e) {
 
 // This function is in charge of angularjs model change.
 NTHUCourse.Autocomplete.prototype.refreshScope = function(e) {
-  scope.query = e;
+  this.next_page = e.next;
+  scope.query = e.courses;
+  scope.total_result = e.total;
   scope.$apply();
 }
 
@@ -236,6 +240,7 @@ NTHUCourse.Autocomplete.prototype.refreshScope = function(e) {
 NTHUCourse.Autocomplete.prototype.refresh = function() {
   // Set the new current value.
   this.value = this.getQuery();
+  this.next_page = 1;
 
   if (this.value.length == 0) {
     this.refreshScope([]);
@@ -249,12 +254,14 @@ NTHUCourse.Autocomplete.prototype.refresh = function() {
 NTHUCourse.Autocomplete.prototype.fetch = function() {
   // Add the current value to the data dict.
   this.data[this.queryVariable] = this.value;
+  this.data['next_page'] = this.next_page;
 
   this.lastData = {};
   for (var key in this.data) {
     this.lastData[key] = this.data[key];
   }
 
+  console.log(this.data);
   // Abort any current request.
   if (this.xhr) this.xhr.abort();
 
@@ -344,5 +351,10 @@ $(function() {
   scope = angular.element('[ng-controller=CourseCtrl]').scope();
   $('#courseSearch').NTHUCourseAutocomplete({
     url: '/search'
+  });
+
+  $('#moreCourses').click(function() {
+    // $('#courseSearch').NTHUCourseAutocomplete().next_page += 1;
+    $('#courseSearch').NTHUCourseAutocomplete().fetch();
   });
 })
