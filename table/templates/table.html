@@ -36,6 +36,9 @@
                   課程查詢結果<span ng-show="filtered.length>0"> (共{{ total_result }}筆)</span>
                   <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
                 </h4>
+                <div ng-controller="PaginationCtrl">
+                  <pagination total-items="total_result" ng-model="currentPage" ng-change="pageChanged()" max-size="maxSize" class="pagination-sm" boundary-links="true"></pagination>
+                </div>
               </center>
             </td>
           </tr>

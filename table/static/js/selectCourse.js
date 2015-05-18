@@ -1,4 +1,4 @@
-var moduleNTHUCourse = angular.module("ModuleNTHUCourse", []);
+var moduleNTHUCourse = angular.module("ModuleNTHUCourse", ['ui.bootstrap']);
 
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {
@@ -23,6 +23,20 @@ moduleNTHUCourse.filter('showQuery', function() {
     }
     return out;
   };
+});
+
+moduleNTHUCourse.controller('PaginationCtrl', function ($scope, $log) {
+  $scope.setPage = function (pageNo) {
+    $scope.currentPage = pageNo;
+  };
+
+  $scope.pageChanged = function() {
+    angular.element($('#courseSearch')).NTHUCourseAutocomplete().fetch($scope.currentPage);
+    $log.log('Page changed to: ' + $scope.currentPage);
+  };
+
+  $scope.maxSize = 10;
+  $scope.currentPage = 1;
 });
 
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
