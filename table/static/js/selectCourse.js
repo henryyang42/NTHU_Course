@@ -25,26 +25,13 @@ moduleNTHUCourse.filter('showQuery', function() {
   };
 });
 
-moduleNTHUCourse.controller('PaginationCtrl', function ($scope, $log) {
-  $scope.setPage = function (pageNo) {
-    $scope.currentPage = pageNo;
-  };
-
-  $scope.pageChanged = function() {
-    angular.element($('#courseSearch')).NTHUCourseAutocomplete().fetch($scope.currentPage);
-    $log.log('Page changed to: ' + $scope.currentPage);
-  };
-
-  $scope.maxSize = 10;
-  $scope.currentPage = 1;
-});
-
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.query = [];
   $scope.added_course = [];
   $scope.time_table = {};
   $scope.credit = 0;
   $scope.course_ct = 0;
+  $scope.currentPage = 1;
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -92,6 +79,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.course_ct++;
     timeTable(c, 'add');
   }
+
+  $scope.pageChanged = function() {
+    angular.element(document.querySelector('#courseSearch'))
+        .NTHUCourseAutocomplete().fetch($scope.currentPage);
+  };
 
   $scope.add = function(c) {
     timeTable(c, 'add');
