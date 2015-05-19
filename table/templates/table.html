@@ -33,9 +33,12 @@
             <td colspan="3">
               <center>
                 <h4>
-                  課程查詢結果<span ng-show="filtered.length>0"> (共{{ filtered.length }}筆)</span>
+                  課程查詢結果<span ng-show="filtered.length>0"> (共{{ total_result }}筆)</span>
                   <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
                 </h4>
+                <div ng-show="total_result>0">
+                  <pagination total-items="total_result" ng-model="currentPage" ng-change="pageChanged()" class="pagination-sm" boundary-links="true" max-size="max_size"  previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+                </div>
               </center>
             </td>
           </tr>

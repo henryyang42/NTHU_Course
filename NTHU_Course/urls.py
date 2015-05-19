@@ -1,9 +1,5 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-import autocomplete_light
-
-# OP autodiscover
-autocomplete_light.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
@@ -11,7 +7,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^search/', include('search.urls')),
+    #url(r'^search_/', include('haystack.urls')),
     url(r'^', include('index.urls')),
     url(r'^', include('table.urls')),
-    url(r'^search/', include('search.urls')),
 )

@@ -188,16 +188,6 @@ NTHUCourse.Autocomplete.prototype.inputKeyup = function(e) {
 
     case 9: // tab
     case 13: // enter
-      if (!this.box.is(':visible')) return
-
-      var choice = this.box.find('.' + this.hilightClass);
-
-      if (!choice.length) {
-        // Don't get in the way, let the browser submit form or focus
-        // on next element.
-        return;
-      }
-
       e.preventDefault();
       e.stopPropagation();
       break
@@ -228,7 +218,8 @@ NTHUCourse.Autocomplete.prototype.inputKeypress = function(e) {
 
 // This function is in charge of angularjs model change.
 NTHUCourse.Autocomplete.prototype.refreshScope = function(e) {
-  scope.query = e;
+  scope.query = e.courses;
+  scope.total_result = e.total;
   scope.$apply();
 }
 
@@ -246,9 +237,10 @@ NTHUCourse.Autocomplete.prototype.refresh = function() {
 }
 
 // Manage requests to this.url.
-NTHUCourse.Autocomplete.prototype.fetch = function() {
+NTHUCourse.Autocomplete.prototype.fetch = function(page) {
   // Add the current value to the data dict.
   this.data[this.queryVariable] = this.value;
+  this.data['next_page'] = page == undefined ? 1 : page;
 
   this.lastData = {};
   for (var key in this.data) {

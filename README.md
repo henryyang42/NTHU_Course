@@ -8,6 +8,7 @@ python manage.py syncdb
 python manage.py makemigrations
 python manage.py migrate
 python manage.py crawl_course tnpa7e61l4a3c5vrf2kvacaof6 956
+python manage.py rebuild_index
 ```
 Note that ``tnpa7e61l4a3c5vrf2kvacaof6 956`` will vary each day.
 Please get a new pair of the token from [this site](https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php).
