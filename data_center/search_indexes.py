@@ -3,7 +3,7 @@ from haystack import indexes
 import datetime
 
 class CourseIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.EdgeNgramField(document=True, use_template=True)
+    text = indexes.NgramField(document=True, use_template=True)
 
     no = indexes.CharField(model_attr='no')
     code = indexes.CharField(model_attr='code')
