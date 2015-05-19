@@ -7,21 +7,18 @@ from data_center.models import Course
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 
+from haystack.query import SearchQuerySet
+from haystack.inputs import AutoQuery
 # Create your views here.
 
-@cache_page(60 * 60)
 def search(request):
     q = request.GET.get('q', '')
     next_page = request.GET.get('next_page', '')
 
-    courses = Course.objects.filter(
-        Q(no__icontains=q) |
-        Q(time__icontains=q) |
-        Q(eng_title__icontains=q) |
-        Q(chi_title__icontains=q) |
-        Q(teacher__icontains=q)
-    ).distinct().values('id', 'no', 'eng_title', 'chi_title', 'note',
-    'object', 'time', 'teacher', 'room', 'credit', 'prerequisite').order_by('-hit')
+    courses = SearchQuerySet().filter(content=AutoQuery(q))
+    courses = Course.objects.filter(pk__in=[c.pk for c in courses]). \
+        values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
+            'time', 'teacher', 'room', 'credit', 'prerequisite').order_by('-hit')
 
     pager = Paginator(courses, 10)
 

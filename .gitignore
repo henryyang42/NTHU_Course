@@ -1,5 +1,6 @@
 # Django
 migrations
+whoosh_index
 
 # DB
 db.sqlite3

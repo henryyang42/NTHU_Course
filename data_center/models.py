@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Course(models.Model):
     """Course database schema"""
     no = models.CharField(max_length=20, blank=True)
@@ -7,7 +8,7 @@ class Course(models.Model):
     eng_title = models.CharField(max_length=80, blank=True)
     chi_title = models.CharField(max_length=80, blank=True)
     note = models.CharField(max_length=80, blank=True)
-    object = models.CharField(max_length=20, blank=True)
+    objective = models.CharField(max_length=20, blank=True)
     time = models.CharField(max_length=20, blank=True)
     teacher = models.CharField(max_length=40, blank=True) # Only save Chinese
     room = models.CharField(max_length=20, blank=True)
@@ -21,3 +22,4 @@ class Course(models.Model):
 
     def __str__(self):
         return self.no
+

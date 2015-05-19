@@ -188,16 +188,6 @@ NTHUCourse.Autocomplete.prototype.inputKeyup = function(e) {
 
     case 9: // tab
     case 13: // enter
-      if (!this.box.is(':visible')) return
-
-      var choice = this.box.find('.' + this.hilightClass);
-
-      if (!choice.length) {
-        // Don't get in the way, let the browser submit form or focus
-        // on next element.
-        return;
-      }
-
       e.preventDefault();
       e.stopPropagation();
       break
