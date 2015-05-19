@@ -4,4 +4,4 @@ progressbar==2.3
 requests==2.5.3
 django-autocomplete-light==2.0.9
 Whoosh==2.7.0
-install git+https://github.com/henryyang42/django-haystack.git
+git+https://github.com/henryyang42/django-haystack.git
