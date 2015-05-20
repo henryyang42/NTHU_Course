@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -10,9 +11,29 @@ from django.views.decorators.cache import cache_page
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 # Create your views here.
+import re
+def group_words(s):
+    regex = []
+
+    # Match a whole word:
+    regex += [ur'\w+']
+
+    # Match a single CJK character:
+    regex += [ur'[\u4e00-\ufaff]']
+
+    # Match one of anything else, except for spaces:
+    regex += [ur'[^\s]']
+
+    regex = "|".join(regex)
+    r = re.compile(regex)
+
+    return r.findall(s)
+
 
 def search(request):
     q = request.GET.get('q', '')
+    q = ' '.join(group_words(q))
+
     next_page = request.GET.get('next_page', '')
 
     courses = SearchQuerySet().filter(content=AutoQuery(q))
