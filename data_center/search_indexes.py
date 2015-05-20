@@ -14,6 +14,8 @@ class CourseIndex(indexes.SearchIndex, indexes.Indexable):
     time = indexes.CharField(model_attr='time')
     teacher = indexes.CharField(model_attr='teacher')
     room = indexes.CharField(model_attr='room')
+    ge = indexes.CharField(model_attr='ge')
+
     credit = indexes.IntegerField(model_attr='credit')
     limit = indexes.IntegerField(model_attr='limit')
     prerequisite = indexes.BooleanField(model_attr='prerequisite')

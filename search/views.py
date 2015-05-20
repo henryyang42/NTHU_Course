@@ -36,10 +36,7 @@ def search(request):
 
     next_page = request.GET.get('next_page', '')
 
-    courses = SearchQuerySet().filter(content=AutoQuery(q))
-    courses = Course.objects.filter(pk__in=[c.pk for c in courses]). \
-        values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-            'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge').order_by('-hit')
+    courses = SearchQuerySet().filter(content=AutoQuery(q)).order_by('-hit')
 
     pager = Paginator(courses, 10)
 
@@ -50,15 +47,21 @@ def search(request):
     except EmptyPage:
         courses_page = pager.page(pager.num_pages)
 
+    courses_list = Course.objects.filter(pk__in=[c.pk for c in courses_page.object_list]). \
+        values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
+            'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
+
+
+
     result = {
         'total': courses.count(),
         'next': courses_page.next_page_number() if courses_page.has_next() else pager.num_pages,
-        'courses': list(courses_page.object_list)
+        'courses': list(courses_list)
     }
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
 
-
+@cache_page(60 * 60)
 def syllabus(request, id):
     course = get_object_or_404(Course, id=id)
     return render(request, 'syllabus.html', {'course': course})
