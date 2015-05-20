@@ -35,11 +35,11 @@
   <script>
     window.fbAsyncInit = function() {
       FB.init({
-    appId      : '348628832000015',
-    xfbml      : true,
-    version    : 'v2.3'
-    });
-    };
+        appId      : '348628832000015',
+        xfbml      : true,
+        version    : 'v2.3'
+        });
+      };
 
     (function(d, s, id){
      var js, fjs = d.getElementsByTagName(s)[0];
@@ -64,6 +64,16 @@
               </div>
             </form>
           </li>
+          {% block func_btn_block %}
+          <li>
+            <div
+              class="fb-like"
+              data-share="true"
+              data-width="200"
+              data-show-faces="true">
+            </div>
+          </li>
+          {% endblock func_btn_block %}
         </ul>
       </nav>
     </div>

@@ -1,10 +1,12 @@
 {% extends 'table_base.html' %}
 {% load static %}
 {% block title_block %}
-<title>NTHU Course - Todo List</title>
+<title>NTHU Course - Time Table</title>
 {% endblock title_block %} {% block include_block %}
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://raw.githubusercontent.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
+<script src="https://raw.githubusercontent.com/hydai/Canvas/master/base64binary.js"></script>
 <style type="text/css">
 .red {
   color: red;
@@ -19,7 +21,14 @@
 }
 
 </style>
-{% endblock include_block %} {% block body_block %}
+{% endblock include_block %}
+
+{% block func_btn_block %}
+<li>
+<button class="btn btn-primary" id="postToFB">透過 Facebook 分享您的課表</button>
+</li>
+{% endblock func_btn_block %}
+{% block body_block %}
 <!-- Main -->
 <script type="text/javascript">
 </script>
@@ -61,7 +70,7 @@
         </tbody>
       </table>
 
-      <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2">
+      <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table">
         <thead>
           <tr>
             <th ng-repeat="col in '#MTWRFS' ">
@@ -118,4 +127,5 @@
   </div>
 </div>
 <!-- /Main -->
+<script src="{% static 'js/postToFB.js' %}"></script>
 {% endblock body_block %}
