@@ -59,13 +59,11 @@ def search(request):
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
 
 
-@cache_page(60 * 60)
 def syllabus(request, id):
     course = get_object_or_404(Course, id=id)
     return render(request, 'syllabus.html', {'course': course})
 
 
-@cache_page(60 * 60)
 def hit(request, id):
     course = get_object_or_404(Course, id=id)
     course.hit += 1
