@@ -1,9 +1,6 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title_block %}
+{% extends 'base.html' %} {% load static %} {% block title_block %}
 <title>NTHU Course - Todo List</title>
-{% endblock title_block %}
-{% block body_block %}
+{% endblock title_block %} {% block body_block %}
 <!-- Main -->
 <div id="main">
   <div class="container">
@@ -12,23 +9,24 @@
       <div id="sidebar" class="4u">
         <section>
           <header>
+            <h2>已經完成的開發</h2>
+          </header>
+          <div class="row">
+            <section class="12u">
+              <ul class="default">
+                <li><a href="#issue-sync">1)同步更新課目資料</a></li>
+                <li><a href="#issue-search">2)強大的搜尋功能</a></li>
+                <li><a href="#issue-timeconflict">3)衝堂提醒</a></li>
+              </ul>
+            </section>
+          </div>
+          <header>
             <h2>進行中的開發</h2>
           </header>
           <div class="row">
-            <section class="6u">
+            <section class="12u">
               <ul class="default">
-                <li><a href="#issue1">1)同步更新課目資料</a></li>
-                <li><a href="#issue2">2)儲存多種課表</a></li>
-                <li><a href="#issue3">3)強大的搜尋功能</a></li>
-                <li><a href="#issue4">4)衝堂提醒</a></li>
-              </ul>
-            </section>
-            <section class="6u">
-              <ul class="default">
-                <li><a href="#issue5">5)簡化通識分類</a></li>
-                <li><a href="#issue6">6)多彩的高亮標示</a></li>
-                <li><a href="#issue7">7)使用者登入功能</a></li>
-                <li><a href="#issue8">8)擋修提醒</a></li>
+                <li><a href="#issue-classblock">4)擋修提醒</a></li>
               </ul>
             </section>
           </div>
@@ -36,36 +34,14 @@
             <h2>還在許願池的想法</h2>
           </header>
           <div class="row">
-            <section class="6u">
+            <section class="12u">
               <ul class="default">
-                <li><a href="#issue9">9)歷年成績分布資訊</a></li>
-                <li><a href="#issue10">10)歷年考古題資訊</a></li>
-              </ul>
-            </section>
-            <section class="6u">
-              <ul class="default">
-                <li><a href="#issue11">11)支援行動平台</a></li>
-                <li><a href="#issue12">12)等待您的提議（≧∇≦）</a></li>
+                <li><a href="#issue-score">5)歷年成績分布資訊</a></li>
+                <li><a href="#issue-problem">6)歷年考古題資訊</a></li>
+                <li><a href="#issue-youridea">7)等待您的提議（≧∇≦）</a></li>
               </ul>
             </section>
           </div>
-        </section>
-        <section>
-          <header>
-            <h2>已經完成的功能</h2>
-          </header>
-          <ul class="style">
-            <!--
-                            <li>
-                                <p class="posted">May 21, 2014 | Updated</p>
-                                <p><a href="#">Nullam non wisi a sem eleifend. Donec mattis libero eget urna. Pellentesque viverra enim.</a></p>
-                            </li>
-                            <li>
-                                <p class="posted">May 18, 2014 | (10 ) Comments</p>
-                                <p><a href="#">Nullam non wisi a sem eleifend. Donec mattis libero eget urna. Pellentesque viverra enim.</a></p>
-                            </li>
-                          -->
-          </ul>
         </section>
       </div>
       <!-- Content -->
@@ -76,53 +52,33 @@
             <span class="byline">紀錄已完成、開發中、準備要做的想法集散地</span>
           </header>
           <header>
-            <span class="byline"><a name="issue1"></a>1)同步更新課目資料</span>
+            <span class="byline"><a name="issue-sync"></a>1)同步更新課目資料</span>
           </header>
-          <p>讓我們與校務資訊系統同步最新的課程，在有任何課程異動的情況下，即時的通知使用者。</p>
+          <p>讓我們與校務資訊系統同步最新的課程，在有任何課程異動的情況下，即時的更新網站上的資料。</p>
           <header>
-            <span class="byline"><a name="issue2"></a>2)儲存多種課表</span>
+            <span class="byline"><a name="issue-search"></a>2)強大的搜尋功能</span>
           </header>
-          <p>在選課時有太多的選擇，但卻集中在同一張課表上。是的，我們感同身受，儲存多種課表能讓使用者隨心隨意地儲存、載入、複製課表，增加操作的自由度。</p>
+          <p>體驗過校務資訊系統難用的搜尋了嗎？我們推出課號搜尋、課目搜尋、時間搜尋甚至是通識查詢的強大功能。</p>
           <header>
-            <span class="byline"><a name="issue3"></a>3)強大的搜尋功能</span>
-          </header>
-          <p>體驗過校務資訊系統難用的搜尋了嗎？我們將推出課號搜尋、課目搜尋、甚至是全文搜尋的強大功能。</p>
-          <header>
-            <span class="byline"><a name="issue4"></a>4)衝堂提醒</span>
+            <span class="byline"><a name="issue-timeconflict"></a>3)衝堂提醒</span>
           </header>
           <p>總是到了選課時候才意外發現衝堂了嗎？本系統在預排階段就能對衝堂的課提出警示，幫助您提早預見風險。</p>
           <header>
-            <span class="byline"><a name="issue5"></a>5)簡化通識分類</span>
-          </header>
-          <p>選通識總是會出現很多已經修讀過的向度，過於繁雜的內容，卻沒有透過顏色來分隔。我們將讓不同類項得通識有明顯的區隔，也能快速篩選出您尚未修習的通識。</p>
-          <header>
-            <span class="byline"><a name="issue6"></a>6)多彩的高亮標示</span>
-          </header>
-          <p>是否有某些課程或是資訊是特別重要的呢？但是在課表上卻因為一樣的色彩，一點兒都沒被注意到，本系統將幫您留意這些資訊，並在適當時機提出提示通知。</p>
-          <header>
-            <span class="byline"><a name="issue7"></a>7)使用者登入功能</span>
-          </header>
-          <p>結合課表與曾經修習過的課程，幫助您處理畢業審查相關的資訊。</p>
-          <header>
-            <span class="byline"><a name="issue8"></a>8)擋修提醒</span>
+            <span class="byline"><a name="issue-classblock"></a>4)擋修提醒</span>
           </header>
           <p>學校的擋修都必須點開來查詢，不夠直觀與好用，我們提供擋修提醒，在該科目有限制條件的情況下，在預排階段就給予通知。</p>
           <header>
-            <span class="byline"><a name="issue9"></a>9)歷年成績分布資訊</span>
+            <span class="byline"><a name="issue-score"></a>5)歷年成績分布資訊</span>
           </header>
           <p>透過蒐集大量的成績資訊，提供使用者能提前知曉該門課的給分，幫助您規劃選課的抉擇。</p>
           <header>
-            <span class="byline"><a name="issue10"></a>10)歷年考古題資訊</span>
+            <span class="byline"><a name="issue-problem"></a>6)歷年考古題資訊</span>
           </header>
           <p>累積修課同學的過往經驗，幫助使用者能知曉以往的考試內容。</p>
           <header>
-            <span class="byline"><a name="issue11"></a>11)支援行動平台</span>
+            <span class="byline"><a name="issue-youridea"></a>7)等待您的提議（≧∇≦）</span>
           </header>
-          <p>選課應該是隨時隨地都能使用的服務，支援行動平台能讓使用者在手機、平板等各種行動平台都能取得服務。</p>
-          <header>
-            <span class="byline"><a name="issue12"></a>12)等待您的提議（≧∇≦）</span>
-          </header>
-          <p>您是否對選課系統也有很多的想法與抱負呢？</p>
+          <p>您是否對選課系統也有很多的想法與抱負呢？趕快告訴我們或加入團隊吧！</p>
         </section>
       </div>
     </div>
