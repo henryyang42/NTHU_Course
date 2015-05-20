@@ -5,8 +5,8 @@
 {% endblock title_block %} {% block include_block %}
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<script src="https://raw.githubusercontent.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
-<script src="https://raw.githubusercontent.com/hydai/Canvas/master/base64binary.js"></script>
+<script src="{% static 'js/html2canvas.min.js' %}"></script>
+<script src="{% static 'js/base64binary.js' %}"></script>
 <style type="text/css">
 .red {
   color: red;
@@ -70,8 +70,15 @@
         </tbody>
       </table>
 
-      <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table">
+      <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table" style="border-style: solid; border-width: 2px;">
         <thead>
+          <tr>
+            <td colspan="7">
+              <center>
+                <h4>您的預排課表 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分</h4>
+              </center>
+            </td>
+          </tr>
           <tr>
             <th ng-repeat="col in '#MTWRFS' ">
               <center>{{ col }}</center>
