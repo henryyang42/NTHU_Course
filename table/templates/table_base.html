@@ -14,8 +14,11 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700,500,900' rel='stylesheet' type='text/css'>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://cdn.rawgit.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.rawgit.com/hydai/Canvas/master/base64binary.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
   <script src="{% static 'js/autocomplete.js' %}"></script>
   <script src="{% static 'js/skel.min.js' %}"></script>
@@ -26,30 +29,46 @@
   <link rel="stylesheet" href="{% static 'css/skel-noscript.min.css' %}" />
   <link rel="stylesheet" href="{% static 'css/style.min.css' %}" />
   <link rel="stylesheet" href="{% static 'css/style-desktop.min.css' %}" />
-  {% block include_block %}
-  {% endblock include_block %}
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+  .red {
+    color: red;
+  }
+
+  .table-btn {
+    float: right;
+    margin: 3px;
+  }
+
+  .table-text {
+    margin: 3px;
+  }
+  </style>
+  {% block include_block %} {% endblock include_block %}
 </head>
 
 <body ng-controller="CourseCtrl">
   <!-- Facebook -->
   <script>
-    window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '348628832000015',
-        xfbml      : true,
-        version    : 'v2.3'
-        });
-      };
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId: '348628832000015',
+      xfbml: true,
+      version: 'v2.3'
+    });
+  };
 
-    (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-     }(document, 'script', 'facebook-jssdk'));
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
   </script>
-
   <!-- Header -->
   <div id="header">
     <div id="nav-wrapper">
@@ -64,16 +83,13 @@
               </div>
             </form>
           </li>
-          {% block func_btn_block %}
-          <li>
-            <div
-              class="fb-like"
-              data-share="true"
-              data-width="200"
-              data-show-faces="true">
+          <!--li>
+            <div class="fb-like" data-share="true" data-width="200" data-show-faces="true">
             </div>
+          </li-->
+          <li>
+            <button class="btn btn-primary" id="postToFB">透過 Facebook 分享您的課表</button>
           </li>
-          {% endblock func_btn_block %}
         </ul>
       </nav>
     </div>
@@ -81,17 +97,6 @@
   <!-- Header -->
   {% block body_block %}
   <!-- Main -->
-  <div id="main">
-    <div id="content" class="container">
-      <section>
-        <header>
-          <h2>ERROR 404 - 程式錯誤！</h2>
-          <span class="byline">您偶然碰上程式的一場謬誤，如同湖水偶然遇見詩人的一片雲</span>
-          <span class="byline">所以，請跟著我們<a href="index.html">重新開始</a></span>
-        </header>
-      </section>
-    </div>
-  </div>
   <!-- /Main -->
   {% endblock body_block %}
 </body>

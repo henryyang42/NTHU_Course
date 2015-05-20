@@ -39,7 +39,7 @@ def search(request):
     courses = SearchQuerySet().filter(content=AutoQuery(q))
     courses = Course.objects.filter(pk__in=[c.pk for c in courses]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-            'time', 'teacher', 'room', 'credit', 'prerequisite').order_by('-hit')
+            'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge').order_by('-hit')
 
     pager = Paginator(courses, 10)
 

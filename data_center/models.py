@@ -16,6 +16,9 @@ class Course(models.Model):
     limit = models.IntegerField(blank=True)
     prerequisite = models.BooleanField(default=False, blank=True)
 
+    ge = models.CharField(max_length=30, blank=True)
+
+
     hit = models.IntegerField(default=0)
 
     syllabus = models.TextField(blank=True) # A html div

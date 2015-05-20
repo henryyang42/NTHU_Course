@@ -1,6 +1,7 @@
 {{ object.chi_title }}
 {{ object.eng_title }}
 {{ object.teacher }}
+{{ object.ge }}
 {{ object.no }}
 {{ object.code }}
 {{ object.time}}
