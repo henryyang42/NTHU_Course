@@ -228,6 +228,7 @@ NTHUCourse.Autocomplete.prototype.refreshScope = function(e) {
 NTHUCourse.Autocomplete.prototype.refresh = function() {
     // Set the new current value.
     this.value = this.getQuery();
+    scope.currentPage = 1;
 
     if (this.value.length == 0) {
         this.refreshScope([]);

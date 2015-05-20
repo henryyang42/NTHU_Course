@@ -1,5 +1,7 @@
 $("#postToFB").click(function(){
-    console.log("Click\n");
+    var pre_message = "My tentative course selection";
+    var nthu_course_link = "by http://nthu-course.cf";
+    var img_message = pre_message + "\n" + nthu_course_link;
     var canvas = null;
     html2canvas($("#course-table")).then(function(cav) {
         document.body.appendChild(cav);
@@ -11,16 +13,16 @@ $("#postToFB").click(function(){
         var decodedPng = Base64Binary.decode(encodedPng);
         FB.getLoginStatus(function(response) {
             if (response.status === "connected") {
-                postImageToFacebook(response.authResponse.accessToken, "NTHU Course", "image/png", decodedPng, "nthu-course.cf");
+                postImageToFacebook(response.authResponse.accessToken, "NTHU Course", "image/png", decodedPng, img_message);
             } else if (response.status === "not_authorized") {
                 FB.login(function(response) {
-                    postImageToFacebook(response.authResponse.accessToken, "NTHU Course", "image/png", decodedPng, "nthu-course.cf");
+                    postImageToFacebook(response.authResponse.accessToken, "NTHU Course", "image/png", decodedPng, img_message);
                 }, {
                     scope: "publish_actions"
                 });
             } else {
                 FB.login(function(response) {
-                    postImageToFacebook(response.authResponse.accessToken, "NTHU Course", "image/png", decodedPng, "nthu-course.cf");
+                    postImageToFacebook(response.authResponse.accessToken, "NTHU Course", "image/png", decodedPng, img_message);
                 }, {
                     scope: "publish_actions"
                 });
