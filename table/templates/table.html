@@ -2,32 +2,7 @@
 {% load static %}
 {% block title_block %}
 <title>NTHU Course - Time Table</title>
-{% endblock title_block %} {% block include_block %}
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<script src="https://cdn.rawgit.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
-<script src="https://cdn.rawgit.com/hydai/Canvas/master/base64binary.js"></script>
-<style type="text/css">
-.red {
-  color: red;
-}
-
-.table-btn {
-  float: right;
-  margin: 3px;
-}
-.table-text {
-  margin: 3px;
-}
-
-</style>
-{% endblock include_block %}
-
-{% block func_btn_block %}
-<li>
-<button class="btn btn-primary" id="postToFB">透過 Facebook 分享您的課表</button>
-</li>
-{% endblock func_btn_block %}
+{% endblock title_block %}
 {% block body_block %}
 <!-- Main -->
 <script type="text/javascript">
@@ -60,7 +35,9 @@
         <tbody>
           <tr ng-repeat="course in filtered = (query | showQuery:added_course)">
             <td>{{ course.chi_title }}
-              <br>{{ course.eng_title }}</td>
+              <br>{{ course.eng_title }}
+              <br>{{ course.ge }}
+            </td>
             <td>{{ course.credit }}</td>
             <td>{{ course.time }}<span ng-hide="free(course)" class="red"> (衝堂)</span>
               <a class="btn btn-primary table-btn" ng-click="add(course)">加選</a>

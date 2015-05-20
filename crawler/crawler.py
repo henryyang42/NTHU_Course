@@ -59,6 +59,7 @@ def syllabus_2_html(ACIXSTORE, course):
         course.chi_title = trs[2].find_all('td')[1].get_text()
         course.eng_title = trs[3].find_all('td')[1].get_text()
         course.teacher = trs[4].find_all('td')[1].get_text()
+        course.room = trs[5].find_all('td')[3].get_text()
         course.syllabus = trim_syllabus(ACIXSTORE, soup)
         course.save()
     except:
@@ -74,22 +75,32 @@ def tr_2_class_info(tr):
     tds = tr.find_all('td')
     class_info = {
         'no': trim_td(tds[0]),
+        'title': tds[1],
         'credit': trim_td(tds[2]),
         'time': trim_td(tds[3]),
-        'room': trim_td(tds[4]),
         'limit': trim_td(tds[6]),
         'note': trim_td(tds[7]),
-        'object': trim_td(tds[9]),
+        'objective': trim_td(tds[9]),
         'prerequisite': trim_td(tds[10])
     }
     return class_info
 
+def get_ge(title):
+    title = title.contents
+    if len(title) > 1:
+        title = title[1].contents
+        if len(title) > 1:
+            title = title[1].get_text()
+            title = title.rstrip().lstrip().encode('utf8', 'ignore')
+            return title
+    return ''
 
 def initial_db(ACIXSTORE, auth_num):
     progress = progressbar.ProgressBar()
     class_infos = []
     total_collected = 0
     fail = 0
+    #for cou_code in progress(['GEC', 'GE', 'CS']):
     for cou_code in progress(cou_codes):
         html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
         soup = bs4.BeautifulSoup(html, 'html.parser')
@@ -107,13 +118,14 @@ def initial_db(ACIXSTORE, auth_num):
                 no=class_info['no'],
                 credit=int(class_info['credit']),
                 time=class_info['time'],
-                room=class_info['room'],
                 limit=int(class_info['limit']),
                 note=class_info['note'],
-                object=class_info['object'],
+                objective=class_info['objective'],
                 prerequisite=class_info['prerequisite'] != '',
                 code=cou_code.strip(),
+                ge=get_ge(class_info['title']),
             )
+
             syllabus_2_html(ACIXSTORE, course)
             total_collected += 1
 
