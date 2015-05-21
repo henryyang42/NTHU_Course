@@ -88,7 +88,8 @@
           <li>
             <form class="navbar-form">
               <div class="form-group">
-                <input id="courseSearch" type="text" class="form-control" placeholder="查詢課程">
+                <input id="courseSearch" type="text" class="form-control" placeholder="查詢課程"
+                data-toggle="tooltip" data-placement="bottom" data-original-title="輸入學號可查詢必選修課程">
               </div>
             </form>
           </li>
@@ -104,6 +105,9 @@
   <!-- Main -->
   <!-- /Main -->
   {% endblock body_block %}
+  <script type="text/javascript" charset="utf-8">
+    $('[data-toggle="tooltip"]').tooltip();
+  </script>
 </body>
 
 </html>
