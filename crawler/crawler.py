@@ -179,8 +179,3 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
             total_collected += 1
 
     print '%d department information collected.' % total_collected
-
-
-def initial_db(ACIXSTORE, auth_num):
-    crawl_course_info(ACIXSTORE, auth_num, cou_codes)
-    crawl_dept_info(ACIXSTORE, auth_num, cou_codes)
