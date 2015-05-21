@@ -15,6 +15,7 @@ class Command(BaseCommand):
         if len(args) == 3:
             if args[2] == 'clear':
                 Course.objects.all().delete()
+                Deptartment.objects.all().delete()
 
         initial_db(args[0], args[1])
 

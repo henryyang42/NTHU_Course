@@ -9,10 +9,28 @@ import progressbar
 from data_center.models import *
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
+dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
 YS = '103|20'
 cond = 'a'
-
+T_YEAR = 103
+C_TERM = 20
 cou_codes = ['ANTH', 'ANTU', 'ASTR', 'BME ', 'BMES', 'CF ', 'CFGE', 'CHE ', 'CHEM', 'CL ', 'CLC ', 'CLU ', 'COM ', 'CS ', 'DL ', 'DMS ', 'E ', 'ECON', 'EE ', 'EECS', 'EMBA', 'ENE ', 'ESS ', 'FL ', 'FLU ', 'GE ', 'GEC ', 'GEU ', 'GPTS', 'HIS ', 'HSS ', 'HSSU', 'IACS', 'IACU', 'IEEM', 'IEM ', 'ILS ', 'IMBA', 'IPE ', 'IPNS', 'IPT ', 'ISA ', 'ISS ', 'LANG', 'LING', 'LS ', 'LSBS', 'LSBT', 'LSIP', 'LSMC', 'LSMM', 'LSSN', 'LST ', 'MATH', 'MATU', 'MBA ', 'MI ', 'MS ', 'NEMS', 'NES ', 'NS ', 'NUCL', 'PE ', 'PE1 ', 'PE3 ', 'PHIL', 'PHYS', 'PHYU', 'PME ', 'QF ', 'RB ', 'RDDM', 'RDIC', 'RDPE', 'SCI ', 'SLS ', 'SNHC', 'SOC ', 'STAT', 'STAU', 'TE ', 'TEG ', 'TEX ', 'TIGP', 'TL ', 'TM ', 'UPMT', 'W ', 'WH ', 'WW ', 'WZ ', 'X ', 'XA ', 'XZ ', 'YZ ', 'ZY ', 'ZZ ']
+
+def dept_2_html(dept, ACIXSTORE, auth_num):
+    try:
+        r = requests.post(dept_url,
+            data={
+                'SEL_FUNC': 'DEP',
+                'ACIXSTORE': ACIXSTORE,
+                'T_YEAR': T_YEAR,
+                'C_TERM': C_TERM,
+                'DEPT': dept,
+                'auth_num': auth_num})
+        return r.text.encode('latin1', 'ignore').decode('big5', 'ignore').encode('utf8', 'ignore')
+    except:
+        print traceback.format_exc()
+        print dept
+        return 'QAQ, what can I do?'
 
 
 def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
@@ -24,17 +42,18 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
                 'cond': cond,
                 'cou_code': cou_code,
                 'auth_num': auth_num})
-        return r.text.encode('latin1', 'ignore').decode('big5', 'ignore')
+        return r.text.encode('latin1', 'ignore').decode('big5', 'ignore').encode('utf8', 'ignore')
     except:
         print traceback.format_exc()
         print cou_code
         return 'QAQ, what can I do?'
 
+
 def trim_syllabus(ACIXSTORE, soup):
     href_garbage = '?ACIXSTORE=%s' % ACIXSTORE
     host = 'https://www.ccxp.nthu.edu.tw'
     # Replace link
-    for a in soup.findAll('a'):
+    for a in soup.find_all('a'):
         a['href'] = a['href'].replace(href_garbage, '').replace(' ', '%20')
         # Make relative path to absolute path
         if 'www' not in a['href'] or 'http' not in a['href']:
@@ -43,6 +62,7 @@ def trim_syllabus(ACIXSTORE, soup):
     syllabus = ''.join(map(str, soup.body.contents))
     syllabus = syllabus.replace('</br></br></br></br></br>', '')
     return syllabus
+
 
 def syllabus_2_html(ACIXSTORE, course):
     url = \
@@ -67,11 +87,9 @@ def syllabus_2_html(ACIXSTORE, course):
         print course
         return 'QAQ, what can I do?'
 
-def trim_td(td):
-    return td.get_text().rstrip().lstrip().encode('utf8', 'ignore')
-
 
 def tr_2_class_info(tr):
+    trim_td = lambda td: td.get_text().rstrip().lstrip()
     tds = tr.find_all('td')
     class_info = {
         'no': trim_td(tds[0]),
@@ -85,30 +103,28 @@ def tr_2_class_info(tr):
     }
     return class_info
 
+
 def get_ge(title):
     title = title.contents
     if len(title) > 1:
         title = title[1].contents
         if len(title) > 1:
             title = title[1].get_text()
-            title = title.rstrip().lstrip().encode('utf8', 'ignore')
+            title = title.rstrip().lstrip()
             return title
     return ''
 
-def initial_db(ACIXSTORE, auth_num):
+
+def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
     progress = progressbar.ProgressBar()
-    class_infos = []
     total_collected = 0
-    fail = 0
-    #for cou_code in progress(['GEC', 'GE', 'CS']):
     for cou_code in progress(cou_codes):
         html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
         soup = bs4.BeautifulSoup(html, 'html.parser')
-        trs = soup.find_all('tr')
-        trs = [tr for tr in trs if 'class3' in tr['class'] and len(tr.find_all('td')) > 1]
+        trs = soup.find_all('tr', class_='class3')
+        trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
         for tr in trs:
             class_info = tr_2_class_info(tr)
-            class_infos.append(class_info)
             if not class_info['credit']:
                 class_info['credit'] = '0'
             if not class_info['limit']:
@@ -129,6 +145,42 @@ def initial_db(ACIXSTORE, auth_num):
             syllabus_2_html(ACIXSTORE, course)
             total_collected += 1
 
+    print '%d course information collected.' % total_collected
 
-    print 'Crawling process is done. %d course information collected.' % total_collected
 
+def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
+    progress = progressbar.ProgressBar()
+    total_collected = 0
+    for dept_code in progress(dept_codes):
+        html = dept_2_html(dept_code, ACIXSTORE, auth_num)
+        soup = bs4.BeautifulSoup(html, 'html.parser')
+        divs = soup.find_all('div', class_='newpage')
+
+        for div in divs:
+            # Get something like ``EE  103BA``
+            dept_name = div.find_all('font')[0].get_text().strip()
+            try:
+                dept_name = re.search('\((.*?)\)',dept_name).group(1)
+            except:
+                # For all student (Not important for that dept.)
+                continue
+
+            trs = div.find_all('tr', bgcolor="#D8DAEB")
+            deptartment = Deptartment.objects.create(dept_name=dept_name)
+            for tr in trs:
+                tds = tr.find_all('td')
+                cou_no = tds[0].get_text()
+                try:
+                    course = Course.objects.get(no__contains=cou_no)
+                    deptartment.required_course.add(course)
+                except:
+                    print cou_no, 'gg'
+            deptartment.save()
+            total_collected += 1
+
+    print '%d deptartment information collected.' % total_collected
+
+
+def initial_db(ACIXSTORE, auth_num):
+    crawl_course_info(ACIXSTORE, auth_num, cou_codes)
+    crawl_dept_info(ACIXSTORE, auth_num, cou_codes)

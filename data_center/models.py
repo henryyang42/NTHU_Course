@@ -26,3 +26,10 @@ class Course(models.Model):
     def __str__(self):
         return self.no
 
+class Deptartment(models.Model):
+    dept_name = models.CharField(max_length=20, blank=True)
+    required_course = models.ManyToManyField(Course, blank=True)
+
+
+    def __unicode__(self):
+        return self.dept_name
