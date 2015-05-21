@@ -166,19 +166,19 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
                 continue
 
             trs = div.find_all('tr', bgcolor="#D8DAEB")
-            deptartment = Deptartment.objects.create(dept_name=dept_name)
+            department = Department.objects.create(dept_name=dept_name)
             for tr in trs:
                 tds = tr.find_all('td')
                 cou_no = tds[0].get_text()
                 try:
                     course = Course.objects.get(no__contains=cou_no)
-                    deptartment.required_course.add(course)
+                    department.required_course.add(course)
                 except:
                     print cou_no, 'gg'
-            deptartment.save()
+            department.save()
             total_collected += 1
 
-    print '%d deptartment information collected.' % total_collected
+    print '%d department information collected.' % total_collected
 
 
 def initial_db(ACIXSTORE, auth_num):
