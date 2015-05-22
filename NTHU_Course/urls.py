@@ -8,7 +8,6 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', include('search.urls')),
-    #url(r'^search_/', include('haystack.urls')),
     url(r'^', include('index.urls')),
     url(r'^', include('table.urls')),
 )
