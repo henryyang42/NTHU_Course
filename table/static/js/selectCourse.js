@@ -101,6 +101,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.credit -= c.credit;
     $scope.course_ct--;
     del_course($scope.added_course, c);
+    $scope.query.push(c);
   }
 
   $scope.free = function(c) {
