@@ -69,15 +69,17 @@ def syllabus_2_html(ACIXSTORE, course):
         'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % \
         (ACIXSTORE, course.no.replace(' ', '%20'))
     try:
-        r = requests.get(url, timeout=1000)
-        html = r.text.encode('latin1', 'ignore'). \
-            decode('big5', 'ignore').encode('utf8', 'ignore')
-        soup = bs4.BeautifulSoup(html, 'html.parser')
-        try:
-            trs = soup.find_all('table')[0].find_all('tr')
-        except:
-            print soup.find_all('table')
-            raw_input('PAUSE')
+        while True:
+            r = requests.get(url, timeout=1000)
+            html = r.text.encode('latin1', 'ignore'). \
+                decode('big5', 'ignore').encode('utf8', 'ignore')
+            soup = bs4.BeautifulSoup(html, 'html.parser')
+            tables = soup.find_all('table')
+            if tables:
+                trs = tables[0].find_all('tr')
+                break
+            else:
+                continue
         for i in range(2, 5):
             trs[i].find_all('td')[1]['colspan'] = 5
         course.chi_title = trs[2].find_all('td')[1].get_text()
