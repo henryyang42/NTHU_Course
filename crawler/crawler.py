@@ -70,7 +70,7 @@ def syllabus_2_html(ACIXSTORE, course):
         (ACIXSTORE, course.no.replace(' ', '%20'))
     try:
         while True:
-            r = requests.get(url, timeout=1000)
+            r = requests.get(url)
             html = r.text.encode('latin1', 'ignore'). \
                 decode('big5', 'ignore').encode('utf8', 'ignore')
             soup = bs4.BeautifulSoup(html, 'html.parser')
