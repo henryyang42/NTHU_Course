@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
-import json
+import json, re
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
+from data_center.const import *
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
+from django import forms
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
-# Create your views here.
-import re
-
-CLASS_NAME_MAP = {'1': 'BA', '2': 'BB', '3': 'BC', '5': 'M',
-                  '6': 'M', '7': 'M', '8': 'D', '9': 'D'}
-DEPT_MAP = {'000': 'ST', '001': 'SLS', '002': 'ILS', '010': 'IPNS', '011': 'ESS', '012': 'BMES', '013': 'NES', '020': 'SCI', '021': 'MATH', '022': 'PHYS', '023': 'CHEM', '024': 'STAT', '025': 'ASTR', '030': 'IPE', '031': 'MS', '032': 'CHE', '033': 'PME', '034': 'IEEM', '035': 'NEMS', '036': 'IEM', '037': 'OET', '038': 'BME', '041': 'CL', '042': 'FL', '043': 'HIS', '044': 'LING', '045': 'SOC', '046': 'ANTH', '047': 'PHIL',
-            '048': 'HSS', '049': 'TL', '141': 'GPTS', '142': 'IACS', '060': 'EECS', '061': 'EE', '062': 'CS', '063': 'ENE', '064': 'COM', '065': 'ISA', '066': 'IPT', '067': 'RDIC', '068': 'RDDM', '069': 'RDPE', '161': 'UPPP', '162': 'SNHC', '070': 'UPMT', '071': 'QF', '072': 'ECON', '073': 'TM', '074': 'LST', '075': 'EMBA', '076': 'MBA', '077': 'IMBA', '078': 'ISS', '080': 'LSIP', '081': 'LS', '082': 'DMS', '083': 'LSIN'}
 
 
 def get_class_name(c):
@@ -58,23 +53,31 @@ def group_words(s):
 def search(request):
     q = request.GET.get('q', '')
     q = ' '.join(group_words(q))
+    page = request.GET.get('page', '')
+    code = request.GET.get('code', '')
 
-    next_page = request.GET.get('next_page', '')
-
-    #student_id = request.GET.get('student_id', '')
     if get_dept(q):
         courses = Department.objects.get(dept_name=get_dept(q)).required_course.all()
     else:
-        courses = SearchQuerySet().filter(content=AutoQuery(q)).order_by('-hit')
+        courses = SearchQuerySet().filter(content=AutoQuery(q))
+        if code:
+            courses = courses.filter(code=code)
+        if code in ['GE', 'GEC']:
+            core = request.GET.get(code.lower(), '')
+            if core:
+                courses = Course.objects.filter(pk__in=[c.pk for c in courses])
+                courses = courses.filter(ge__contains=core)
 
-    pager = Paginator(courses, 10)
+    paginator = Paginator(courses, 10)
 
     try:
-        courses_page = pager.page(next_page)
+        courses_page = paginator.page(page)
     except PageNotAnInteger:
-        courses_page = pager.page(1)
+        # If page is not an integer, deliver first page.
+        courses_page = paginator.page(1)
     except EmptyPage:
-        courses_page = pager.page(pager.num_pages)
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        courses_page = paginator.page(paginator.num_pages)
 
 
     courses_list = Course.objects.filter(pk__in=[c.pk for c in courses_page.object_list]). \
@@ -83,11 +86,11 @@ def search(request):
 
     result = {
         'total': courses.count(),
-        'next': courses_page.next_page_number() if courses_page.has_next() else pager.num_pages,
+        'page': courses_page.number,
         'courses': list(courses_list)
     }
 
-    return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
+    return json.dumps(result, cls=DjangoJSONEncoder)
 
 
 @cache_page(60 * 60)
@@ -101,3 +104,17 @@ def hit(request, id):
     course.hit += 1
     course.save()
     return HttpResponse('')
+
+class CourseSearchForm(forms.Form):
+    q = forms.CharField(label='關鍵字', required=False)
+    code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
+    ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
+    gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)
+
+
+def table(request):
+    render_data = {}
+    render_data['search_filter'] = CourseSearchForm(request.GET)
+    render_data['search_result'] = search(request)
+    return render(request, 'table.html', render_data)
+

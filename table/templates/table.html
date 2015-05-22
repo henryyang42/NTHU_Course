@@ -1,14 +1,28 @@
-{% extends 'table_base.html' %}
-{% load static %}
+{% extends 'table_base.html' %} {% load static %} {% load bootstrap %}
 {% block title_block %}
 <title>NTHU Course - Time Table</title>
-{% endblock title_block %}
-{% block body_block %}
+{% endblock title_block %} {% block body_block %}
 <!-- Main -->
 <script type="text/javascript">
 </script>
 <div id="main">
   <div class="container">
+    <form action='' method="get" class="form-horizontal">
+      <script>
+      query = {{ search_result | safe }};
+      </script>
+      {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
+      {{ search_filter.code|bootstrap_horizontal:"col-lg-1" }}
+      <div id="ge-option">
+        {{ search_filter.ge|bootstrap_horizontal:"col-lg-1" }}
+      </div>
+      <div id="gec-option">
+        {{ search_filter.gec|bootstrap_horizontal:"col-lg-1" }}
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
     <div class="row">
       {% verbatim %}
       <table class="table table-bordered table-hover search-table">
@@ -21,7 +35,7 @@
                   <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
                 </h4>
                 <div ng-show="total_result>0">
-                  <pagination total-items="total_result" ng-model="currentPage" ng-change="pageChanged()" class="pagination-sm" boundary-links="true" max-size="max_size"  previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+                  <pagination total-items="total_result" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
                 </div>
               </center>
             </td>
@@ -41,14 +55,15 @@
             </td>
             <td>{{ course.teacher }}</td>
             <td>{{ course.credit }}</td>
-            <td>{{ course.time }}<span ng-hide="free(course)" class="red"> (衝堂)</span>
-              <a class="btn btn-primary table-btn" ng-click="add(course)">加選</a>
+            <td>{{ course.time }}
+              <span ng-hide="free(course)" class="red"> (衝堂)</span>
+              <span ng-show="course.added" class="blue"> (已選)</span>
+              <a class="btn btn-primary table-btn" ng-hide="course.added" ng-click="add(course)">加選</a>
               <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
             </td>
           </tr>
         </tbody>
       </table>
-
       <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table" style="border-style: solid; border-width: 2px;">
         <thead>
           <tr>
@@ -66,17 +81,18 @@
         </thead>
         <tbody>
           <tr ng-repeat="row in '1234n5678abc' ">
-            <td><center>{{ row }}</center></td>
+            <td>
+              <center>{{ row }}</center>
+            </td>
             <td ng-repeat="col in 'MTWRFS' ">
               <div ng-repeat="course in added_course | courseInThatTime:col+row " class="table-text">
-                {{ course.chi_title }}<br>
-                {{ course.room }}
+                {{ course.chi_title }}
+                <br> {{ course.room }}
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-
       <table class="table table-bordered table-hover">
         <thead>
           <tr>

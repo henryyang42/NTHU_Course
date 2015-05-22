@@ -1,9 +1,9 @@
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
-import views
+import search
 
 urlpatterns = patterns(
     '',
-    url(r'^table.html$', TemplateView.as_view(template_name='table.html')),
+    url(r'^table.html$', search.views.table),
 )
 

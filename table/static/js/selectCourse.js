@@ -13,27 +13,26 @@ moduleNTHUCourse.filter('courseInThatTime', function() {
 
 moduleNTHUCourse.filter('showQuery', function() {
   return function(input, added_course) {
-    var out = [], ids = [];
+    var ids = [];
     for (var i in added_course)
       ids.push(added_course[i].id);
 
     for (var i in input) {
-      if (ids.indexOf(input[i].id) < 0)
-        out.push(input[i]);
+      input[i].added = ids.indexOf(input[i].id) >= 0;
     }
-    return out;
+    return input;
   };
 });
 
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
-  $scope.query = [];
+  $scope.query = query.courses;
   $scope.added_course = [];
   $scope.time_table = {};
   $scope.credit = 0;
   $scope.course_ct = 0;
-  $scope.currentPage = 1;
+  $scope.currentPage = query.page;
   $scope.max_size = 5;
-  $scope.total_result = 0;
+  $scope.total_result = query.total;
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -67,10 +66,15 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   // Init data
   if (typeof(Storage) !== 'undefined') {
     // Code for localStorage
-    var added_course = localStorage.getItem('added_course');
-    if (added_course != null) {
-      $scope.added_course = JSON.parse(added_course);
+    try {
+      var added_course = localStorage.getItem('added_course');
+      if (added_course != null) {
+        $scope.added_course = JSON.parse(added_course);
+      }
+    } catch (e) {
+      localStorage.setItem('added_course', JSON.stringify($scope.added_course));
     }
+
   } else {
     //Holy shit! No Web Storage support..
   }
@@ -82,20 +86,26 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     timeTable(c, 'add');
   }
 
-  $scope.pageChanged = function() {
-    angular.element(document.querySelector('#courseSearch'))
-        .NTHUCourseAutocomplete().fetch($scope.currentPage);
-  };
+  $scope.pageChanged = function(page) {
+    var get_vars = $.url.paramAll();
+    var url = 'http://' + window.location.host + '/table.html?';
+    get_vars.page = page;
+    for (g in get_vars) {
+      url += g + '=' + get_vars[g] + '&';
+    }
+    console.log(url);
+    window.location.href = url;
+  }
 
   $scope.add = function(c) {
+    if (c.added)
+      return;
     timeTable(c, 'add');
     $scope.added_course.push(c);
     $scope.credit += c.credit;
     $scope.course_ct++;
-    del_course($scope.query, c);
-    $scope.total_result--;
     // Increase hit
-    $.get('/search/hit/'+c.id);
+    $.get('/search/hit/' + c.id);
   }
 
   $scope.del = function(c) {
@@ -103,17 +113,12 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.credit -= c.credit;
     $scope.course_ct--;
     del_course($scope.added_course, c);
-    $scope.query.push(c);
-    $scope.total_result++;
   }
 
   $scope.free = function(c) {
+    if (c.added)
+      return true;
     return timeTable(c, 'free');
-  }
-
-  $scope.ass = function(c) {
-    console.log(c)
-    return true;
   }
 
   var updateChange = function() {
