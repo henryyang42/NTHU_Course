@@ -3,7 +3,7 @@ migrations
 whoosh_index
 
 # DB
-db.sqlite3
+mysql.ini
 
 # Garbage
 .DS_Store
