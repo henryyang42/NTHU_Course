@@ -73,7 +73,11 @@ def syllabus_2_html(ACIXSTORE, course):
         html = r.text.encode('latin1', 'ignore'). \
             decode('big5', 'ignore').encode('utf8', 'ignore')
         soup = bs4.BeautifulSoup(html, 'html.parser')
-        trs = soup.find_all('table')[0].find_all('tr')
+        try:
+            trs = soup.find_all('table')[0].find_all('tr')
+        except:
+            print soup.find_all('table')
+            raw_input('PAUSE')
         for i in range(2, 5):
             trs[i].find_all('td')[1]['colspan'] = 5
         course.chi_title = trs[2].find_all('td')[1].get_text()
