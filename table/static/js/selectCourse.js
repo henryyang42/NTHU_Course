@@ -91,6 +91,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page;
     $.get(url, function(data) {
       $scope.fetch = JSON.parse(data);
+      $scope.$apply();
     });
   }
 
