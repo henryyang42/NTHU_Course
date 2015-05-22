@@ -71,6 +71,7 @@ DATABASES = {
         },
     }
 }
+
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
