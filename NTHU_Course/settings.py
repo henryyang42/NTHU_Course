@@ -62,12 +62,30 @@ WSGI_APPLICATION = 'NTHU_Course.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
+# settings.py
+INI_PATH = os.path.join(BASE_DIR, 'NTHUCourseDB.ini')
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        #'NAME': DB_NAME,
+        #'USER': DB_USER,
+        #'PASSWORD': DB_PASS,
+        #'HOST': DB_HOST,
+        #'PORT': DB_PORT,
+        'OPTIONS': {
+            #'init_command': 'SET storage_engine=INNODB, character_set_connection=utf8, collation_connection=utf8_unicode_ci'
+            'read_default_file': INI_PATH,
+        },
+
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
 
 HAYSTACK_CONNECTIONS = {
     'default': {
