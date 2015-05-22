@@ -7,7 +7,7 @@ class Course(models.Model):
     code = models.CharField(max_length=20, blank=True)
     eng_title = models.CharField(max_length=200, blank=True)
     chi_title = models.CharField(max_length=200, blank=True)
-    note = models.CharField(max_length=200, blank=True)
+    note = models.TextField(blank=True)
     objective = models.CharField(max_length=80, blank=True)
     time = models.CharField(max_length=20, blank=True)
     teacher = models.CharField(max_length=40, blank=True) # Only save Chinese
