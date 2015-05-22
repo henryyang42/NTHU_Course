@@ -7,10 +7,7 @@
 </script>
 <div id="main">
   <div class="container">
-    <form action='' method="get" class="form-horizontal">
-      <script>
-      query = {{ search_result | safe }};
-      </script>
+    <form method="get" id="search-filter" class="form-horizontal">
       {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
       {{ search_filter.code|bootstrap_horizontal:"col-lg-1" }}
       <div id="ge-option">

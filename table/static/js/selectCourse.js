@@ -25,14 +25,15 @@ moduleNTHUCourse.filter('showQuery', function() {
 });
 
 moduleNTHUCourse.controller("CourseCtrl", function($scope) {
-  $scope.query = query.courses;
+  $scope.fetch = {};
+  $scope.query = [];
   $scope.added_course = [];
   $scope.time_table = {};
   $scope.credit = 0;
   $scope.course_ct = 0;
-  $scope.currentPage = query.page;
+  $scope.currentPage = 0;
   $scope.max_size = 5;
-  $scope.total_result = query.total;
+  $scope.total_result = 0;
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -87,14 +88,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   }
 
   $scope.pageChanged = function(page) {
-    var get_vars = $.url.paramAll();
-    var url = 'http://' + window.location.host + '/table.html?';
-    get_vars.page = page;
-    for (g in get_vars) {
-      url += g + '=' + get_vars[g] + '&';
-    }
-    console.log(url);
-    window.location.href = url;
+    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page;
+    $.get(url, function(data) {
+      $scope.fetch = JSON.parse(data);
+    });
   }
 
   $scope.add = function(c) {
@@ -135,6 +132,15 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
       //Holy shit! No Web Storage support..
     }
   }
+
+  var updateFetch = function() {
+    $scope.query = $scope.fetch.courses;
+    $scope.currentPage = $scope.fetch.page;
+    $scope.total_result = $scope.fetch.total;
+  }
+
   $scope.$watch('query', updateChange, true);
   $scope.$watch('added_course', updateChange, true);
+  $scope.$watch('fetch', updateFetch, true);
+
 })

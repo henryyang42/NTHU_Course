@@ -90,7 +90,7 @@ def search(request):
         'courses': list(courses_list)
     }
 
-    return json.dumps(result, cls=DjangoJSONEncoder)
+    return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
 
 
 @cache_page(60 * 60)
