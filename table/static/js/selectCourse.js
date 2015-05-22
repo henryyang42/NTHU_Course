@@ -33,6 +33,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.course_ct = 0;
   $scope.currentPage = 1;
   $scope.max_size = 5;
+  $scope.total_result = 0;
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -92,6 +93,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.credit += c.credit;
     $scope.course_ct++;
     del_course($scope.query, c);
+    $scope.total_result--;
     // Increase hit
     $.get('/search/hit/'+c.id);
   }
@@ -102,6 +104,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.course_ct--;
     del_course($scope.added_course, c);
     $scope.query.push(c);
+    $scope.total_result++;
   }
 
   $scope.free = function(c) {
