@@ -69,7 +69,7 @@ def syllabus_2_html(ACIXSTORE, course):
         'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % \
         (ACIXSTORE, course.no.replace(' ', '%20'))
     try:
-        r = requests.get(url)
+        r = requests.get(url, timeout=1000)
         html = r.text.encode('latin1', 'ignore'). \
             decode('big5', 'ignore').encode('utf8', 'ignore')
         soup = bs4.BeautifulSoup(html, 'html.parser')

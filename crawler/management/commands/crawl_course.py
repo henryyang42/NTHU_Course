@@ -23,6 +23,6 @@ class Command(BaseCommand):
 
 
         if len(args) == 1:
-            if args[1] == 'clear':
+            if args[0] == 'clear':
                 Course.objects.all().delete()
                 Department.objects.all().delete()
