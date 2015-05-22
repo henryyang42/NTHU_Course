@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Help crawl the course data from NTHU.'
 
     def handle(self, *args, **kwargs):
-        if len(args) == 1:
+        if len(args) == 0:
             print 'Please provide valid ACIXSTORE and auth_num from'
             print 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php'
             ACIXSTORE = raw_input('ACIXSTORE: ')
@@ -22,7 +22,7 @@ class Command(BaseCommand):
             crawl_dept_info(ACIXSTORE, auth_num, cou_codes)
 
 
-        if len(args) == 2:
+        if len(args) == 1:
             if args[1] == 'clear':
                 Course.objects.all().delete()
                 Department.objects.all().delete()

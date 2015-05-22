@@ -111,6 +111,7 @@ def get_ge(title):
         if len(title) > 1:
             title = title[1].get_text()
             title = title.rstrip().lstrip()
+            print title, len(title)
             return title
     return ''
 
