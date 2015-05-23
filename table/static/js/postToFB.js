@@ -48,7 +48,7 @@ $("#postToFB").click(function() {
     }
     formData += '\r\n';
     formData += '--' + boundary + '\r\n';
-    formData += 'Content-Disposition: form-data; name="message"\r\n\r\n';
+    formData += 'Content-Disposition: form-data; charset=utf-8; name="message"\r\n\r\n';
     formData += message + '\r\n';
     formData += '--' + boundary + '--\r\n';
 
@@ -57,7 +57,9 @@ $("#postToFB").click(function() {
     xhr.onload = xhr.onerror = function() {
       console.log(xhr.responseText);
       var result = JSON.parse(xhr.responseText);
-      if (!result.error) {
+      if (result.error) {
+        toastr.error('我們正努力通過fb審核中！！！');
+      } else {
         toastr.success('已成功將課表發佈至您的塗鴉牆上。');
       }
     };
