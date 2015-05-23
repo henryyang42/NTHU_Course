@@ -20,11 +20,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'g17y@qg*@kb+=o^f$mwn^^s4mnnfl5ofbo5lc1bf_d87n#ja4@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.nthu-course.cf',
+    '.localhost',
+]
 
 
 # Application definition
