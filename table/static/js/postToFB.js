@@ -56,6 +56,10 @@ $("#postToFB").click(function() {
     xhr.open('POST', 'https://graph.facebook.com/me/photos?access_token=' + authToken, true);
     xhr.onload = xhr.onerror = function() {
       console.log(xhr.responseText);
+      var result = JSON.parse(xhr.responseText);
+      if (!result.error) {
+        toastr.success('已成功將課表發佈至您的塗鴉牆上。');
+      }
     };
     xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
     xhr.sendAsBinary(formData);

@@ -19,8 +19,12 @@ $(function() {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize();
     $.get(url, function(data) {
-      scope.fetch = JSON.parse(data);
+      var result = JSON.parse(data);
+      scope.fetch = result;
       scope.$apply();
+      if (result.total == 0) {
+        toastr.info('查無結果！請嘗試其他關鍵字。');
+      }
     });
   });
 })
