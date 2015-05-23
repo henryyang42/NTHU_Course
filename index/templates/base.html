@@ -71,19 +71,36 @@
   <!-- Header -->
   {% block body_block %}
   <!-- Main -->
-
   <!-- /Main -->
   {% endblock body_block %}
   <!-- Footer -->
   <div id="footer">
     <div class="container">
+      <div id="disqus_thread"></div>
+      <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES * * */
+      var disqus_shortname = 'nthucourse';
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
       <section>
         <header>
           <h2>與我們聯繫</h2>
           <span class="byline">感謝您對我們的關注，期盼與您的聯絡</span>
         </header>
         <ul class="contact">
-          <li><a class="fa fa-inbox"><br>z54981220@gmail.com</a></li>
+          <li>
+            <a class="fa fa-inbox">
+              <br>z54981220@gmail.com</a>
+          </li>
           <!--<li><a href="https://github.com/henryyang42/NTHU_Course" class="fa fa-github-square"><span>GitHub</span></a></li>-->
         </ul>
       </section>
