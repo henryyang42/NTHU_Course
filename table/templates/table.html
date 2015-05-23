@@ -8,7 +8,9 @@
 <div id="main">
   <div class="container">
     <form method="get" id="search-filter" class="form-horizontal">
-      {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
+      <div data-toggle="tooltip" data-placement="bottom" data-original-title="輸入學號可查詢必選修課程">
+        {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
+      </div>
       {{ search_filter.code|bootstrap_horizontal:"col-lg-1" }}
       <div id="ge-option">
         {{ search_filter.ge|bootstrap_horizontal:"col-lg-1" }}
