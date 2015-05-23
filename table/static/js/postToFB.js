@@ -1,5 +1,5 @@
 $("#postToFB").click(function() {
-  var pre_message = "My tentative course selection";
+  var pre_message = "大家來看看我的預排課表吧！";
   var nthu_course_link = "by http://nthu-course.cf";
   var img_message = pre_message + "\n" + nthu_course_link;
   html2canvas($("#course-table")).then(function(canvas) {
