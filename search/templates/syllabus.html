@@ -22,6 +22,22 @@
 <div class="jumbotron center">
   <center><h2>{{ course.chi_title }}</h2><h4>{{ course.eng_title }}</h4></center>
   {{ course.syllabus|safe|escape }}
+  <div class="">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    var disqus_shortname = 'nthucourse',
+        disqus_identifier = '{{ disqus_identifier }}';
+    var disqus_url = 'http://example.com/helloworld.html';
+    (function() {
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
 </div>
 
 <script type="text/javascript">
