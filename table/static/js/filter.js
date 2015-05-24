@@ -26,5 +26,10 @@ $(function() {
         toastr.info('查無結果！請嘗試其他關鍵字。');
       }
     });
+    $('#result_table')
+      .addClass('bounceInLeft animated')
+      .one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function(e) {
+        $(this).removeClass('bounceInLeft animated');
+    });
   });
 })
