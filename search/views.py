@@ -96,8 +96,7 @@ def search(request):
 @cache_page(60 * 60)
 def syllabus(request, id):
     course = get_object_or_404(Course, id=id)
-    disqus_identifier = id
-    return render(request, 'syllabus.html', {'course': course, 'disqus_identifier': disqus_identifier})
+    return render(request, 'syllabus.html', {'course': course, 'disqus_identifier': id})
 
 
 def hit(request, id):
