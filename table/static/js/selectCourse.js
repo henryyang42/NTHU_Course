@@ -124,7 +124,8 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   var updateChange = function() {
     setTimeout(function() {
       $('.ajax-popup-link').magnificPopup({
-        type: 'ajax'
+        type: 'ajax',
+        closeOnBgClick: false
       });
     }, 100);
     // Save data
