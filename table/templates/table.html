@@ -30,7 +30,10 @@
             <td colspan="4">
               <center>
                 <h4>
-                  課程查詢結果<span ng-show="filtered.length>0"> (共{{ total_result }}筆)</span>
+                  課程查詢結果
+                  <span ng-show="filtered.length>0"> (共{{ total_result }}筆)
+                    <span ng-show="fetch.type='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
+                  </span>
                   <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
                 </h4>
                 <div ng-show="total_result>0">

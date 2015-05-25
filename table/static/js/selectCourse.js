@@ -105,6 +105,13 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     toastr.success(c.chi_title + ' 已成功加入您的課表。');
   }
 
+  $scope.add_all = function(courses) {
+    for (var i = 0; i < courses.length; i++) {
+      $scope.add(courses[i]);
+    }
+    toastr.info('您真貪心。');
+  }
+
   $scope.del = function(c) {
     timeTable(c, 'del');
     $scope.credit -= c.credit;

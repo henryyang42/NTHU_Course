@@ -51,6 +51,7 @@ def group_words(s):
 
 
 def search(request):
+    result = {}
     q = request.GET.get('q', '')
     q = ' '.join(group_words(q))
     page = request.GET.get('page', '')
@@ -58,6 +59,8 @@ def search(request):
 
     if get_dept(q):
         courses = Department.objects.get(dept_name=get_dept(q)).required_course.all()
+        if courses:
+            result['type'] = 'required'
     else:
         courses = SearchQuerySet().filter(content=AutoQuery(q))
         if code:
@@ -84,11 +87,9 @@ def search(request):
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
 
-    result = {
-        'total': courses.count(),
-        'page': courses_page.number,
-        'courses': list(courses_list)
-    }
+    result['total'] = courses.count()
+    result['page'] = courses_page.number,
+    result['courses'] = list(courses_list)
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
 
