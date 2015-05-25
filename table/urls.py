@@ -6,4 +6,3 @@ urlpatterns = patterns(
     '',
     url(r'^table.html$', search.views.table),
 )
-

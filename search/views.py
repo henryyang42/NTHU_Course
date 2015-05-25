@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import json, re
+import json
+import re
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
@@ -58,7 +59,8 @@ def search(request):
     code = request.GET.get('code', '')
 
     if get_dept(q):
-        courses = Department.objects.get(dept_name=get_dept(q)).required_course.all()
+        courses = Department.objects.get(
+            dept_name=get_dept(q)).required_course.all()
         if courses:
             result['type'] = 'required'
     else:
@@ -82,8 +84,8 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-
-    courses_list = Course.objects.filter(pk__in=[c.pk for c in courses_page.object_list]). \
+    courses_list = Course.objects. \
+        filter(pk__in=[c.pk for c in courses_page.object_list]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
 
@@ -97,7 +99,8 @@ def search(request):
 @cache_page(60 * 60)
 def syllabus(request, id):
     course = get_object_or_404(Course, id=id)
-    return render(request, 'syllabus.html', {'course': course, 'syllabus_path': request.path})
+    return render(request, 'syllabus.html',
+                  {'course': course, 'syllabus_path': request.path})
 
 
 def hit(request, id):
@@ -105,6 +108,7 @@ def hit(request, id):
     course.hit += 1
     course.save()
     return HttpResponse('')
+
 
 class CourseSearchForm(forms.Form):
     q = forms.CharField(label='關鍵字', required=False)
@@ -117,4 +121,3 @@ def table(request):
     render_data = {}
     render_data['search_filter'] = CourseSearchForm(request.GET)
     return render(request, 'table.html', render_data)
-
