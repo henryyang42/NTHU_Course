@@ -110,6 +110,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
       $scope.add(courses[i]);
     }
     toastr.info('您真貪心。');
+    delete $scope.fetch.type;
   }
 
   $scope.del = function(c) {
