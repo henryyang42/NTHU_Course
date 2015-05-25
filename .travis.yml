@@ -11,7 +11,7 @@ install:
     - pip install pyflakes
     - pip install pylint-django
 before_script:
-    - pyflakes .
+    #- pyflakes .
     - sh ./ci-test/pylint.sh
     - mysql -e 'create database NTHUCourseDB;'
 script:
