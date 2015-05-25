@@ -1,0 +1,24 @@
+language: python
+services:
+    - mysql
+python:
+    - "2.7"
+    - "pypy"
+install:
+    - pip install --upgrade pip
+    - pip install -r requirement.txt
+    - pip install mysql-python
+    - pip install pep8
+    - pip install pyflakes
+before_script:
+    - pep8
+    - pyflakes .
+
+notifications:
+    email:
+        recipients:
+            - z54981220@gmail.com
+            - henryyang42@gmail.com
+        on_success: [always]
+        on_failure: [always]
+
