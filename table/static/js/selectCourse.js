@@ -123,7 +123,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     setTimeout(function() {
       $('.ajax-popup-link').magnificPopup({
         type: 'ajax',
-        closeOnBgClick: false
+        closeOnContentClick: false
       });
     }, 100);
     // Save data
