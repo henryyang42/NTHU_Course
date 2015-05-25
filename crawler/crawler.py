@@ -7,6 +7,7 @@ import sys
 import traceback
 import progressbar
 from data_center.models import *
+from data_center.const import *
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
