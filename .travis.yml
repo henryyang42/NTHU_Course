@@ -5,12 +5,12 @@ python:
     - "2.7"
     - "pypy"
 install:
-    - pip install --upgrade pip --use-mirrors
-    - pip install -r requirement.txt --use-mirrors
+    - pip install --upgrade pip
+    - pip install -r requirement.txt
     #- pip install mysql-python
-    - pip install pylint --use-mirrors
-    - pip install pylint-django --use-mirrors
-    - pip install pyflakes --use-mirrors
+    - pip install pylint
+    - pip install pylint-django
+    - pip install pyflakes
 before_script:
     - pyflakes .
 script:
