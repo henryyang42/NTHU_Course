@@ -1,22 +1,21 @@
 language: python
-services:
-    - mysql
+#services:
+    #- mysql
 python:
     - "2.7"
     - "pypy"
 install:
-    - pip install --upgrade pip
-    - pip install -r requirement.txt
-    - pip install mysql-python
-    - pip install pylint
-    - pip install pylint-django
-    - pip install pyflakes
+    - pip install --upgrade pip --use-mirrors
+    - pip install -r requirement.txt --use-mirrors
+    #- pip install mysql-python
+    - pip install pylint --use-mirrors
+    - pip install pylint-django --use-mirrors
+    - pip install pyflakes --use-mirrors
 before_script:
-    #- pyflakes .
-    #- sh ./ci-test/pylint.sh
-    - mysql -e 'create database NTHUCourseDB;'
+    - pyflakes .
 script:
-    - sh ./ci-test/runTest.sh
+    - sh ./ci-test/pylint.sh
+    #- sh ./ci-test/runTest.sh
 notifications:
     email:
         recipients:
