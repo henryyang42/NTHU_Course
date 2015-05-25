@@ -7,6 +7,7 @@ import sys
 import traceback
 import progressbar
 from data_center.models import *
+from data_center.const import *
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
@@ -14,7 +15,6 @@ YS = '103|20'
 cond = 'a'
 T_YEAR = 103
 C_TERM = 20
-cou_codes = ['ANTH', 'ANTU', 'ASTR', 'BME ', 'BMES', 'CF ', 'CFGE', 'CHE ', 'CHEM', 'CL ', 'CLC ', 'CLU ', 'COM ', 'CS ', 'DL ', 'DMS ', 'E ', 'ECON', 'EE ', 'EECS', 'EMBA', 'ENE ', 'ESS ', 'FL ', 'FLU ', 'GE ', 'GEC ', 'GEU ', 'GPTS', 'HIS ', 'HSS ', 'HSSU', 'IACS', 'IACU', 'IEEM', 'IEM ', 'ILS ', 'IMBA', 'IPE ', 'IPNS', 'IPT ', 'ISA ', 'ISS ', 'LANG', 'LING', 'LS ', 'LSBS', 'LSBT', 'LSIP', 'LSMC', 'LSMM', 'LSSN', 'LST ', 'MATH', 'MATU', 'MBA ', 'MI ', 'MS ', 'NEMS', 'NES ', 'NS ', 'NUCL', 'PE ', 'PE1 ', 'PE3 ', 'PHIL', 'PHYS', 'PHYU', 'PME ', 'QF ', 'RB ', 'RDDM', 'RDIC', 'RDPE', 'SCI ', 'SLS ', 'SNHC', 'SOC ', 'STAT', 'STAU', 'TE ', 'TEG ', 'TEX ', 'TIGP', 'TL ', 'TM ', 'UPMT', 'W ', 'WH ', 'WW ', 'WZ ', 'X ', 'XA ', 'XZ ', 'YZ ', 'ZY ', 'ZZ ']
 
 def dept_2_html(dept, ACIXSTORE, auth_num):
     try:
@@ -52,6 +52,10 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
 def trim_syllabus(ACIXSTORE, soup):
     href_garbage = '?ACIXSTORE=%s' % ACIXSTORE
     host = 'https://www.ccxp.nthu.edu.tw'
+    # Remove width
+    for tag in soup.find_all():
+        if 'width' in tag:
+            del tag['width']
     # Replace link
     for a in soup.find_all('a'):
         a['href'] = a['href'].replace(href_garbage, '').replace(' ', '%20')
