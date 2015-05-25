@@ -1,6 +1,6 @@
 language: python
-#services:
-    #- mysql
+services:
+    - mysql
 python:
     - "2.7"
     - "pypy"
@@ -10,8 +10,10 @@ install:
     #- pip install mysql-python
     - pip install pylint
     - pip install pylint-django
+    - pip install pep8
     - pip install pyflakes
 before_script:
+    - pep8
     - pyflakes .
 script:
     - sh ./ci-test/pylint.sh
