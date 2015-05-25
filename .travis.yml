@@ -14,8 +14,11 @@ install:
 
 
 before_script:
-    - pep8 --exclude=const.py .
     - pyflakes .
+
+
+script:
+    - sh ./test.sh
 
 
 notifications:
