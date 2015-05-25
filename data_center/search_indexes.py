@@ -1,6 +1,5 @@
 from data_center.models import Course
 from haystack import indexes
-import datetime
 
 
 class CourseIndex(indexes.SearchIndex, indexes.Indexable):

@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand
-from django.core.management.base import CommandError
 
-from crawler.crawler import *
+from crawler.crawler import crawl_course_info, crawl_dept_info
+from data_center.const import cou_codes
+from data_center.models import Course, Department
 
 
 class Command(BaseCommand):

@@ -1,13 +1,9 @@
 import re
-import urllib2
 import bs4
-import json
 import requests
-import sys
 import traceback
 import progressbar
-from data_center.models import *
-from data_center.const import *
+from data_center.models import Course, Department
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 dept_url = \
