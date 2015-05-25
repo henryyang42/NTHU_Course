@@ -13,10 +13,10 @@ install:
     - pip install pep8
     - pip install pyflakes
 before_script:
-    - pep8
+    - sh ./ci-test/runPep8.sh
     - pyflakes .
 script:
-    - sh ./ci-test/pylint.sh
+    - sh ./ci-test/runPylint.sh
     #- sh ./ci-test/runTest.sh
 notifications:
     email:
