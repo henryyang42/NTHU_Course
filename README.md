@@ -10,4 +10,4 @@ python manage.py migrate
 python manage.py crawl_course
 python manage.py rebuild_index
 ```
-To clear all contests in db, use ``python manage.py crawl_course clear``
+To clear all contents in db, use ``python manage.py crawl_course clear``
