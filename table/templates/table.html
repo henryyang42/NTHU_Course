@@ -22,115 +22,113 @@
         <button type="submit" class="btn btn-primary">搜尋</button>
       </div>
     </form>
-    <div class="row">
-      {% verbatim %}
-      <table id="result_table" class="table table-bordered table-hover search-table">
-        <thead>
-          <tr>
-            <td colspan="4">
-              <center>
-                <h4>
-                  課程查詢結果
-                  <span ng-show="filtered.length>0"> (共{{ total_result }}筆)
-                    <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
-                  </span>
-                  <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
-                </h4>
-                <div ng-show="total_result>0">
-                  <pagination total-items="total_result" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
-                </div>
-              </center>
-            </td>
-          </tr>
-          <tr ng-show="filtered.length>0">
-            <th>課程名稱</th>
-            <th>任課教師</th>
-            <th>學分</th>
-            <th>課程時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="course in filtered = (query | showQuery:added_course)">
-            <td>{{ course.chi_title }}
-              <br>{{ course.eng_title }}
-              <br>{{ course.ge }}
-            </td>
-            <td>{{ course.teacher }}</td>
-            <td>{{ course.credit }}</td>
-            <td>{{ course.time }}
-              <span ng-hide="free(course)" class="red"> (衝堂)</span>
-              <span ng-show="course.added" class="blue"> (已選)</span>
-              <a class="btn btn-primary table-btn" ng-hide="course.added" ng-click="add(course)">加選</a>
-              <a class="btn btn-danger table-btn" ng-show="course.added" ng-click="del(course)">退選</a>
-              <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table" style="border-style: solid; border-width: 1px;">
-        <thead>
-          <tr>
-            <td colspan="7">
-              <center>
-                <h4>您的預排課表 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分</h4>
-              </center>
-            </td>
-          </tr>
-          <tr>
-            <th ng-repeat="col in '#MTWRFS' ">
-              <center>{{ col }}</center>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="row in '1234n56789abc' ">
-            <td>
-              <center>{{ row }}</center>
-            </td>
-            <td ng-repeat="col in 'MTWRFS' ">
-              <div ng-repeat="course in added_course | courseInThatTime:col+row " class="table-text">
-                {{ course.chi_title }}
-                <br> {{ course.room }}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <td colspan="4">
-              <center>
-                <h4>
-                您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
+    {% verbatim %}
+    <table id="result_table" class="table table-bordered table-hover search-table">
+      <thead>
+        <tr>
+          <td colspan="4">
+            <center>
+              <h4>
+                課程查詢結果
+                <span ng-show="filtered.length>0"> (共{{ total_result }}筆)
+                  <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
+                </span>
+                <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
               </h4>
-              </center>
-            </td>
-          </tr>
-          <tr>
-            <th>課程名稱</th>
-            <th>任課教師</th>
-            <th>學分</th>
-            <th>課程時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="course in added_course">
-            <td>
+              <div ng-show="total_result>0">
+                <pagination total-items="total_result" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+              </div>
+            </center>
+          </td>
+        </tr>
+        <tr ng-show="filtered.length>0">
+          <th>課程名稱</th>
+          <th>任課教師</th>
+          <th>學分</th>
+          <th>課程時間</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="course in filtered = (query | showQuery:added_course)">
+          <td>{{ course.chi_title }}
+            <br>{{ course.eng_title }}
+            <br>{{ course.ge }}
+          </td>
+          <td>{{ course.teacher }}</td>
+          <td>{{ course.credit }}</td>
+          <td>{{ course.time }}
+            <span ng-hide="free(course)" class="red"> (衝堂)</span>
+            <span ng-show="course.added" class="blue"> (已選)</span>
+            <a class="btn btn-primary table-btn" ng-hide="course.added" ng-click="add(course)">加選</a>
+            <a class="btn btn-danger table-btn" ng-show="course.added" ng-click="del(course)">退選</a>
+            <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table" style="border-style: solid; border-width: 1px;">
+      <thead>
+        <tr>
+          <td colspan="7">
+            <center>
+              <h4>您的預排課表 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分</h4>
+            </center>
+          </td>
+        </tr>
+        <tr>
+          <th ng-repeat="col in '#MTWRFS' ">
+            <center>{{ col }}</center>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="row in '1234n56789abc' ">
+          <td>
+            <center>{{ row }}</center>
+          </td>
+          <td ng-repeat="col in 'MTWRFS' ">
+            <div ng-repeat="course in added_course | courseInThatTime:col+row " class="table-text">
               {{ course.chi_title }}
-              <br>{{ course.eng_title }}
-            </td>
-            <td>{{ course.teacher }}</td>
-            <td>{{ course.credit }}</td>
-            <td>{{ course.time }}
-              <a class="btn btn-danger table-btn" ng-click="del(course)">退選</a>
-              <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      {% endverbatim %}
-    </div>
+              <br> {{ course.room }}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <td colspan="4">
+            <center>
+              <h4>
+              您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
+            </h4>
+            </center>
+          </td>
+        </tr>
+        <tr>
+          <th>課程名稱</th>
+          <th>任課教師</th>
+          <th>學分</th>
+          <th>課程時間</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="course in added_course">
+          <td>
+            {{ course.chi_title }}
+            <br>{{ course.eng_title }}
+          </td>
+          <td>{{ course.teacher }}</td>
+          <td>{{ course.credit }}</td>
+          <td>{{ course.time }}
+            <a class="btn btn-danger table-btn" ng-click="del(course)">退選</a>
+            <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    {% endverbatim %}
   </div>
 </div>
 <!-- /Main -->
