@@ -1,7 +1,11 @@
 language: python
+
+
 python:
     - "2.7"
     - "pypy"
+
+
 install:
     - pip install --upgrade pip
     - pip install -r requirement.txt
@@ -9,11 +13,17 @@ install:
     - pip install pylint-django
     - pip install pep8
     - pip install pyflakes
+
+
 before_script:
-    - pep8 .
+    - sh ./ci-test/runPep8.sh
     - pyflakes .
+
+
 script:
-    - sh ./ci-test/pylint.sh
+    - sh ./ci-test/runPylint.sh
+
+
 notifications:
     email:
         recipients:
