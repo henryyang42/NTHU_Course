@@ -9,8 +9,6 @@ python:
 install:
     - pip install --upgrade pip
     - pip install -r requirement.txt
-    - pip install pylint
-    - pip install pylint-django
     - pip install pep8
     - pip install pyflakes
 
@@ -18,10 +16,6 @@ install:
 before_script:
     - pep8 --exclude=const.py .
     - pyflakes .
-
-
-script:
-    - sh ./ci-test/runPylint.sh
 
 
 notifications:
