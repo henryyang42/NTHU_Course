@@ -1,0 +1,26 @@
+language: python
+services:
+    - mysql
+python:
+    - "2.7"
+    - "pypy"
+install:
+    - pip install --upgrade pip
+    - pip install -r requirement.txt --use-mirror
+    - pip install pylint
+    - pip install pyflakes
+    - pip install pylint-django
+before_script:
+    - pyflakes .
+    - sh ./ci-test/pylint.sh
+    - mysql -e 'create database NTHUCourseDB;'
+script:
+    - sh ./ci-test/runTest.sh
+notifications:
+    email:
+        recipients:
+            - z54981220@gmail.com
+            - henryyang42@gmail.com
+        on_success: [always]
+        on_failure: [always]
+
