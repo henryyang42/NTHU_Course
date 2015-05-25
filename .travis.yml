@@ -16,7 +16,7 @@ install:
 
 
 before_script:
-    - sh ./ci-test/runPep8.sh
+    - pep8 --exclude=const.py .
     - pyflakes .
 
 
