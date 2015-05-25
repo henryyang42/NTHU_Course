@@ -33,9 +33,11 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css">
 
-  <link rel="stylesheet" href="{% static 'css/skel-noscript.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style-desktop.min.css' %}">
+  <link rel="stylesheet" media="screen" href="{% static 'css/skel-noscript.css' %}" />
+  <link rel="stylesheet" media="screen" href="{% static 'css/style.css' %}" />
+  <link rel="stylesheet" media="screen and (min-width: 768px)" href="{% static 'css/style-desktop.css' %}" />
+  <link rel="stylesheet" media="screen and (min-width: 1000px)" href="{% static 'css/style-1000px.css' %}" />
+  <link rel="stylesheet" media="screen and (max-width:767px)" href="{% static 'css/style-mobile.css' %}" />
   <style type="text/css">
   .form-horizontal .control-label {
     text-align: left;
