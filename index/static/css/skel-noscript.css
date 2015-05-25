@@ -19,7 +19,7 @@
 	}
 
 	.container {
-		width: 100%;
+		width: 83%;
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -32,7 +32,7 @@
 
 		.container.big {
 			width: 100%;
-			max-width: 125%;
+			max-width: 100%;
 			min-width: 100%;
 		}
 

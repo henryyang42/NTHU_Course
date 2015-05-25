@@ -63,15 +63,25 @@
     font-size: 35px;
     opacity: .8;
   }
-  .mfp-ajax-holder .mfp-content {
-    width: 680px;
+  @media screen and (min-width: 768px) {
+    .mfp-ajax-holder .mfp-content {
+      width: 680px;
+    }
+    .mfp-prevent-close > table{
+      width: 100%;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .mfp-ajax-holder .mfp-content {
+      width: 100%;
+    }
   }
   .mfp-content {
-    margin: 15px auto;
+    margin: 50px auto;
   }
   .jumbotron {
     border-radius: 10px;
-    width: 40%;
+    min-width: 100%;
   }
   #main {
     background: -webkit-linear-gradient(-30deg, #DDE8FF 10%, #FFFFFF 90%);
