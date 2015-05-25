@@ -6,7 +6,7 @@ python:
     - "pypy"
 install:
     - pip install --upgrade pip
-    - pip install -r requirement.txt --use-mirror
+    - pip install -r requirement.txt
     - pip install pylint
     - pip install pyflakes
     - pip install pylint-django
