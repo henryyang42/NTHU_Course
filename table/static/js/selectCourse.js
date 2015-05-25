@@ -102,8 +102,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.added_course.push(c);
     $scope.credit += c.credit;
     $scope.course_ct++;
-    // Increase hit
-    $.get('/search/hit/' + c.id);
     toastr.success(c.chi_title + ' 已成功加入您的課表。');
   }
 
