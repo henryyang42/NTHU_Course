@@ -9,19 +9,16 @@ python:
 install:
     - pip install --upgrade pip
     - pip install -r requirement.txt
-    - pip install pylint
-    - pip install pylint-django
     - pip install pep8
     - pip install pyflakes
 
 
 before_script:
-    - sh ./ci-test/runPep8.sh
     - pyflakes .
 
 
 script:
-    - sh ./ci-test/runPylint.sh
+    - sh ./test.sh
 
 
 notifications:

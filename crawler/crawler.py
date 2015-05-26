@@ -1,32 +1,31 @@
 import re
-import urllib2
 import bs4
-import json
 import requests
-import sys
 import traceback
 import progressbar
-from data_center.models import *
-from data_center.const import *
+from data_center.models import Course, Department
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
-dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
+dept_url = \
+    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
 YS = '103|20'
 cond = 'a'
 T_YEAR = 103
 C_TERM = 20
 
+
 def dept_2_html(dept, ACIXSTORE, auth_num):
     try:
         r = requests.post(dept_url,
-            data={
-                'SEL_FUNC': 'DEP',
-                'ACIXSTORE': ACIXSTORE,
-                'T_YEAR': T_YEAR,
-                'C_TERM': C_TERM,
-                'DEPT': dept,
-                'auth_num': auth_num})
-        return r.text.encode('latin1', 'ignore').decode('big5', 'ignore').encode('utf8', 'ignore')
+                          data={
+                              'SEL_FUNC': 'DEP',
+                              'ACIXSTORE': ACIXSTORE,
+                              'T_YEAR': T_YEAR,
+                              'C_TERM': C_TERM,
+                              'DEPT': dept,
+                              'auth_num': auth_num})
+        return r.text.encode('latin1', 'ignore') \
+            .decode('big5', 'ignore').encode('utf8', 'ignore')
     except:
         print traceback.format_exc()
         print dept
@@ -36,13 +35,14 @@ def dept_2_html(dept, ACIXSTORE, auth_num):
 def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
     try:
         r = requests.post(url,
-            data={
-                'ACIXSTORE': ACIXSTORE,
-                'YS': YS,
-                'cond': cond,
-                'cou_code': cou_code,
-                'auth_num': auth_num})
-        return r.text.encode('latin1', 'ignore').decode('big5', 'ignore').encode('utf8', 'ignore')
+                          data={
+                              'ACIXSTORE': ACIXSTORE,
+                              'YS': YS,
+                              'cond': cond,
+                              'cou_code': cou_code,
+                              'auth_num': auth_num})
+        return r.text.encode('latin1', 'ignore') \
+            .decode('big5', 'ignore').encode('utf8', 'ignore')
     except:
         print traceback.format_exc()
         print cou_code
@@ -69,8 +69,8 @@ def trim_syllabus(ACIXSTORE, soup):
 
 
 def syllabus_2_html(ACIXSTORE, course):
-    url = \
-        'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % \
+    url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/' \
+        'common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % \
         (ACIXSTORE, course.no.replace(' ', '%20'))
     try:
         while True:
@@ -98,8 +98,11 @@ def syllabus_2_html(ACIXSTORE, course):
         return 'QAQ, what can I do?'
 
 
+def trim_td(td):
+    td.get_text().rstrip().lstrip()
+
+
 def tr_2_class_info(tr):
-    trim_td = lambda td: td.get_text().rstrip().lstrip()
     tds = tr.find_all('td')
     class_info = {
         'no': trim_td(tds[0]),
@@ -170,7 +173,7 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
             # Get something like ``EE  103BA``
             dept_name = div.find_all('font')[0].get_text().strip()
             try:
-                dept_name = re.search('\((.*?)\)',dept_name).group(1)
+                dept_name = re.search('\((.*?)\)', dept_name).group(1)
             except:
                 # For all student (Not important for that dept.)
                 continue

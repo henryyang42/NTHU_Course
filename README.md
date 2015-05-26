@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/henryyang42/NTHU_Course.svg?branch=master)](https://travis-ci.org/henryyang42/NTHU_Course)
 # NTHU Course
 A system that fetch the course data and provide service that is insinctive, easy to use.
 
