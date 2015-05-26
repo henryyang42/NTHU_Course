@@ -90,7 +90,7 @@ def search(request):
                'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
 
     result['total'] = courses.count()
-    result['page'] = courses_page.number,
+    result['page'] = courses_page.number
     result['courses'] = list(courses_list)
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
