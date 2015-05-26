@@ -7,6 +7,7 @@
 </script>
 <div id="main">
   <div class="container">
+    <alert ng-show="alerts>0" close="closeAlert()">本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！</alert>
     <form method="get" id="search-filter" class="form-horizontal">
       <div data-toggle="tooltip" data-placement="bottom" data-original-title="輸入學號可查詢必選修課程">
         {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
@@ -23,6 +24,7 @@
       </div>
     </form>
     {% verbatim %}
+    
     <table id="result_table" class="table table-bordered table-hover search-table">
       <thead>
         <tr>

@@ -34,6 +34,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.currentPage = 0;
   $scope.max_size = 5;
   $scope.total_result = 0;
+  $scope.alerts = 1;
+
+  $scope.closeAlert = function() {
+    $scope.alerts = 0;
+  };
 
   function del_course(arr, c) {
     for (var i in arr) {
