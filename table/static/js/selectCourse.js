@@ -35,7 +35,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.max_size = 5;
   $scope.total_result = 0;
 
-
   function del_course(arr, c) {
     for (var i in arr) {
       // Remove course from array

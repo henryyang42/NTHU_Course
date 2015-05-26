@@ -57,12 +57,14 @@ def search(request):
     q = ' '.join(group_words(q))
     page = request.GET.get('page', '')
     code = request.GET.get('code', '')
+    page_size = 10
 
     if get_dept(q):
         courses = Department.objects.get(
             dept_name=get_dept(q)).required_course.all()
         if courses:
             result['type'] = 'required'
+            page_size = courses.count()
     else:
         courses = SearchQuerySet().filter(content=AutoQuery(q))
         if code:
@@ -73,7 +75,7 @@ def search(request):
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
                 courses = courses.filter(ge__contains=core)
 
-    paginator = Paginator(courses, 10)
+    paginator = Paginator(courses, page_size)
 
     try:
         courses_page = paginator.page(page)
@@ -92,6 +94,7 @@ def search(request):
     result['total'] = courses.count()
     result['page'] = courses_page.number
     result['courses'] = list(courses_list)
+    result['page_size'] = page_size
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
 
