@@ -36,10 +36,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.total_result = 0;
   $scope.alerts = 1;
 
-  $scope.closeAlert = function() {
-    $scope.alerts = 0;
-  };
-
   function del_course(arr, c) {
     for (var i in arr) {
       // Remove course from array
@@ -91,6 +87,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.course_ct++;
     timeTable(c, 'add');
   }
+
+  $scope.closeAlert = function() {
+    $scope.alerts = 0;
+  };
 
   $scope.pageChanged = function(page) {
     var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page;
