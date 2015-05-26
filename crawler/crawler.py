@@ -65,6 +65,7 @@ def trim_syllabus(ACIXSTORE, soup):
 
     syllabus = ''.join(map(str, soup.body.contents))
     syllabus = syllabus.replace('</br></br></br></br></br>', '')
+    syllabus = syllabus.replace('<br><br><br><br><br>', '')
     return syllabus
 
 
