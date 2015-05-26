@@ -20,12 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'g17y@qg*@kb+=o^f$mwn^^s4mnnfl5ofbo5lc1bf_d87n#ja4@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = [
     '.nthu-course.cf',
+    '.nthu-course-weering.c9.io',
     '.localhost',
 ]
 
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'NTHU_Course.urls'
 
 WSGI_APPLICATION = 'NTHU_Course.wsgi.application'
 
-
+import os
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 CONFIG_PATH = os.path.join(BASE_DIR, 'NTHU_Course/mysql.ini')
@@ -70,6 +71,7 @@ CONFIG_PATH = os.path.join(BASE_DIR, 'NTHU_Course/mysql.ini')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'HOST': os.environ['IP'],
         'OPTIONS': {
             'read_default_file': CONFIG_PATH,
         },

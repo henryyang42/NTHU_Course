@@ -35,6 +35,8 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.max_size = 5;
   $scope.total_result = 0;
   $scope.alerts = 1;
+  $scope.page_size = 10;
+  $scope.pageSizeModel = '10';
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -92,12 +94,21 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.alerts = 0;
   };
 
-  $scope.pageChanged = function(page) {
-    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page;
+  var search = function(page, size) {
+    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size;
     $.get(url, function(data) {
       $scope.fetch = JSON.parse(data);
       $scope.$apply();
     });
+  }
+
+  $scope.pageChanged = function(page) {
+    search(page, $scope.page_size);
+  }
+
+  $scope.setPageSize = function(size) {
+    $scope.page_size = size;
+    search('', size);
   }
 
   $scope.add = function(c) {
