@@ -56,8 +56,9 @@ def search(request):
     q = request.GET.get('q', '')
     q = ' '.join(group_words(q))
     page = request.GET.get('page', '')
+    size = request.GET.get('size', '')
     code = request.GET.get('code', '')
-    page_size = 10
+    page_size = size or 10
 
     if get_dept(q):
         courses = Department.objects.get(

@@ -28,14 +28,20 @@
         <tr>
           <td colspan="4">
             <center>
-              <h4>
-                課程查詢結果
-                <span ng-show="filtered.length>0"> (共{{ total_result }}筆)
-                  <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
+              <div>
+                <h4>課程查詢結果</h4>
+                <span ng-show="filtered.length>0"> (共{{ total_result }}筆<span ng-hide="fetch.type=='required'">，每
+                  <div class="btn-group">
+                    <label class="btn" ng-click="setPageSize(10)" ng-model="pageSizeModel" btn-radio="'10'">10</label>
+                    <label class="btn" ng-click="setPageSize(20)" ng-model="pageSizeModel" btn-radio="'20'">20</label>
+                    <label class="btn" ng-click="setPageSize(50)" ng-model="pageSizeModel" btn-radio="'50'">50</label>
+                  </div>
+                  筆顯示</span>)
                 </span>
                 <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
-              </h4>
-              <div ng-show="total_result>0">
+              </div>
+              <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
+              <div ng-show="total_result>0 && fetch.type!='required'">
                 <pagination total-items="total_result" items-per-page="fetch.page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
               </div>
             </center>
