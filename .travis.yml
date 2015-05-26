@@ -26,6 +26,6 @@ notifications:
         recipients:
             - z54981220@gmail.com
             - henryyang42@gmail.com
-        on_success: [always]
-        on_failure: [always]
+        on_success: always
+        on_failure: always
 
