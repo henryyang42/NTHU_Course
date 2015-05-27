@@ -1,5 +1,5 @@
 var moduleNTHUCourse = angular.module("ModuleNTHUCourse", ['ui.bootstrap']);
-
+var semester = '10320'
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {
     var out = [];
@@ -50,7 +50,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   function timeTable(c, type) {
     var time = c.time.match(/.{1,2}/g);
     var table = $scope.time_table;
-    for (i in time) {
+    for (var i in time) {
       if (type == 'add') {
         if (!table[time[i]])
           table[time[i]] = 0;
@@ -73,7 +73,15 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     try {
       var added_course = localStorage.getItem('added_course');
       if (added_course != null) {
-        $scope.added_course = JSON.parse(added_course);
+        added_course = JSON.parse(added_course);
+        console.log(added_course);
+        for (var i in added_course) {
+          c = added_course[i];
+          if (c.no.indexOf(semester) >= 0) {
+            $scope.added_course.push(c);
+
+          }
+        }
       }
     } catch (e) {
       localStorage.setItem('added_course', JSON.stringify($scope.added_course));
@@ -122,7 +130,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   }
 
   $scope.add_all = function(courses) {
-    for (var i = 0; i < courses.length; i++) {
+    for (var i in courses) {
       $scope.add(courses[i]);
     }
     toastr.info('您真貪心。');

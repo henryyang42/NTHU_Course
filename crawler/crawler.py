@@ -173,6 +173,8 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
         for div in divs:
             # Get something like ``EE  103BA``
             dept_name = div.find_all('font')[0].get_text().strip()
+            dept_name = dept_name.replace('B A', 'BA')
+            dept_name = dept_name.replace('B B', 'BB')
             try:
                 dept_name = re.search('\((.*?)\)', dept_name).group(1)
             except:
@@ -180,6 +182,7 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
                 continue
 
             trs = div.find_all('tr', bgcolor="#D8DAEB")
+            Department.objects.filter(dept_name=dept_name).delete()
             department = Department.objects.create(dept_name=dept_name)
             for tr in trs:
                 tds = tr.find_all('td')

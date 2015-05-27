@@ -59,10 +59,14 @@ def search(request):
     size = request.GET.get('size', '')
     code = request.GET.get('code', '')
     page_size = size or 10
+    courses = SearchQuerySet()
 
     if get_dept(q):
-        courses = Department.objects.get(
-            dept_name=get_dept(q)).required_course.all()
+        try:
+            courses = Department.objects.get(
+                dept_name=get_dept(q)).required_course.all()
+        except:
+            pass
         if courses:
             result['type'] = 'required'
             page_size = courses.count()
