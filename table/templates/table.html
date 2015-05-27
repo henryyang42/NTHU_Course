@@ -1,12 +1,73 @@
-{% extends 'table_base.html' %} {% load static %} {% load bootstrap %}
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+
 {% block title_block %}
 <title>NTHU Course - 選課預排系統</title>
-{% endblock title_block %} {% block body_block %}
-<!-- Main -->
-<script type="text/javascript">
+{% endblock title_block %}
+
+{% block source_block %}
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="//cdn.rawgit.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
+<script src="//cdn.rawgit.com/hydai/Canvas/master/base64binary.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js
+"></script>
+<script src="{% static 'js/selectCourse.js' %}"></script>
+<script src="{% static 'js/filter.js' %}"></script>
+<script src="{% static 'js/postToFB.js' %}"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<link rel="stylesheet" media="screen" href="{% static 'css/table.css' %}" />
+<!-- Facebook -->
+<script>
+window.fbAsyncInit = function() {
+  FB.init({
+    appId: '348628832000015',
+    xfbml: true,
+    version: 'v2.3'
+  });
+};
+
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {
+    return;
+  }
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+$('[data-toggle="tooltip"]').tooltip();
 </script>
-<div id="main">
-  <div class="container">
+{% endblock source_block %}
+
+
+{% block navbar_block %}
+<!-- Header -->
+<div id="header">
+  <div id="nav-wrapper">
+    <!-- Nav -->
+    <nav id="nav">
+      <ul>
+        <li class="active"><a href="/">關於我們</a></li>
+        <li>
+          <button class="btn btn-primary" id="postToFB">透過 Facebook 分享課表</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+{% endblock navbar_block %}
+
+{% block body_block %}
+<!-- Main -->
+<div id="main" ng-app="ModuleNTHUCourse">
+  <div class="container" ng-controller="CourseCtrl">
     <alert ng-show="alerts>0" close="closeAlert()">本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！</alert>
     <form method="get" id="search-filter" class="form-horizontal">
       <div data-toggle="tooltip" data-placement="bottom" data-original-title="輸入學號可查詢必選修課程">
@@ -24,7 +85,7 @@
       </div>
     </form>
     {% verbatim %}
-    
+
     <table id="result_table" class="table table-bordered table-hover search-table">
       <thead>
         <tr>
@@ -140,5 +201,7 @@
   </div>
 </div>
 <!-- /Main -->
-<script src="{% static 'js/postToFB.js' %}"></script>
 {% endblock body_block %}
+
+{% block footer_block %}
+{% endblock footer_block %}

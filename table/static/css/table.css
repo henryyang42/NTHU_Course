@@ -84,3 +84,67 @@
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
 }
+
+.form-horizontal .control-label {
+  text-align: left;
+}
+
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue;
+}
+
+.table-btn {
+  float: right;
+  margin: 3px;
+}
+
+.table-text {
+  margin: 3px;
+}
+.mfp-close {
+  font-size: 35px;
+  opacity: .8;
+}
+@media screen and (min-width: 768px) {
+  .mfp-ajax-holder .mfp-content {
+    width: 680px;
+  }
+  .mfp-prevent-close > table{
+    width: 100%;
+  }
+}
+@media screen and (max-width: 767px) {
+  .mfp-ajax-holder .mfp-content {
+    width: 100%;
+  }
+  .mfp-prevent-close > table{
+    width: 100%;
+  }
+}
+.mfp-content {
+  margin: 50px auto;
+}
+.jumbotron {
+  border-radius: 10px;
+  min-width: 100%;
+}
+#main {
+  background: -webkit-linear-gradient(-30deg, #DDE8FF 10%, #FFFFFF 90%);
+  /* Chrome 10+, Saf5.1+ */
+
+  background: -moz-linear-gradient(-30deg, #DDE8FF 10%, #FFFFFF 90%);
+  /* FF3.6+ */
+
+  background: -ms-linear-gradient(-30deg, #DDE8FF 10%, #FFFFFF 90%);
+  /* IE10 */
+
+  background: -o-linear-gradient(-30deg, #DDE8FF 10%, #FFFFFF 90%);
+  /* Opera 11.10+ */
+
+  background: linear-gradient(-30deg, #DDE8FF 10%, #FFFFFF 90%);
+  /* W3C */
+}

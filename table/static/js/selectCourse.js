@@ -74,7 +74,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
       var added_course = localStorage.getItem('added_course');
       if (added_course != null) {
         added_course = JSON.parse(added_course);
-        console.log(added_course);
         for (var i in added_course) {
           c = added_course[i];
           if (c.no.indexOf(semester) >= 0) {
