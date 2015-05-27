@@ -37,6 +37,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   $scope.alerts = 1;
   $scope.page_size = 10;
   $scope.pageSizeModel = '10';
+  $scope.predicate = '-eng_title';
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -133,7 +134,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
       $scope.add(courses[i]);
     }
     toastr.info('您真貪心。');
-    delete $scope.fetch.type;
+    // delete $scope.fetch.type;
   }
 
   $scope.del = function(c) {

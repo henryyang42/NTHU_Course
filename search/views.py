@@ -80,24 +80,24 @@ def search(request):
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
                 courses = courses.filter(ge__contains=core)
 
-    paginator = Paginator(courses, page_size)
+    # paginator = Paginator(courses, page_size)
 
-    try:
-        courses_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        courses_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        courses_page = paginator.page(paginator.num_pages)
+    # try:
+    #     courses_page = paginator.page(page)
+    # except PageNotAnInteger:
+    #     # If page is not an integer, deliver first page.
+    #     courses_page = paginator.page(1)
+    # except EmptyPage:
+    #     # If page is out of range (e.g. 9999), deliver last page of results.
+    #     courses_page = paginator.page(paginator.num_pages)
 
     courses_list = Course.objects. \
-        filter(pk__in=[c.pk for c in courses_page.object_list]). \
+        filter(pk__in=[c.pk for c in courses]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
 
     result['total'] = courses.count()
-    result['page'] = courses_page.number
+    # result['page'] = courses_page.number
     result['courses'] = list(courses_list)
     result['page_size'] = page_size
 
