@@ -16,7 +16,7 @@ from haystack.inputs import AutoQuery
 
 
 def get_class_name(c):
-    return CLASS_NAME_MAP.get(c, 'B')
+    return CLASS_NAME_MAP.get(c, '')
 
 
 def get_dept(no):
