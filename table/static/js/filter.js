@@ -20,13 +20,14 @@ $(function() {
   $("#search-filter").on("submit", function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
-      '&page=' + scope.page_limit_index + 
+      '&page=' + 1 + 
       '&size=' + scope.page_size + 
       '&sort=' + scope.predicate + 
       '&reverse=' + scope.reverse;
     $.get(url, function(data) {
       var result = JSON.parse(data);
       scope.fetch = result;
+      scope.currentPage = 1;
       scope.$apply();
       if (result.total == 0) {
         toastr.info('查無結果！請嘗試其他關鍵字。');
