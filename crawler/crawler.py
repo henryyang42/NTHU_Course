@@ -4,6 +4,7 @@ import requests
 import traceback
 import progressbar
 from data_center.models import Course, Department
+from data_center.const import week_dict, course_dict
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 dept_url = \
@@ -150,6 +151,7 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
                 no=class_info['no'],
                 credit=int(class_info['credit']),
                 time=class_info['time'],
+                time_token=get_token(class_info['time']),
                 limit=int(class_info['limit']),
                 note=class_info['note'],
                 objective=class_info['objective'],
@@ -198,3 +200,10 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
             total_collected += 1
 
     print '%d department information collected.' % total_collected
+
+
+def get_token(s):
+    try:
+        return week_dict[s[0]] + course_dict[s[1]] + s[2:]
+    except:
+        return ''

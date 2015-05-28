@@ -97,7 +97,7 @@ window.fbAsyncInit = function() {
     <table id="result_table" class="table table-bordered table-hover search-table">
       <thead>
         <tr>
-          <td colspan="4">
+          <td colspan="5">
             <center>
               <div>
                 <h4>課程查詢結果</h4>
@@ -112,21 +112,23 @@ window.fbAsyncInit = function() {
                 <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
               </div>
               <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
-              <div ng-show="total_result>0 && fetch.type!='required'">
-                <pagination total-items="total_result" items-per-page="fetch.page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+              <div ng-show="total_result>0">
+                <pagination ng-hide="fetch.type=='required'" total-items="total_result" items-per-page="page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
               </div>
             </center>
           </td>
         </tr>
         <tr ng-show="filtered.length>0">
-          <th>課程名稱</th>
-          <th>任課教師</th>
-          <th>學分</th>
-          <th>課程時間</th>
+          <th ng-click="reverse=!reverse;predicate='no';order('no',reverse)"><a class="">科號</a></th>
+          <th ng-click="reverse=!reverse;predicate='chi_title';order('chi_title',reverse)">課程名稱</th>
+          <th ng-click="reverse=!reverse;predicate='teacher';order('teacher',reverse)">任課教師</th>
+          <th ng-click="reverse=!reverse;predicate='credit';order('credit',reverse)">學分</th>
+          <th ng-click="reverse=!reverse;predicate='time_token';order('time_token',reverse)">課程時間</th>
         </tr>
       </thead>
       <tbody>
-          <tr ng-repeat="course in filtered = (query | showQuery:added_course)" title="{{ course.note}}">
+        <tr ng-repeat="course in filtered = (query | showQuery:added_course)" title="{{ course.note}}">
+          <td>{{ course.no }}</td>
           <td>{{ course.chi_title }}
             <br>{{ course.eng_title }}
             <br>{{ course.ge }}
@@ -178,8 +180,9 @@ window.fbAsyncInit = function() {
           <td colspan="4">
             <center>
               <h4>
-              您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
-            </h4>
+                您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
+                <a class="btn btn-danger table-btn" ng-click="del_all()">清空課表</a>
+              </h4>
             </center>
           </td>
         </tr>

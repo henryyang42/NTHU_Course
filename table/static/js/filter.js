@@ -1,5 +1,7 @@
 $(function() {
   var scope = angular.element('[ng-controller=CourseCtrl]').scope();
+  var animation = 'animated bounceInLeft',
+      animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
   var ge_option = function() {
     code = $('#id_code').val();
     $('#ge-option').hide();
@@ -25,13 +27,10 @@ $(function() {
       if (result.total == 0) {
         toastr.info('查無結果！請嘗試其他關鍵字。');
       }
+      $('#result_table').addClass(animation)
+        .one(animationend, function(e) {
+          $(this).removeClass(animation);
+        });
     });
-    var animation = 'animated bounceInLeft',
-        animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-    $('#result_table')
-      .addClass(animation)
-      .one(animationend, function(e) {
-        $(this).removeClass(animation);
-      });
   });
 })

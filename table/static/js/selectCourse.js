@@ -1,5 +1,6 @@
 var moduleNTHUCourse = angular.module("ModuleNTHUCourse", ['ui.bootstrap']);
-var semester = '10320'
+var semester = '10320';
+
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {
     var out = [];
@@ -24,19 +25,53 @@ moduleNTHUCourse.filter('showQuery', function() {
   };
 });
 
-moduleNTHUCourse.controller("CourseCtrl", function($scope) {
+moduleNTHUCourse.filter('limit', function() {
+  return function(input, limit, begin) {
+    if (Math.abs(Number(limit)) === Infinity) {
+      limit = Number(limit);
+    } else {
+      // limit = toInt(limit);
+    }
+    if (isNaN(limit)) return input;
+
+    if (!input) return input;
+    // if (isNumber(input)) input = input.toString();
+    // if (!isArray(input) && !isString(input)) return input;
+
+    begin = (!begin || isNaN(begin)) ? 0 : parseInt(begin);
+    begin = (begin < 0 && begin >= -input.length) ? input.length + begin : begin;
+
+    if (limit >= 0) {
+      return input.slice(begin, begin + limit);
+    } else {
+      if (begin === 0) {
+        return input.slice(limit, input.length);
+      } else {
+        return input.slice(Math.max(0, begin + limit), begin);
+      }
+    }
+  };
+})
+
+moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   $scope.fetch = {};
   $scope.query = [];
-  $scope.added_course = [];
-  $scope.time_table = {};
-  $scope.credit = 0;
-  $scope.course_ct = 0;
   $scope.currentPage = 0;
   $scope.max_size = 5;
   $scope.total_result = 0;
   $scope.alerts = 1;
   $scope.page_size = 10;
+  $scope.page_limit_index = 0;
   $scope.pageSizeModel = '10';
+  $scope.predicate = 'time_token';
+  $scope.reverse = false;
+
+  function init() {
+    $scope.added_course = [];
+    $scope.time_table = {};
+    $scope.credit = 0;
+    $scope.course_ct = 0;
+  }
 
   function del_course(arr, c) {
     for (var i in arr) {
@@ -68,6 +103,8 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
   }
 
   // Init data
+  init();
+  toastr.options.timeOut = 1500;
   if (typeof(Storage) !== 'undefined') {
     // Code for localStorage
     try {
@@ -101,21 +138,27 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.alerts = 0;
   };
 
-  var search = function(page, size) {
-    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size;
+  var search = function(page, size, sortby) {
+    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size + '&sort=' + sortby + '&reverse=' +$scope.reverse;
+    console.log(url);
     $.get(url, function(data) {
       $scope.fetch = JSON.parse(data);
       $scope.$apply();
     });
   }
 
+  $scope.order = function(predicate) {
+    search($scope.page_limit_index, $scope.page_size, predicate);
+  }
+
   $scope.pageChanged = function(page) {
-    search(page, $scope.page_size);
+    $scope.page_limit_index = page;
+    search(page, $scope.page_size, $scope.predicate);
   }
 
   $scope.setPageSize = function(size) {
     $scope.page_size = size;
-    search('', size);
+    search($scope.page_limit_index, size, $scope.predicate);
   }
 
   $scope.add = function(c) {
@@ -142,6 +185,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
     $scope.course_ct--;
     del_course($scope.added_course, c);
     toastr.warning(c.chi_title + ' 已從您的課表移除。');
+  }
+
+  $scope.del_all = function() {
+    init();
+    toastr.info('已完全清空您的課表。');
   }
 
   $scope.free = function(c) {
@@ -172,7 +220,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
 
   var updateFetch = function() {
     $scope.query = $scope.fetch.courses;
-    $scope.currentPage = $scope.fetch.page;
+    // $scope.currentPage = $scope.fetch.page;
     $scope.total_result = $scope.fetch.total;
   }
 

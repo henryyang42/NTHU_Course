@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+week_dict = {'M': 'a', 'T': 'b', 'W': 'c', 'R': 'd', 'F': 'e', 'S': 'f'}
+
+course_dict = {'1': 'a','2': 'b','3': 'c','4': 'd','n': 'e','5': 'f','6': 'g','7': 'h','8': 'i','9': 'j','a': 'k','b': 'l','c': 'm'}
+
+
 cou_codes = ['ANTH', 'ANTU', 'ASTR', 'BME ', 'BMES', 'CF ', 'CFGE', 'CHE ', 'CHEM', 'CL ', 'CLC ', 'CLU ', 'COM ', 'CS ', 'DL ', 'DMS ', 'E ', 'ECON', 'EE ', 'EECS', 'EMBA', 'ENE ', 'ESS ', 'FL ', 'FLU ', 'GE ', 'GEC ', 'GEU ', 'GPTS', 'HIS ', 'HSS ', 'HSSU', 'IACS', 'IACU', 'IEEM', 'IEM ', 'ILS ', 'IMBA', 'IPE ', 'IPNS', 'IPT ', 'ISA ', 'ISS ', 'LANG', 'LING', 'LS ', 'LSBS',
              'LSBT', 'LSIP', 'LSMC', 'LSMM', 'LSSN', 'LST ', 'MATH', 'MATU', 'MBA ', 'MI ', 'MS ', 'NEMS', 'NES ', 'NS ', 'NUCL', 'PE ', 'PE1 ', 'PE3 ', 'PHIL', 'PHYS', 'PHYU', 'PME ', 'QF ', 'RB ', 'RDDM', 'RDIC', 'RDPE', 'SCI ', 'SLS ', 'SNHC', 'SOC ', 'STAT', 'STAU', 'TE ', 'TEG ', 'TEX ', 'TIGP', 'TL ', 'TM ', 'UPMT', 'W ', 'WH ', 'WW ', 'WZ ', 'X ', 'XA ', 'XZ ', 'YZ ', 'ZY ', 'ZZ ']
 
