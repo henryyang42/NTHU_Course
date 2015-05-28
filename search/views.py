@@ -141,7 +141,7 @@ class CourseSearchForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'placeholder':
-                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號可查詢必選修'
+                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程'
             })
     )
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
