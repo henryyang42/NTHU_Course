@@ -61,7 +61,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   $scope.total_result = 0;
   $scope.alerts = 1;
   $scope.page_size = 10;
-  $scope.page_limit_index = 0;
   $scope.pageSizeModel = '10';
   $scope.predicate = 'time_token';
   $scope.reverse = false;
@@ -139,7 +138,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   };
 
   var search = function(page, size, sortby) {
-    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size + '&sort=' + sortby + '&reverse=' +$scope.reverse;
+    var url = '/search/?' + $('#search-filter').serialize() +
+      '&page=' + page +
+      '&size=' + size +
+      '&sort=' + sortby +
+      '&reverse=' +$scope.reverse;
     $.get(url, function(data) {
       $scope.fetch = JSON.parse(data);
       $scope.$apply();
@@ -147,17 +150,16 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   }
 
   $scope.order = function(predicate) {
-    search($scope.page_limit_index, $scope.page_size, predicate);
+    search($scope.currentPage, $scope.page_size, predicate);
   }
 
   $scope.pageChanged = function(page) {
-    $scope.page_limit_index = page;
     search(page, $scope.page_size, $scope.predicate);
   }
 
   $scope.setPageSize = function(size) {
     $scope.page_size = size;
-    search($scope.page_limit_index, size, $scope.predicate);
+    search($scope.currentPage, size, $scope.predicate);
   }
 
   $scope.add = function(c) {
