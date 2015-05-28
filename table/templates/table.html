@@ -176,8 +176,9 @@ $('[data-toggle="tooltip"]').tooltip();
           <td colspan="4">
             <center>
               <h4>
-              您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
-            </h4>
+                您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
+                <a class="btn btn-danger table-btn" ng-click="del_all()">清空課表</a>
+              </h4>
             </center>
           </td>
         </tr>
