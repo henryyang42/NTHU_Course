@@ -84,14 +84,16 @@ def search(request):
             result['type'] = 'required'
             page_size = courses.count()
     else:
-        courses = SearchQuerySet().filter(content=AutoQuery(q)).order_by(sortby)
+        courses = SearchQuerySet().filter(
+            content=AutoQuery(q)).order_by(sortby)
         if code:
             courses = courses.filter(code=code)
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
-                courses = courses.filter(ge__contains=core).order_by(rev_sortby)#reverse
+                courses = courses.filter(ge__contains=core).order_by(
+                    rev_sortby)  # reverse
 
     paginator = Paginator(courses, page_size)
 
@@ -107,10 +109,12 @@ def search(request):
     courses_list = Course.objects. \
         filter(pk__in=[c.pk for c in courses_page.object_list]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-               'time', 'time_token', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
+               'time', 'time_token', 'teacher', 'room', 'credit',
+               'prerequisite', 'ge')
 
     raw_coures = list(courses_list)
-    sorted_courses = sorted(raw_coures, key=operator.itemgetter(sortby), reverse=reverse)
+    sorted_courses = sorted(
+        raw_coures, key=operator.itemgetter(sortby), reverse=reverse)
     result['total'] = courses.count()
     result['page'] = courses_page.number
     result['courses'] = sorted_courses
@@ -134,8 +138,15 @@ def hit(request, id):
 
 
 class CourseSearchForm(forms.Form):
-    q = forms.CharField(label='關鍵字', required=False,
-            widget=forms.TextInput(attrs={'placeholder': '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號可查詢必選修'}))
+    q = forms.CharField(
+        label='關鍵字',
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder':
+                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號可查詢必選修'
+            })
+    )
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
     ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
     gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)
