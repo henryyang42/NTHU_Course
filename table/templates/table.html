@@ -81,7 +81,7 @@ window.fbAsyncInit = function() {
   <div class="container" ng-controller="CourseCtrl">
     <alert ng-show="alerts>0" close="closeAlert()">
       本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！<br>
-      所有課程資料以課務組為準。
+      此外，因為課程資料課務組可能更動，我們每天至少更新一次，最終結果以課務組為準。
     </alert>
     <form method="get" id="search-filter" class="form-horizontal">
       {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
