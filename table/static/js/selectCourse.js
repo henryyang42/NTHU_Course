@@ -156,15 +156,12 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     }
   };
 
-
   $scope.pageChanged = function(page) {
     $scope.page_limit_index = page - 1;
-    // search(page, $scope.page_size);
   }
 
   $scope.setPageSize = function(size) {
     $scope.page_size = size;
-    // search('', size);
   }
 
   $scope.add = function(c) {
@@ -182,7 +179,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       $scope.add(courses[i]);
     }
     toastr.info('您真貪心。');
-    // delete $scope.fetch.type;
+    delete $scope.fetch.type;
   }
 
   $scope.del = function(c) {
