@@ -143,9 +143,9 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
             class_info = tr_2_class_info(tr)
             if Course.objects.filter(no=class_info['no']):
                 continue
-            if not class_info['credit']:
+            if not class_info['credit'].isdigit():
                 class_info['credit'] = '0'
-            if not class_info['limit']:
+            if not class_info['limit'].isdigit():
                 class_info['limit'] = '0'
             course = Course.objects.update_or_create(
                 no=class_info['no'],
