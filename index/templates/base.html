@@ -36,6 +36,11 @@
   {% endblock title_block %}
 
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta property="og:title" content="NTHU Course"/>
+  <meta property="og:image" content="{% static 'images/header.jpg' %}"/>
+  <meta property="og:site_name" content="NTHU Course"/>
+  <meta property="og:description" content="NTHU Course ~ 專門為你設計預排選課的好幫手！！！"/>
+
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,300,700,500,900' rel='stylesheet' type='text/css'>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <script src="{% static 'js/skel.min.js' %}"></script>
@@ -112,10 +117,9 @@
         </header>
         <ul class="contact">
           <li>
-            <a class="fa fa-inbox">
-              <br>z54981220@gmail.com</a>
+          <a class="fa fa-facebook-square" href="https://www.facebook.com/nthucourse" target="_blank"><span>Facebook</span></a>
           </li>
-          <!--<li><a href="https://github.com/henryyang42/NTHU_Course" class="fa fa-github-square"><span>GitHub</span></a></li>-->
+          <li><a href="https://github.com/henryyang42/NTHU_Course" class="fa fa-github-square" target="_blank"><span>GitHub</span></a></li>
         </ul>
       </section>
     </div>

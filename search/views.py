@@ -75,7 +75,7 @@ def search(request):
     if get_dept(q):
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all().order_by(rev_sortby)
+                dept_name=get_dept(q)).required_course.all()
         except:
             pass
         if courses:
@@ -83,15 +83,16 @@ def search(request):
             page_size = courses.count()
     else:
         courses = SearchQuerySet().filter(
-            content=AutoQuery(q)).order_by(rev_sortby)
+            content=AutoQuery(q))
         if code:
-            courses = courses.filter(code=code).order_by(rev_sortby)
+            courses = courses.filter(code=code)
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
-                courses = courses.filter(ge__contains=core).order_by(
-                    rev_sortby)  # reverse
+                courses = courses.filter(ge__contains=core)
+
+    courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
 
     try:
@@ -107,7 +108,7 @@ def search(request):
         filter(pk__in=[c.pk for c in courses_page.object_list]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit',
-               'prerequisite', 'ge')
+               'prerequisite', 'ge', 'code')
 
     raw_courses = list(courses_list)
     sorted_courses = sorted(
