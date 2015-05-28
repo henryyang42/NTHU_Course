@@ -1,5 +1,5 @@
 var moduleNTHUCourse = angular.module("ModuleNTHUCourse", ['ui.bootstrap']);
-var semester = '10320';
+var semester = '10410';
 
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {
