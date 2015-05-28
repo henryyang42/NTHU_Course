@@ -75,23 +75,20 @@ def search(request):
     if get_dept(q):
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all().order_by(sortby)
-            if reverse:
-                courses = courses.reverse()
+                dept_name=get_dept(q)).required_course.all().order_by(rev_sortby)
         except:
             pass
         if courses:
             result['type'] = 'required'
             page_size = courses.count()
     else:
-        courses = SearchQuerySet().filter(content=AutoQuery(q)).order_by(sortby)
+        courses = SearchQuerySet().filter(content=AutoQuery(q)).order_by(rev_sortby)
         if code:
-            courses = courses.filter(code=code)
+            courses = courses.filter(code=code).order_by(rev_sortby)
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
-                courses = courses.filter(ge__contains=core).order_by(rev_sortby)#reverse
 
     paginator = Paginator(courses, page_size)
 
@@ -109,8 +106,8 @@ def search(request):
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
 
-    raw_coures = list(courses_list)
-    sorted_courses = sorted(raw_coures, key=operator.itemgetter(sortby), reverse=reverse)
+    raw_courses = list(courses_list)
+    sorted_courses = sorted(raw_courses, key=operator.itemgetter(sortby), reverse=reverse)
     result['total'] = courses.count()
     result['page'] = courses_page.number
     result['courses'] = sorted_courses
