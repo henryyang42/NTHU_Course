@@ -156,6 +156,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope) {
         type: 'ajax',
         closeOnContentClick: false
       });
+      $('[data-toggle="tooltip"]').tooltip();
+      $( document ).tooltip({
+        track: true
+      });
     }, 100);
     // Save data
     if (typeof(Storage) !== 'undefined') {
