@@ -27,7 +27,7 @@ $(function() {
       if (result.total == 0) {
         toastr.info('查無結果！請嘗試其他關鍵字。');
       }
-      $('#result_table').addClass(animation)
+      $('#result-table').addClass(animation)
         .one(animationend, function(e) {
           $(this).removeClass(animation);
         });
