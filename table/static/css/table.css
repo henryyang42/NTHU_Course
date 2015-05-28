@@ -78,7 +78,7 @@
   animation-fill-mode: both;
 }
 
-#result_table {
+#result-table {
     -webkit-backface-visibility: hidden;  /* Chrome, Safari, Opera */
     backface-visibility: hidden;
     -webkit-transform: translateZ(0);
@@ -114,6 +114,15 @@
 #course-table, #course-table td, #course-table th{
   border: solid 2px gray;
 }
+
+#result-table, #result-table td, #result-table th{
+  border: solid 2px gray;
+}
+
+#selected-table, #selected-table td, #selected-table th{
+  border: solid 2px gray;
+}
+
 @media screen and (min-width: 768px) {
   .mfp-ajax-holder .mfp-content {
     width: 680px;
@@ -122,6 +131,7 @@
     width: 100%;
   }
 }
+
 @media screen and (max-width: 767px) {
   .mfp-ajax-holder .mfp-content {
     width: 100%;
@@ -130,9 +140,11 @@
     width: 100%;
   }
 }
+
 .mfp-content {
   margin: 50px auto;
 }
+
 .jumbotron {
   border-radius: 10px;
   min-width: 100%;
