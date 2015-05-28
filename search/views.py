@@ -107,7 +107,7 @@ def search(request):
         filter(pk__in=[c.pk for c in courses_page.object_list]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit',
-               'prerequisite', 'ge')
+               'prerequisite', 'ge', 'code')
 
     raw_courses = list(courses_list)
     sorted_courses = sorted(
