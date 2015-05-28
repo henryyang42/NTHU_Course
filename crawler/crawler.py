@@ -9,10 +9,10 @@ from data_center.const import week_dict, course_dict
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
 dept_url = \
     'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
-YS = '103|20'
+YS = '104|10'
 cond = 'a'
-T_YEAR = 103
-C_TERM = 20
+T_YEAR = 104
+C_TERM = 10
 
 
 def dept_2_html(dept, ACIXSTORE, auth_num):

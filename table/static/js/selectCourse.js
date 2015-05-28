@@ -1,5 +1,5 @@
 var moduleNTHUCourse = angular.module("ModuleNTHUCourse", ['ui.bootstrap']);
-var semester = '10320';
+var semester = '10410';
 
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {
@@ -203,6 +203,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       $('.ajax-popup-link').magnificPopup({
         type: 'ajax',
         closeOnContentClick: false
+      });
+      $('[data-toggle="tooltip"]').tooltip();
+      $( document ).tooltip({
+        track: true
       });
     }, 100);
     // Save data

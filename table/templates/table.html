@@ -13,11 +13,11 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js
-"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script src="{% static 'js/selectCourse.js' %}"></script>
 <script src="{% static 'js/filter.js' %}"></script>
-<script src="{% static 'js/postToFB.js' %}"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
@@ -42,7 +42,6 @@ window.fbAsyncInit = function() {
   js.src = "//connect.facebook.net/en_US/sdk.js";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-$('[data-toggle="tooltip"]').tooltip();
 </script>
 {% endblock source_block %}
 
@@ -56,7 +55,10 @@ $('[data-toggle="tooltip"]').tooltip();
       <ul>
         <li class="active"><a href="/">關於我們</a></li>
         <li>
+          <!--
           <button class="btn btn-primary" id="postToFB">透過 Facebook 分享課表</button>
+          -->
+          <button class="btn btn-primary" id="saveAsFile">輸出課表</button>
         </li>
       </ul>
     </nav>
@@ -76,9 +78,7 @@ $('[data-toggle="tooltip"]').tooltip();
   <div class="container" ng-controller="CourseCtrl">
     <alert ng-show="alerts>0" close="closeAlert()">本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！</alert>
     <form method="get" id="search-filter" class="form-horizontal">
-      <div data-toggle="tooltip" data-placement="bottom" data-original-title="輸入學號可查詢必選修課程">
-        {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
-      </div>
+      {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
       {{ search_filter.code|bootstrap_horizontal:"col-lg-1" }}
       <div id="ge-option">
         {{ search_filter.ge|bootstrap_horizontal:"col-lg-1" }}
@@ -92,7 +92,7 @@ $('[data-toggle="tooltip"]').tooltip();
     </form>
     {% verbatim %}
 
-    <table id="result_table" class="table table-bordered table-hover search-table">
+    <table id="result-table" class="table table-bordered table-hover search-table">
       <thead>
         <tr>
           <td colspan="5">
@@ -125,7 +125,7 @@ $('[data-toggle="tooltip"]').tooltip();
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="course in filtered = (query | showQuery:added_course)">
+        <tr ng-repeat="course in filtered = (query | showQuery:added_course)" title="{{ course.note}}">
           <td>{{ course.no }}</td>
           <td>{{ course.chi_title }}
             <br>{{ course.eng_title }}
@@ -153,7 +153,7 @@ $('[data-toggle="tooltip"]').tooltip();
           </td>
         </tr>
         <tr>
-          <th ng-repeat="col in '#MTWRFS' ">
+          <th ng-repeat="col in '#MTWRFS' " width="14%">
             <center>{{ col }}</center>
           </th>
         </tr>
@@ -172,10 +172,10 @@ $('[data-toggle="tooltip"]').tooltip();
         </tr>
       </tbody>
     </table>
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover" id="selected-table">
       <thead>
         <tr>
-          <td colspan="4">
+          <td colspan="5">
             <center>
               <h4>
                 您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
@@ -185,6 +185,7 @@ $('[data-toggle="tooltip"]').tooltip();
           </td>
         </tr>
         <tr>
+          <th>科號</th>
           <th>課程名稱</th>
           <th>任課教師</th>
           <th>學分</th>
@@ -192,7 +193,8 @@ $('[data-toggle="tooltip"]').tooltip();
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="course in added_course">
+        <tr ng-repeat="course in added_course" title="{{ course.note}}">
+          <td>{{ course.no }}</td>
           <td>
             {{ course.chi_title }}
             <br>{{ course.eng_title }}
@@ -210,6 +212,8 @@ $('[data-toggle="tooltip"]').tooltip();
   </div>
 </div>
 <!-- /Main -->
+<script src="{% static 'js/postToFB.js' %}"></script>
+<script src="{% static 'js/saveAsFile.js' %}"></script>
 {% endblock body_block %}
 
 {% block footer_block %}
