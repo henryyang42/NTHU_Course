@@ -12,6 +12,7 @@ class CourseIndex(indexes.SearchIndex, indexes.Indexable):
     note = indexes.CharField(model_attr='note')
     objective = indexes.CharField(model_attr='objective')
     time = indexes.CharField(model_attr='time')
+    time_token = indexes.CharField(model_attr='time_token')
     teacher = indexes.CharField(model_attr='teacher')
     room = indexes.CharField(model_attr='room')
     ge = indexes.CharField(model_attr='ge')

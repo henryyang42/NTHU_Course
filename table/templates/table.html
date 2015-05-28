@@ -117,15 +117,15 @@ $('[data-toggle="tooltip"]').tooltip();
           </td>
         </tr>
         <tr ng-show="filtered.length>0">
-          <th ng-click="reverse=!reverse;order('no', reverse)">科號</th>
-          <th ng-click="reverse=!reverse;order('chi_title', reverse)">課程名稱</th>
-          <th ng-click="reverse=!reverse;order('teacher', reverse)">任課教師</th>
-          <th ng-click="reverse=!reverse;order('credit', reverse)">學分</th>
-          <th ng-click="reverse=!reverse;order('time', reverse)">課程時間</th>
+          <th ng-click="reverse=!reverse;predicate='no';order('no',reverse)"><a class="">科號</a></th>
+          <th ng-click="reverse=!reverse;predicate='chi_title';order('chi_title',reverse)">課程名稱</th>
+          <th ng-click="reverse=!reverse;predicate='teacher';order('teacher',reverse)">任課教師</th>
+          <th ng-click="reverse=!reverse;predicate='credit';order('credit',reverse)">學分</th>
+          <th ng-click="reverse=!reverse;predicate='time_token';order('time_token',reverse)">課程時間</th>
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="course in filtered = (query | limit:page_size:page_size*page_limit_index)">
+        <tr ng-repeat="course in filtered = (query | showQuery:added_course)">
           <td>{{ course.no }}</td>
           <td>{{ course.chi_title }}
             <br>{{ course.eng_title }}

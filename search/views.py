@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import operator
 import json
 import re
 from django.core.serializers.json import DjangoJSONEncoder
@@ -55,36 +56,64 @@ def search(request):
     result = {}
     q = request.GET.get('q', '')
     q = ' '.join(group_words(q))
+    page = request.GET.get('page', '')
+    size = request.GET.get('size', '')
     code = request.GET.get('code', '')
-    page_size = 10
+    sortby_param = request.GET.get('sort', '')
+    reverse_param = request.GET.get('reverse', '')
+
+    page_size = size or 10
+    sortby = sortby_param or 'time_token'
+    reverse = True if reverse_param == 'true' else False
+
     courses = SearchQuerySet()
+
+    if sortby == 'time':
+        sortby = 'time_token'
+    rev_sortby = u'-' + sortby if reverse else sortby
 
     if get_dept(q):
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all()
+                dept_name=get_dept(q)).required_course.all().order_by(sortby)
+            if reverse:
+                courses = courses.reverse()
         except:
             pass
         if courses:
             result['type'] = 'required'
             page_size = courses.count()
     else:
-        courses = SearchQuerySet().filter(content=AutoQuery(q))
+        courses = SearchQuerySet().filter(content=AutoQuery(q)).order_by(sortby)
         if code:
             courses = courses.filter(code=code)
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
-                courses = courses.filter(ge__contains=core)
+                courses = courses.filter(ge__contains=core).order_by(rev_sortby)#reverse
+
+    paginator = Paginator(courses, page_size)
+
+    try:
+        courses_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        courses_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        courses_page = paginator.page(paginator.num_pages)
 
     courses_list = Course.objects. \
-        filter(pk__in=[c.pk for c in courses]). \
+        filter(pk__in=[c.pk for c in courses_page.object_list]). \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-               'time', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
+               'time', 'time_token', 'teacher', 'room', 'credit', 'prerequisite', 'ge')
 
+    raw_coures = list(courses_list)
+    sorted_courses = sorted(raw_coures, key=operator.itemgetter(sortby), reverse=reverse)
     result['total'] = courses.count()
-    result['courses'] = list(courses_list)
+    result['page'] = courses_page.number
+    result['courses'] = sorted_courses
     result['page_size'] = page_size
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))

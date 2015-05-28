@@ -5,4 +5,5 @@
 {{ object.no }}
 {{ object.code }}
 {{ object.time}}
+{{ object.time_token}}
 {{ object.room }}

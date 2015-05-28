@@ -63,7 +63,8 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   $scope.page_size = 10;
   $scope.page_limit_index = 0;
   $scope.pageSizeModel = '10';
-  $scope.predicate = '-eng_title';
+  $scope.predicate = 'time_token';
+  $scope.reverse = false;
 
   function init() {
     $scope.added_course = [];
@@ -137,50 +138,27 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.alerts = 0;
   };
 
-  var search = function(page, size) {
-    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size;
+  var search = function(page, size, sortby) {
+    var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size + '&sort=' + sortby + '&reverse=' +$scope.reverse;
+    console.log(url);
     $.get(url, function(data) {
       $scope.fetch = JSON.parse(data);
       $scope.$apply();
     });
   }
 
-  var orderBy = $filter('orderBy'),
-    limitTo = $filter('limitTo');
-  var week_dict = ['S', 'F', 'R', 'W', 'T', 'M'];
-  var c_dict = {
-    'c': 'a',
-    'b': 'b',
-    'a': 'c',
-    '9': 'd',
-    '8': 'e',
-    '7': 'f',
-    '6': 'g',
-    '5': 'h',
-    '4': 'i',
-    '3': 'j',
-    '2': 'k',
-    '1': 'l'
-  };
-
-  var time_cmp = function(item) {
-    return '' + week_dict.indexOf(item.time[0]) + c_dict[item.time[1]];
+  $scope.order = function(predicate) {
+    search($scope.page_limit_index, $scope.page_size, predicate);
   }
 
-  $scope.order = function(predicate, reverse) {
-    if (predicate === 'time') {
-      $scope.query = orderBy($scope.query, time_cmp, reverse);
-    } else {
-      $scope.query = orderBy($scope.query, predicate, reverse);
-    }
-  };
-
   $scope.pageChanged = function(page) {
-    $scope.page_limit_index = page - 1;
+    $scope.page_limit_index = page;
+    search(page, $scope.page_size, $scope.predicate);
   }
 
   $scope.setPageSize = function(size) {
     $scope.page_size = size;
+    search($scope.page_limit_index, size, $scope.predicate);
   }
 
   $scope.add = function(c) {
