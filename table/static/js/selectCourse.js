@@ -140,7 +140,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
 
   var search = function(page, size, sortby) {
     var url = '/search/?' + $('#search-filter').serialize() + '&page=' + page + '&size=' + size + '&sort=' + sortby + '&reverse=' +$scope.reverse;
-    console.log(url);
     $.get(url, function(data) {
       $scope.fetch = JSON.parse(data);
       $scope.$apply();

@@ -60,6 +60,9 @@ window.fbAsyncInit = function() {
           -->
           <button class="btn btn-primary" id="saveAsFile">輸出課表</button>
         </li>
+        <li>
+          <button class="btn btn-primary" onclick=window.open("http://goo.gl/forms/YGNZryl4o7")>意見回饋</button>
+        </li>
       </ul>
     </nav>
   </div>
@@ -76,7 +79,10 @@ window.fbAsyncInit = function() {
 <!-- Main -->
 <div id="main" ng-app="ModuleNTHUCourse">
   <div class="container" ng-controller="CourseCtrl">
-    <alert ng-show="alerts>0" close="closeAlert()">本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！</alert>
+    <alert ng-show="alerts>0" close="closeAlert()">
+      本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！<br>
+      所有課程資料以課務組為準。
+    </alert>
     <form method="get" id="search-filter" class="form-horizontal">
       {{ search_filter.q|bootstrap_horizontal:"col-lg-1" }}
       {{ search_filter.code|bootstrap_horizontal:"col-lg-1" }}
@@ -117,11 +123,11 @@ window.fbAsyncInit = function() {
           </td>
         </tr>
         <tr ng-show="filtered.length>0">
-          <th ng-click="reverse=!reverse;predicate='no';order('no',reverse)"><a class="">科號</a></th>
-          <th ng-click="reverse=!reverse;predicate='chi_title';order('chi_title',reverse)">課程名稱</th>
-          <th ng-click="reverse=!reverse;predicate='teacher';order('teacher',reverse)">任課教師</th>
-          <th ng-click="reverse=!reverse;predicate='credit';order('credit',reverse)">學分</th>
-          <th ng-click="reverse=!reverse;predicate='time_token';order('time_token',reverse)">課程時間</th>
+          <th ng-click="reverse=!reverse;predicate='no';order('no',reverse)"><a class="sort_item">科號</a></th>
+          <th ng-click="reverse=!reverse;predicate='chi_title';order('chi_title',reverse)"><a class="sort_item">課程名稱</a></th>
+          <th ng-click="reverse=!reverse;predicate='teacher';order('teacher',reverse)"><a class="sort_item">任課教師</a></th>
+          <th ng-click="reverse=!reverse;predicate='credit';order('credit',reverse)"><a class="sort_item">學分</a></th>
+          <th ng-click="reverse=!reverse;predicate='time_token';order('time_token',reverse)"><a class="sort_item">課程時間</a></th>
         </tr>
       </thead>
       <tbody>

@@ -75,7 +75,7 @@ def search(request):
     if get_dept(q):
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all().order_by(rev_sortby)
+                dept_name=get_dept(q)).required_course.all()
         except:
             pass
         if courses:
@@ -83,15 +83,16 @@ def search(request):
             page_size = courses.count()
     else:
         courses = SearchQuerySet().filter(
-            content=AutoQuery(q)).order_by(rev_sortby)
+            content=AutoQuery(q))
         if code:
-            courses = courses.filter(code=code).order_by(rev_sortby)
+            courses = courses.filter(code=code)
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
-                courses = courses.filter(ge__contains=core).order_by(
-                    rev_sortby)  # reverse
+                courses = courses.filter(ge__contains=core)
+
+    courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
 
     try:
@@ -141,7 +142,7 @@ class CourseSearchForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'placeholder':
-                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號可查詢必選修'
+                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程'
             })
     )
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
