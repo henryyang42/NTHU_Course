@@ -19,7 +19,11 @@ $(function() {
 
   $("#search-filter").on("submit", function(event) {
     event.preventDefault();
-    var url = '/search/?' + $(this).serialize();
+    var url = '/search/?' + $(this).serialize() +
+      '&page=' + scope.page_limit_index + 
+      '&size=' + scope.page_size + 
+      '&sort=' + scope.predicate + 
+      '&reverse=' + scope.reverse;
     $.get(url, function(data) {
       var result = JSON.parse(data);
       scope.fetch = result;
