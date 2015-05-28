@@ -63,8 +63,9 @@ def trim_syllabus(ACIXSTORE, soup):
         if 'www' not in a['href'] or 'http' not in a['href']:
             a['href'] = host + a['href']
 
-    syllabus = ''.join(map(str, soup.body.contents))
+    syllabus = ''.join(map(unicode, soup.body.contents))
     syllabus = syllabus.replace('</br></br></br></br></br>', '')
+    syllabus = syllabus.replace('<br><br><br><br><br>', '')
     return syllabus
 
 
@@ -90,6 +91,7 @@ def syllabus_2_html(ACIXSTORE, course):
         course.eng_title = trs[3].find_all('td')[1].get_text()
         course.teacher = trs[4].find_all('td')[1].get_text()
         course.room = trs[5].find_all('td')[3].get_text()
+        course.save()
         course.syllabus = trim_syllabus(ACIXSTORE, soup)
         course.save()
     except:
@@ -99,7 +101,7 @@ def syllabus_2_html(ACIXSTORE, course):
 
 
 def trim_td(td):
-    td.get_text().rstrip().lstrip()
+    return td.get_text().rstrip().lstrip()
 
 
 def tr_2_class_info(tr):
@@ -138,12 +140,13 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
         trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
         for tr in trs:
             class_info = tr_2_class_info(tr)
+            if Course.objects.filter(no=class_info['no']):
+                continue
             if not class_info['credit']:
                 class_info['credit'] = '0'
             if not class_info['limit']:
                 class_info['limit'] = '0'
-            Course.objects.filter(no=class_info['no']).delete()
-            course = Course.objects.create(
+            course = Course.objects.update_or_create(
                 no=class_info['no'],
                 credit=int(class_info['credit']),
                 time=class_info['time'],
@@ -153,7 +156,7 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
                 prerequisite=class_info['prerequisite'] != '',
                 code=cou_code.strip(),
                 ge=get_ge(class_info['title']),
-            )
+            )[0]
 
             syllabus_2_html(ACIXSTORE, course)
             total_collected += 1
@@ -172,6 +175,8 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
         for div in divs:
             # Get something like ``EE  103BA``
             dept_name = div.find_all('font')[0].get_text().strip()
+            dept_name = dept_name.replace('B A', 'BA')
+            dept_name = dept_name.replace('B B', 'BB')
             try:
                 dept_name = re.search('\((.*?)\)', dept_name).group(1)
             except:
@@ -179,7 +184,8 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
                 continue
 
             trs = div.find_all('tr', bgcolor="#D8DAEB")
-            department = Department.objects.create(dept_name=dept_name)
+            department = Department.objects.get_or_create(
+                dept_name=dept_name)[0]
             for tr in trs:
                 tds = tr.find_all('td')
                 cou_no = tds[0].get_text()

@@ -62,7 +62,6 @@ ROOT_URLCONF = 'NTHU_Course.urls'
 
 WSGI_APPLICATION = 'NTHU_Course.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 CONFIG_PATH = os.path.join(BASE_DIR, 'NTHU_Course/mysql.ini')
