@@ -179,8 +179,10 @@ window.fbAsyncInit = function() {
           </td>
           <td ng-repeat="col in 'MTWRFS' ">
             <div ng-repeat="course in added_course | courseInThatTime:col+row " class="table-text">
-              {{ course.chi_title }}
-              <br> {{ course.room }}
+              <a data-toggle="tooltip" title="{{course.teacher}}">
+                {{ course.chi_title }}
+                <br> {{ course.room }}
+              </a>
             </div>
           </td>
         </tr>
@@ -189,7 +191,7 @@ window.fbAsyncInit = function() {
     <table class="table table-bordered table-hover" id="selected-table">
       <thead>
         <tr>
-          <td colspan="5">
+          <td colspan="6">
             <center>
               <h4>
                 您選了 {{ course_ct }} 門課共 <span ng-class="{true:'red', false:''}[ credit<16||credit>25 ]">{{ credit }}</span> 學分
@@ -203,6 +205,7 @@ window.fbAsyncInit = function() {
           <th>課程名稱</th>
           <th>任課教師</th>
           <th>學分</th>
+          <th>教室</th>
           <th>課程時間</th>
         </tr>
       </thead>
@@ -215,6 +218,7 @@ window.fbAsyncInit = function() {
           </td>
           <td>{{ course.teacher }}</td>
           <td>{{ course.credit }}</td>
+          <td>{{ course.room }}</td>
           <td>{{ course.time }}
             <a class="btn btn-danger table-btn" ng-click="del(course)">退選</a>
             <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
