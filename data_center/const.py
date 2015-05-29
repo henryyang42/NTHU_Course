@@ -8,6 +8,8 @@ course_dict = {'1': 'a','2': 'b','3': 'c','4': 'd','n': 'e','5': 'f','6': 'g','7
 cou_codes = ['ANTH', 'ANTU', 'ASTR', 'BME ', 'BMES', 'CF ', 'CFGE', 'CHE ', 'CHEM', 'CL ', 'CLC ', 'CLU ', 'COM ', 'CS ', 'DL ', 'DMS ', 'ECON', 'EE ', 'EECS', 'EMBA', 'ENE ', 'ESS ', 'FL ', 'FLU ', 'GEC ', 'GE ', 'GEU ', 'GPTS', 'HIS ', 'HSS ', 'HSSU', 'IACS', 'IACU', 'IEEM', 'IEM ', 'ILS ', 'IMBA', 'IPE ', 'IPNS', 'IPT ', 'ISA ', 'ISS ', 'LANG', 'LING', 'LS ', 'LSBS',
              'LSBT', 'LSIP', 'LSMC', 'LSMM', 'LSSN', 'LST ', 'MATH', 'MATU', 'MBA ', 'MI ', 'MS ', 'NEMS', 'NES ', 'NS ', 'NUCL', 'PE ', 'PE1 ', 'PE3 ', 'PHIL', 'PHYS', 'PHYU', 'PME ', 'QF ', 'RB ', 'RDDM', 'RDIC', 'RDPE', 'SCI ', 'SLS ', 'SNHC', 'SOC ', 'STAT', 'STAU', 'TE ', 'TEG ', 'TEX ', 'TIGP', 'TL ', 'TM ', 'UPMT', 'WH ', 'WW ', 'WZ ', 'XA ', 'XZ ', 'YZ ', 'ZY ', 'ZZ ', 'E ', 'W ', 'X ']
 
+SENIOR = 101
+
 CLASS_NAME_MAP = {'0': 'B', '1': 'BA', '2': 'BB', '3': 'BC', '5': 'M',
                   '6': 'M', '7': 'M', '8': 'D', '9': 'D'}
 DEPT_MAP = {'000': 'ST', '001': 'SLS', '002': 'ILS', '010': 'IPNS', '011': 'ESS', '012': 'BMES', '013': 'NES', '020': 'SCI', '021': 'MATH', '022': 'PHYS', '023': 'CHEM', '024': 'STAT', '025': 'ASTR', '030': 'IPE', '031': 'MS', '032': 'CHE', '033': 'PME', '034': 'IEEM', '035': 'NEMS', '036': 'IEM', '037': 'OET', '038': 'BME', '041': 'CL', '042': 'FL', '043': 'HIS', '044': 'LING', '045': 'SOC', '046': 'ANTH', '047': 'PHIL',
