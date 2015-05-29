@@ -21,6 +21,12 @@
     </div>
   </div>
   <!-- Main -->
+  {% for a in announcements %}
+    {{ a.title }}
+    {{ a.time }}
+    {{ a.type }}
+    {{ a.content|safe }}
+  {% endfor %}
   <div id="main">
     <div id="content" class="container">
       <header>
