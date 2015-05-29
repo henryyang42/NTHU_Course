@@ -15,6 +15,7 @@ from django import forms
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
+import sys
 
 def get_class_name(c):
     return CLASS_NAME_MAP.get(c, '')
@@ -23,9 +24,9 @@ def get_class_name(c):
 def get_dept(no):
     if not no.isdigit():
         return ''
-    if len(no) not in range(9, 11):
+    if len(no) not in range(8, 10):
         return ''
-    if len(no) == 9:
+    if len(no) == 8:
         no = '0' + no
     year = no[0:3]
     if int(year) < SENIOR:
