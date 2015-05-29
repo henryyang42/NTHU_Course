@@ -23,7 +23,7 @@ def get_class_name(c):
 def get_dept(no):
     if not no.isdigit():
         return ''
-    if len(no) not in range(8, 10):
+    if len(no) not in [8, 9]:
         return ''
     if len(no) == 8:
         no = '0' + no
@@ -39,6 +39,7 @@ def get_dept(no):
 
 
 def group_words(s):
+    """Split Chinese token for better search result"""
     regex = []
 
     # Match a whole word:
