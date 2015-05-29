@@ -26,8 +26,8 @@ def get_dept(no):
     if len(no) == len('101062142') - 1:
         no = '0' + no
     year = no[0:3]
-    if (int(year) < 100):
-        year = "100";
+    if (int(year) < 101):
+        year = "101";
     dept = no[3:6]
     dept = DEPT_MAP.get(dept, '')
     class_name = no[6:7]
