@@ -70,6 +70,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.time_table = {};
     $scope.credit = 0;
     $scope.course_ct = 0;
+    $scope.addAll_clicked = false;
   }
 
   function del_course(arr, c) {
@@ -184,7 +185,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       $scope.add(courses[i]);
     }
     toastr.info('您真貪心。');
-    delete $scope.fetch.type;
   }
 
   $scope.del = function(c) {
