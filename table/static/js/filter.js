@@ -26,15 +26,16 @@ $(function() {
       '&reverse=' + scope.reverse;
     $.get(url, function(data) {
       if (data == 'TMD') {
-         toastr.info('搜尋結果過多，請加強搜尋條件。');
-         return;
+          toastr.warning('搜尋結果過多，請加強搜尋條件。');
+          return;
       }
       var result = JSON.parse(data);
       scope.fetch = result;
       scope.currentPage = 1;
       scope.$apply();
       if (result.total == 0) {
-        toastr.info('查無結果！請嘗試其他關鍵字。');
+        toastr.warning('查無結果！請嘗試其他關鍵字。');
+        return;
       }
       $('#result-table').addClass(animation)
         .one(animationend, function(e) {
