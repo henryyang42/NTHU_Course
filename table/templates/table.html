@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 <link rel="stylesheet" media="screen" href="{% static 'css/table.css' %}" />
-<!-- Facebook -->
+<!-- Facebook
 <script>
 window.fbAsyncInit = function() {
   FB.init({
@@ -42,7 +42,7 @@ window.fbAsyncInit = function() {
   js.src = "//connect.facebook.net/en_US/sdk.js";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-</script>
+</script-->
 {% endblock source_block %}
 
 
@@ -93,7 +93,8 @@ window.fbAsyncInit = function() {
         {{ search_filter.gec|bootstrap_horizontal:"col-lg-1" }}
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">搜尋</button>
+        <button type="reset" class="btn btn-info">清除條件</button>
+        <button type="submit" class="btn btn-primary">　搜尋　</button>
       </div>
     </form>
     {% verbatim %}

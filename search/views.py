@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import operator
 import json
 import re
 from django.core.serializers.json import DjangoJSONEncoder
@@ -23,7 +22,7 @@ def get_class_name(c):
 def get_dept(no):
     if not no.isdigit():
         return ''
-    if len(no) not in range(8, 10):
+    if len(no) not in [8, 9]:
         return ''
     if len(no) == 8:
         no = '0' + no
@@ -39,6 +38,7 @@ def get_dept(no):
 
 
 def group_words(s):
+    """Split Chinese token for better search result"""
     regex = []
 
     # Match a whole word:
@@ -89,11 +89,15 @@ def search(request):
         courses = SearchQuerySet().filter(
             content=AutoQuery(q))
         if code:
-            courses = courses.filter(code=code)
+            courses = courses.filter(code__contains=code)
+
+        if courses.count() > 300:
+            return HttpResponse('TMD')  # Too many d...
+
+        courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
-                courses = Course.objects.filter(pk__in=[c.pk for c in courses])
                 courses = courses.filter(ge__contains=core)
 
     courses = courses.order_by(rev_sortby)
@@ -108,18 +112,14 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-    courses_list = Course.objects. \
-        filter(pk__in=[c.pk for c in courses_page.object_list]). \
+    courses_list = courses_page.object_list. \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit',
                'prerequisite', 'ge', 'code')
 
-    raw_courses = list(courses_list)
-    sorted_courses = sorted(
-        raw_courses, key=operator.itemgetter(sortby), reverse=reverse)
     result['total'] = courses.count()
     result['page'] = courses_page.number
-    result['courses'] = sorted_courses
+    result['courses'] = list(courses_list)
     result['page_size'] = page_size
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
@@ -140,15 +140,7 @@ def hit(request, id):
 
 
 class CourseSearchForm(forms.Form):
-    q = forms.CharField(
-        label='關鍵字',
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                'placeholder':
-                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程'
-            })
-    )
+    q = forms.CharField(label='關鍵字', required=False)
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
     ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
     gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)
