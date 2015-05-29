@@ -93,8 +93,6 @@ def search(request):
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
-                for c in courses:
-                    print c, c.ge
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
                 courses = courses.filter(ge__contains=core)
 
