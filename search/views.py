@@ -90,7 +90,7 @@ def search(request):
         courses = SearchQuerySet().filter(
             content=AutoQuery(q))
         if code:
-            courses = courses.filter(code=code)
+            courses = courses.filter(code__contains=code)
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:

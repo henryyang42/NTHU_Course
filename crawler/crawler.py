@@ -61,7 +61,7 @@ def trim_syllabus(ACIXSTORE, soup):
     for a in soup.find_all('a'):
         a['href'] = a['href'].replace(href_garbage, '').replace(' ', '%20')
         # Make relative path to absolute path
-        if 'www' not in a['href'] or 'http' not in a['href']:
+        if 'http' not in a['href']:
             a['href'] = host + a['href']
 
     syllabus = ''.join(map(unicode, soup.body.contents))
@@ -147,7 +147,7 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
             if not class_info['limit'].isdigit():
                 class_info['limit'] = '0'
             if Course.objects.filter(no=class_info['no']):
-                # If the course already exist, update it
+                # If the course already exists, update it
                 course = Course.objects.get(no=class_info['no'])
                 if cou_code not in course.code:
                     course.code = '%s %s' % (course.code, cou_code)
