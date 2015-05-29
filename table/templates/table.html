@@ -116,9 +116,6 @@ window.fbAsyncInit = function() {
                 <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
               </div>
               <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
-              <div ng-show="total_result>0">
-                <pagination ng-hide="fetch.type=='required'" total-items="total_result" items-per-page="page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
-              </div>
             </center>
           </td>
         </tr>
@@ -145,6 +142,15 @@ window.fbAsyncInit = function() {
             <a class="btn btn-primary table-btn" ng-hide="course.added" ng-click="add(course)">加選</a>
             <a class="btn btn-danger table-btn" ng-show="course.added" ng-click="del(course)">退選</a>
             <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5">
+            <center>
+              <div ng-show="total_result>0">
+                <pagination ng-hide="fetch.type=='required'" total-items="total_result" items-per-page="page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+              </div>
+            </center>
           </td>
         </tr>
       </tbody>
