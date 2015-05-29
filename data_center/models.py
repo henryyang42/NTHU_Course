@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 
 
@@ -33,3 +34,19 @@ class Department(models.Model):
 
     def __unicode__(self):
         return self.dept_name
+
+
+class Announcement(models.Model):
+    TAG_CHOICE = (
+        ('Info', 'Info'),
+        ('Bug', 'Bug'),
+        ('Fix', 'Fix'),
+    )
+
+    title = models.CharField(max_length=80, blank=True)
+    content = models.TextField(blank=True)
+    time = models.DateTimeField(default=datetime.now)
+    tag = models.CharField(max_length=10, choices=TAG_CHOICE, default='Info')
+
+    def __unicode__(self):
+        return self.title
