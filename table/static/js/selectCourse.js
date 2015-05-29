@@ -149,12 +149,19 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     });
   }
 
+  $scope.scrollTo = function(element) {
+    $( 'html, body').animate({
+      scrollTop: $(element).offset().top
+    }, 500);
+  }
+
   $scope.order = function(predicate) {
     search($scope.currentPage, $scope.page_size, predicate);
   }
 
   $scope.pageChanged = function(page) {
     search(page, $scope.page_size, $scope.predicate);
+    $scope.scrollTo('#result-table');
   }
 
   $scope.setPageSize = function(size) {
