@@ -143,15 +143,15 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       '&page=' + page +
       '&size=' + size +
       '&sort=' + sortby +
-      '&reverse=' +$scope.reverse;
+      '&reverse=' + $scope.reverse;
     $.get(url, function(data) {
-        $scope.fetch = JSON.parse(data);
-        $scope.$apply();
+      $scope.fetch = JSON.parse(data);
+      $scope.$apply();
     });
   }
 
   $scope.scrollTo = function(element) {
-    $( 'html, body').animate({
+    $('html, body').animate({
       scrollTop: $(element).offset().top
     }, 500);
   }
@@ -213,11 +213,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
         closeOnContentClick: false
       });
       $('[data-toggle="tooltip"]').tooltip();
-      $( document ).tooltip({
+      $(document).tooltip({
         track: true
       });
-      $( '#id_q' ).attr('title', '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程');
-      $( '#id_q' ).tooltip( {
+      $('#id_q').attr('title', '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程');
+      $('#id_q').tooltip({
         track: false,
         position: {
           my: "left bottom",

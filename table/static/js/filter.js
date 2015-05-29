@@ -1,7 +1,7 @@
 $(function() {
   var scope = angular.element('[ng-controller=CourseCtrl]').scope();
   var animation = 'animated bounceInLeft',
-      animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+    animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
   var ge_option = function() {
     code = $('#id_code').val();
     $('#ge-option').hide();
@@ -26,8 +26,8 @@ $(function() {
       '&reverse=' + scope.reverse;
     $.get(url, function(data) {
       if (data == 'TMD') {
-          toastr.warning('搜尋結果過多，請加強搜尋條件。');
-          return;
+        toastr.warning('搜尋結果過多，請加強搜尋條件。');
+        return;
       }
       var result = JSON.parse(data);
       scope.fetch = result;
