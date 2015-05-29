@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from datetime import datetime
 from django.db import models
 
@@ -38,15 +40,14 @@ class Department(models.Model):
 
 class Announcement(models.Model):
     TAG_CHOICE = (
-        ('Info', 'Info'),
-        ('Bug', 'Bug'),
-        ('Fix', 'Fix'),
+        ('Info', '公告'),
+        ('Bug', '已知問題'),
+        ('Fix', '問題修復'),
     )
 
-    title = models.CharField(max_length=80, blank=True)
     content = models.TextField(blank=True)
     time = models.DateTimeField(default=datetime.now)
     tag = models.CharField(max_length=10, choices=TAG_CHOICE, default='Info')
 
     def __unicode__(self):
-        return self.title
+        return '%s|%s' % (self.time, self.tag)
