@@ -141,15 +141,7 @@ def hit(request, id):
 
 
 class CourseSearchForm(forms.Form):
-    q = forms.CharField(
-        label='關鍵字',
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                'placeholder':
-                '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程'
-            })
-    )
+    q = forms.CharField(label='關鍵字', required=False)
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
     ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
     gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)

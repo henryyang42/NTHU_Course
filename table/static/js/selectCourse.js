@@ -216,6 +216,14 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       $( document ).tooltip({
         track: true
       });
+      $( '#id_q' ).attr('title', '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程');
+      $( '#id_q' ).tooltip( {
+        track: false,
+        position: {
+          my: "left bottom",
+          at: "left top-5"
+        }
+      });
     }, 100);
     // Save data
     if (typeof(Storage) !== 'undefined') {
