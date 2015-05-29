@@ -139,15 +139,22 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
         soup = bs4.BeautifulSoup(html, 'html.parser')
         trs = soup.find_all('tr', class_='class3')
         trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
+        cou_code = cou_code.strip()
         for tr in trs:
             class_info = tr_2_class_info(tr)
-            if Course.objects.filter(no=class_info['no']):
-                continue
             if not class_info['credit'].isdigit():
                 class_info['credit'] = '0'
             if not class_info['limit'].isdigit():
                 class_info['limit'] = '0'
-            course = Course.objects.update_or_create(
+            if Course.objects.filter(no=class_info['no']):
+                # If the course already exist, update it
+                course = Course.objects.get(no=class_info['no'])
+                if cou_code not in course.code:
+                    course.code = '%s %s' % (course.code, cou_code)
+                    course.save()
+                syllabus_2_html(ACIXSTORE, course)
+                continue
+            course = Course.objects.create(
                 no=class_info['no'],
                 credit=int(class_info['credit']),
                 time=class_info['time'],
@@ -156,9 +163,9 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
                 note=class_info['note'],
                 objective=class_info['objective'],
                 prerequisite=class_info['prerequisite'] != '',
-                code=cou_code.strip(),
+                code=cou_code,
                 ge=get_ge(class_info['title']),
-            )[0]
+            )
 
             syllabus_2_html(ACIXSTORE, course)
             total_collected += 1

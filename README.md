@@ -9,7 +9,7 @@ python manage.py syncdb
 python manage.py makemigrations
 python manage.py migrate
 python manage.py crawl_course
-python manage.py rebuild_index
+python manage.py update_index
 ```
 To clear all contents in db, use ``python manage.py crawl_course clear``
 To update all syllabus, use ``python manage.py update_syllabus``
