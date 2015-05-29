@@ -91,10 +91,14 @@ def search(request):
             content=AutoQuery(q))
         if code:
             courses = courses.filter(code__contains=code)
+
+        if courses.count() > 300:
+            return HttpResponse('TMD')  # Too many d...
+
+        courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
-                courses = Course.objects.filter(pk__in=[c.pk for c in courses])
                 courses = courses.filter(ge__contains=core)
 
     courses = courses.order_by(rev_sortby)
@@ -114,18 +118,14 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-    courses_list = Course.objects. \
-        filter(pk__in=[c.pk for c in courses_page.object_list]). \
+    courses_list = courses_page.object_list. \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit',
                'prerequisite', 'ge', 'code')
 
-    raw_courses = list(courses_list)
-    sorted_courses = sorted(
-        raw_courses, key=operator.itemgetter(sortby), reverse=reverse)
     result['total'] = courses.count()
     result['page'] = courses_page.number
-    result['courses'] = sorted_courses
+    result['courses'] = list(courses_list)
     result['page_size'] = page_size
 
     return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
