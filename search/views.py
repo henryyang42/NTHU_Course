@@ -15,7 +15,6 @@ from django import forms
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
-import sys
 
 def get_class_name(c):
     return CLASS_NAME_MAP.get(c, '')
