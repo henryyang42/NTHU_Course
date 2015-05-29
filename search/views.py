@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
 from data_center.const import DEPT_CHOICE, GEC_CHOICE, \
-    GE_CHOICE, CLASS_NAME_MAP, DEPT_MAP
+    GE_CHOICE, CLASS_NAME_MAP, DEPT_MAP, SENIOR
 from django.views.decorators.cache import cache_page
 from django import forms
 
@@ -21,18 +21,15 @@ def get_class_name(c):
 
 
 def get_dept(no):
-    if len(no) < len('101062124') - 1:
+    if not no.isdigit():
         return ''
-    if len(no) == len('101062142') - 1:
+    if len(no) not in range(9, 11):
+        return ''
+    if len(no) == 9:
         no = '0' + no
     year = no[0:3]
-    try:
-        year_int = int(year)
-    except ValueError:
-        return ''
-
-    if (int(year) < 101):
-        year = "101";
+    if int(year) < SENIOR:
+        year = SENIOR
     dept = no[3:6]
     dept = DEPT_MAP.get(dept, '')
     class_name = no[6:7]
