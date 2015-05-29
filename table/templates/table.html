@@ -115,6 +115,9 @@ window.fbAsyncInit = function() {
                 </span>
                 <span ng-hide="filtered.length>0"> (尚無查詢結果)</span>
               </div>
+              <div ng-show="total_result>0">
+                <pagination total-items="total_result" items-per-page="page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+              </div>
               <span ng-show="fetch.type=='required'"><a class="btn btn-danger table-btn" ng-click="add_all(filtered)">我全要了</a></span>
             </center>
           </td>
@@ -145,10 +148,10 @@ window.fbAsyncInit = function() {
           </td>
         </tr>
         <tr>
-          <td colspan="5">
+          <td colspan="5" ng-hide="fetch.type=='required'">
             <center>
               <div ng-show="total_result>0">
-                <pagination ng-hide="fetch.type=='required'" total-items="total_result" items-per-page="page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
+                <pagination total-items="total_result" items-per-page="page_size" ng-model="currentPage" ng-change="pageChanged(currentPage)" class="pagination-sm" boundary-links="true" max-size="max_size" previous-text="上一頁" next-text="下一頁" first-text="第一頁" last-text="最尾頁"></pagination>
               </div>
             </center>
           </td>
