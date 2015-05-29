@@ -202,6 +202,16 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
     print '%d department information collected.' % total_collected
 
 
+def update_syllabus():
+    r = requests.get(
+        'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php'
+    )
+    ACIXSTORE = bs4.BeautifulSoup(r.text, 'html.parser').find('input')['value']
+    progress = progressbar.ProgressBar()
+    for course in progress(Course.objects.all()):
+        syllabus_2_html(ACIXSTORE, course)
+
+
 def get_token(s):
     try:
         return week_dict[s[0]] + course_dict[s[1]] + s[2:]
