@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import operator
 import json
 import re
 from django.core.serializers.json import DjangoJSONEncoder

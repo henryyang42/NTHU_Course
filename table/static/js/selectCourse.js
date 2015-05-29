@@ -62,7 +62,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   $scope.alerts = 1;
   $scope.page_size = 10;
   $scope.pageSizeModel = '10';
-  $scope.predicate = 'time_token';
+  $scope.predicate = 'no';
   $scope.reverse = false;
 
   function init() {
