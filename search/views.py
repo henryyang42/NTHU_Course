@@ -26,6 +26,8 @@ def get_dept(no):
     if len(no) == len('101062142') - 1:
         no = '0' + no
     year = no[0:3]
+    if (int(year) < 100):
+        year = "100";
     dept = no[3:6]
     dept = DEPT_MAP.get(dept, '')
     class_name = no[6:7]
@@ -89,6 +91,8 @@ def search(request):
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
+                for c in courses:
+                    print c, c.ge
                 courses = Course.objects.filter(pk__in=[c.pk for c in courses])
                 courses = courses.filter(ge__contains=core)
 

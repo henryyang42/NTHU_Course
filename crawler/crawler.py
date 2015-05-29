@@ -203,13 +203,20 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
 
 
 def update_syllabus():
+    update = 0
     r = requests.get(
         'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php'
     )
     ACIXSTORE = bs4.BeautifulSoup(r.text, 'html.parser').find('input')['value']
     progress = progressbar.ProgressBar()
     for course in progress(Course.objects.all()):
+        s1 = course.syllabus
         syllabus_2_html(ACIXSTORE, course)
+        s2 = course.syllabus
+        if s1 != s2:
+            update += 1
+
+    print '%d syllabus updated.' % update
 
 
 def get_token(s):
