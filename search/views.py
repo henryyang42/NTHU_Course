@@ -100,6 +100,11 @@ def search(request):
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
 
+    # force the lazy queryset executed 
+    # for c in courses:
+    #     pass
+    list(courses)
+
     try:
         courses_page = paginator.page(page)
     except PageNotAnInteger:
