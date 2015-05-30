@@ -7,6 +7,7 @@ Requires tesseract binary & lxml
 from __future__ import print_function
 
 import logging
+import re
 import subprocess
 import tempfile
 try:
@@ -43,15 +44,11 @@ def tesseract_versions():
     )
 
 
-def decaptcha_url(url):
+def decaptcha_url(url, params=None):
     with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmpimg:
-        tmpimg.write(requests.get(url).content)
+        tmpimg.write(requests.get(url, params=params).content)
         tmpimg.flush()
         return tesseract(tmpimg.name).replace(b' ', b'')
-
-
-def get_captcha_url(acixstore):
-    return '%s?ACIXSTORE=%s' % (captcha_url_base, acixstore)
 
 
 class Entrance(object):
@@ -70,11 +67,14 @@ class Entrance(object):
         self.page_encoding = page_encoding
         self.captcha_length_hint = captcha_length_hint
 
-    def get_acixstore(self):
+    def get_key_from_new_form(self, xpath_hint):
         response = requests.get(self.form_url)
         response.encoding = self.page_encoding
-        document = lxml.html.fromstring(response.content)
-        return document.xpath('//input[@name="ACIXSTORE"]')[0].value
+        document = lxml.html.fromstring(response.text)
+        return document.xpath(xpath_hint)[0].value
+
+    def get_acixstore(self):
+        return self.get_key_from_new_form('//input[@name="ACIXSTORE"]')
 
     def guess_form_action_url(self):
         response = requests.get(self.form_url)
@@ -87,7 +87,8 @@ class Entrance(object):
                 return element.action
         raise DecaptchaFailure('Cannot guess form action url')
 
-    def validate_by_post(self, acixstore, captcha):
+    def validate_by_post(self, result):
+        acixstore, captcha = result
         response = requests.post(
             self.form_action_url,
             data={
@@ -97,31 +98,54 @@ class Entrance(object):
         )
         response.encoding = self.page_encoding
         if b'interrupted' in response.content:
-            logger.info('%r: %r session is interrupted', acixstore, captcha)
+            logger.info('%r: %r session is interrupted', *result)
             return False
         elif b'Wrong check code' in response.content:
-            logger.info('%r: %r is simply incorrect', acixstore, captcha)
+            logger.info('%r: %r is simply incorrect', *result)
             return False
         else:
             # assume the code is correct if nothing indicates it's not
-            logger.info('%r: %r is correct', acixstore, captcha)
-            logger.debug('RESPOSE: %r', response.text)
+            logger.info('%r: %r is correct', *result)
+            logger.debug('RESPONSE: %r', response.text)
             return True
 
-    def validate(self, acixstore, captcha):
+    def pre_validate(self, captcha, log_hint):
         if not captcha.isdigit():
-            logger.info('%r: %r is not a number', acixstore, captcha)
+            logger.info('%r: %r is not a number', log_hint, captcha)
             return False
         if (
             self.captcha_length_hint is not None and
             not len(captcha) == self.captcha_length_hint
         ):
             logger.info(
-                '%r: %r does not have length == 3', acixstore, captcha)
+                '%r: %r does not have length == %i',
+                log_hint,
+                captcha,
+                self.captcha_length_hint
+                )
             return False
-        return self.validate_by_post(acixstore, captcha)
+        return True
+
+    def validate(self, result):
+        acixstore, captcha = result
+        return (
+            self.pre_validate(captcha, acixstore) and
+            self.validate_by_post(result)
+        )
+
+    def _get_ticket(self):
+        acixstore = self.get_acixstore()
+        captcha = decaptcha_url(
+            captcha_url_base,
+            params={'ACIXSTORE': acixstore}
+        )
+        return acixstore, captcha
 
     def get_ticket(self, retries=32):
+        '''
+        returns (acixstore, captcha) pair
+        raises DecaptchaFailure if cannot guess captcha in limited retries
+        '''
         logger.info('trying acixstore-captcha pair for %r', self.form_url)
         if self.form_action_url is None:
             self.form_action_url = self.guess_form_action_url()
@@ -129,11 +153,81 @@ class Entrance(object):
                 'form_action_url not provided, assuming %r',
                 self.form_action_url)
         for try_ in range(retries):
-            acixstore = self.get_acixstore()
-            captcha = decaptcha_url(get_captcha_url(acixstore))
-            if self.validate(acixstore, captcha):
-                return acixstore, captcha
+            result = self._get_ticket()
+            if self.validate(result):
+                return result
         raise DecaptchaFailure('Cannot decaptcha for, retries=%i' % retries)
+
+
+class AISEntrance(Entrance):
+    def __init__(self, username=None, password=None):
+        super(AISEntrance, self).__init__(
+            form_url='https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/',
+            form_action_url='/ccxp/INQUIRE/pre_select_entry.php',
+            captcha_length_hint=6
+        )
+        self.username = username
+        self.password = password
+
+    def get_fnstr(self):
+        return self.get_key_from_new_form('//input[@name="fnstr"]')
+
+    def _get_ticket(self):
+        fnstr = self.get_fnstr()
+        captcha = decaptcha_url(
+            urljoin(self.form_url, 'auth_img.php'),
+            params={'pwdstr': fnstr}
+        )
+        return {
+            'account': self.username,
+            'passwd': self.password,
+            'passwd2': captcha,
+            'fnstr': fnstr,
+        }
+
+    def validate_by_post(self, result):
+        '''
+        validate the result, add ACIXSTORE to result dict if it's valid
+        '''
+        response = requests.post(self.form_action_url, data=result)
+        response.encoding = self.page_encoding
+        document = lxml.html.fromstring(response.text)
+        scripts = document.xpath('//script')
+        if scripts:
+            logger.info(
+                '%r: %r: %r',
+                result['fnstr'],
+                result['passwd2'],
+                scripts[0].text
+            )
+            return False
+        else:
+            meta_content = document.xpath('//meta/@content')[0]
+            for meta_fragment in meta_content.split(';'):
+                if meta_fragment.startswith('url='):
+                    match = re.search(
+                        r'ACIXSTORE\=([\w\d]+)',
+                        meta_fragment
+                    )
+                    if match:
+                        result['ACIXSTORE'] = match.groups()[0]
+                        logger.info(
+                            '%(fnstr)r: %(passwd2)r is correct',
+                            result
+                        )
+                        return True
+            logger.warn(
+                '%(fnstr)r: %(passwd2)r'
+                'cannot find ACIXSTORE for meta/@content',
+                result
+            )
+            return False
+
+    def validate(self, result):
+        return (
+            self.pre_validate(result['passwd2'], result['fnstr']) and
+            self.validate_by_post(result)
+        )
 
 
 try:
@@ -160,7 +254,7 @@ if __name__ == '__main__':
         default=None
     )
     parser.add_argument(
-        '--retires',
+        '--retries',
         help='max_retries',
         default=32,
         type=int
@@ -170,6 +264,22 @@ if __name__ == '__main__':
         help='do not log',
         action='store_true'
     )
+    parser.add_argument(
+        '--ais',
+        help='login to AIS',
+        action='store_true',
+        default=False
+    )
+    parser.add_argument(
+        '--username',
+        help='username for AIS',
+        default=None
+    )
+    parser.add_argument(
+        '--password',
+        help='password for AIS',
+        default=None
+    )
 
     args = parser.parse_args()
 
@@ -177,11 +287,25 @@ if __name__ == '__main__':
         logger.setLevel(logging.INFO)
         logger.addHandler(logging.StreamHandler())
 
-    print(
-        Entrance(
-            args.form_url,
-            args.form_action_url
-        ).get_ticket(
-            args.retires
+    if args.ais:
+        import sys
+        import getpass
+        if sys.version_info.major == 2:
+            input = raw_input  # noqa (python 3 does not have raw_input)
+        print(
+            AISEntrance(
+                args.username or input('Username: '),
+                args.password or getpass.getpass()
+            ).get_ticket(
+                args.retries
+            )
         )
-    )
+    else:
+        print(
+            Entrance(
+                args.form_url,
+                args.form_action_url
+            ).get_ticket(
+                args.retries
+            )
+        )
