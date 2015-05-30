@@ -14,7 +14,7 @@ install:
 
 before_script:
     - pyflakes .
-    - pep8 --exclude=const.py
+    - pep8 --exclude=const.py .
 
 script:
     - sh ./test.sh
