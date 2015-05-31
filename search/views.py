@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
