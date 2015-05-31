@@ -145,7 +145,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       '&sort=' + sortby +
       '&reverse=' + $scope.reverse;
     $.get(url, function(data) {
-      $scope.fetch = data;//JSON.parse(data);
+      $scope.fetch = data;
       $scope.$apply();
     });
   }
@@ -236,7 +236,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
 
   var updateFetch = function() {
     $scope.query = $scope.fetch.courses;
-    // $scope.currentPage = $scope.fetch.page;
     $scope.total_result = $scope.fetch.total;
   }
 
