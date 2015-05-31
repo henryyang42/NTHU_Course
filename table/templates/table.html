@@ -7,7 +7,6 @@
 {% endblock title_block %}
 
 {% block source_block %}
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="//cdn.rawgit.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
 <script src="//cdn.rawgit.com/hydai/Canvas/master/base64binary.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js"></script>
@@ -19,7 +18,6 @@
 <script src="{% static 'js/filter.js' %}"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 <link rel="stylesheet" media="screen" href="{% static 'css/table.css' %}" />
 <!-- Facebook
@@ -53,7 +51,10 @@ window.fbAsyncInit = function() {
     <!-- Nav -->
     <nav id="nav">
       <ul>
-        <li class="active"><a href="/">關於我們</a></li>
+        <li class="active"><a href="/">首頁</a></li>
+        <li>
+          <button id="twocolbtn" class="btn btn-info">切換單欄/兩欄式</button>
+        </li>
         <li>
           <!--
           <button class="btn btn-primary" id="postToFB">透過 Facebook 分享課表</button>
@@ -79,6 +80,9 @@ window.fbAsyncInit = function() {
 <!-- Main -->
 <div id="main" ng-app="ModuleNTHUCourse">
   <div class="container" ng-controller="CourseCtrl">
+    <center><p></p></center>
+    <div class="col-lg-12">
+    
     <alert ng-show="alerts>0" close="closeAlert()">
       本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！<br>
       此外，因為課程資料課務組可能更動，我們每天至少更新一次，最終結果以課務組為準。
@@ -124,11 +128,11 @@ window.fbAsyncInit = function() {
           </td>
         </tr>
         <tr ng-show="filtered.length>0">
-          <th ng-click="reverse=!reverse;predicate='no';order('no',reverse)"><a class="sort_item">科號</a></th>
-          <th ng-click="reverse=!reverse;predicate='chi_title';order('chi_title',reverse)"><a class="sort_item">課程名稱</a></th>
-          <th ng-click="reverse=!reverse;predicate='teacher';order('teacher',reverse)"><a class="sort_item">任課教師</a></th>
-          <th ng-click="reverse=!reverse;predicate='credit';order('credit',reverse)"><a class="sort_item">學分</a></th>
-          <th ng-click="reverse=!reverse;predicate='time_token';order('time_token',reverse)"><a class="sort_item">課程時間</a></th>
+          <th ng-click="reverse=!reverse;predicate='no';order('no',reverse)" width="15%"><a class="sort_item">科號</a></th>
+          <th ng-click="reverse=!reverse;predicate='chi_title';order('chi_title',reverse)" width="45%"><a class="sort_item">課程名稱</a></th>
+          <th ng-click="reverse=!reverse;predicate='teacher';order('teacher',reverse)" width="10%"><a class="sort_item">任課教師</a></th>
+          <th ng-click="reverse=!reverse;predicate='credit';order('credit',reverse)" width="5%"><a class="sort_item">學分</a></th>
+          <th ng-click="reverse=!reverse;predicate='time_token';order('time_token',reverse)" width="25%"><a class="sort_item">課程時間</a></th>
         </tr>
       </thead>
       <tbody>
@@ -159,6 +163,8 @@ window.fbAsyncInit = function() {
         </tr>
       </tbody>
     </table>
+    </div>
+    <div class="col-lg-12">
     <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table" style="border-style: solid; border-width: 1px;">
       <thead>
         <tr>
@@ -203,12 +209,12 @@ window.fbAsyncInit = function() {
           </td>
         </tr>
         <tr>
-          <th>科號</th>
-          <th>課程名稱</th>
-          <th>任課教師</th>
-          <th>學分</th>
-          <th>教室</th>
-          <th>課程時間</th>
+          <th width="15%">科號</th>
+          <th width="35%">課程名稱</th>
+          <th width="10%">任課教師</th>
+          <th width="5%">學分</th>
+          <th width="10">教室</th>
+          <th width="25%">課程時間</th>
         </tr>
       </thead>
       <tbody>
@@ -228,6 +234,7 @@ window.fbAsyncInit = function() {
         </tr>
       </tbody>
     </table>
+    </div>
     {% endverbatim %}
   </div>
 </div>

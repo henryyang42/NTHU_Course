@@ -17,6 +17,14 @@ $(function() {
   $('#id_code').change(ge_option);
   ge_option();
 
+  $('#twocolbtn').on("click", function(event) {
+    event.preventDefault();
+    $('#main .container > div').toggleClass('col-lg-12 col-lg-6');
+    $('#main .form-group label').toggleClass('col-lg-1 col-lg-2');
+    $('#main .form-group div').toggleClass('col-lg-11 col-lg-10');
+    $('#main .container').toggleClass("lg-container");
+  });
+
   $("#search-filter").on("submit", function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
@@ -24,12 +32,12 @@ $(function() {
       '&size=' + scope.page_size +
       '&sort=' + scope.predicate +
       '&reverse=' + scope.reverse;
-    $.get(url, function(data) {
-      if (data == 'TMD') {
+    $.get(url, function(result) {
+      if (result == 'TMD') {
         toastr.warning('搜尋結果過多，請加強搜尋條件。');
         return;
       }
-      var result = JSON.parse(data);
+      // var result = JSON.parse(data);
       scope.fetch = result;
       scope.currentPage = 1;
       scope.$apply();
