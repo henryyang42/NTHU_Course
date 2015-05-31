@@ -86,13 +86,12 @@ def search(request):
             result['type'] = 'required'
             page_size = courses.count()
     else:
-        courses = SearchQuerySet().filter(
-            content=AutoQuery(q))
+        courses = courses.filter(content=AutoQuery(q))
         if code:
             courses = courses.filter(code__contains=code)
 
         if courses.count() > 300:
-            return HttpResponse('TMD')  # Too many d...
+            return HttpResponse('TMD')  # Too many detail
 
         courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
