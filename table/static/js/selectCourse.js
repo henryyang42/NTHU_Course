@@ -145,7 +145,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       '&sort=' + sortby +
       '&reverse=' + $scope.reverse;
     $.get(url, function(data) {
-      $scope.fetch = JSON.parse(data);
+      $scope.fetch = data;//JSON.parse(data);
       $scope.$apply();
     });
   }

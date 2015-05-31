@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 import re
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
 from data_center.const import DEPT_CHOICE, GEC_CHOICE, \
@@ -69,12 +69,9 @@ def search(request):
     page_size = size or 10
     sortby = sortby_param or 'time_token'
     reverse = True if reverse_param == 'true' else False
+    rev_sortby = '-' + sortby if reverse else sortby
 
     courses = SearchQuerySet()
-
-    if sortby == 'time':
-        sortby = 'time_token'
-    rev_sortby = u'-' + sortby if reverse else sortby
 
     if get_dept(q):
         try:
@@ -121,7 +118,7 @@ def search(request):
     result['courses'] = list(courses_list)
     result['page_size'] = page_size
 
-    return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
+    return JsonResponse(result)
 
 
 @cache_page(60 * 60)

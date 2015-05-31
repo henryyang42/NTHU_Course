@@ -24,12 +24,12 @@ $(function() {
       '&size=' + scope.page_size +
       '&sort=' + scope.predicate +
       '&reverse=' + scope.reverse;
-    $.get(url, function(data) {
-      if (data == 'TMD') {
+    $.get(url, function(result) {
+      if (result == 'TMD') {
         toastr.warning('搜尋結果過多，請加強搜尋條件。');
         return;
       }
-      var result = JSON.parse(data);
+      // var result = JSON.parse(data);
       scope.fetch = result;
       scope.currentPage = 1;
       scope.$apply();
