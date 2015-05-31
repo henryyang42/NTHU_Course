@@ -17,6 +17,14 @@ $(function() {
   $('#id_code').change(ge_option);
   ge_option();
 
+  $('#twocolbtn').on("click", function(event) {
+    event.preventDefault();
+    $('#main .container > div').toggleClass('col-lg-12 col-lg-6');
+    $('#main .form-group label').toggleClass('col-lg-1 col-lg-2');
+    $('#main .form-group div').toggleClass('col-lg-11 col-lg-10');
+    $('#main .container').toggleClass("lg-container");
+  });
+
   $("#search-filter").on("submit", function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
