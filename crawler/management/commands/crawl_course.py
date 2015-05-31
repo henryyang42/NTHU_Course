@@ -16,7 +16,7 @@ def get_auth_pair(url):
         except DecaptchaFailure:
             print 'Automated decaptcha failed.'
     else:
-        print 'crawler.decaptcha not available (requires tesseract, lxml).'
+        print 'crawler.decaptcha not available (requires tesseract >= 3.03).'
     print 'Please provide valid ACIXSTORE and auth_num from'
     print url
     ACIXSTORE = raw_input('ACIXSTORE: ')

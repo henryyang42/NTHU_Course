@@ -1,7 +1,7 @@
 '''
 NTHU CCXP Decaptcha
 
-Requires tesseract binary & lxml
+Requires tesseract >= 3.03
 '''
 
 from __future__ import print_function
@@ -230,10 +230,15 @@ class AISEntrance(Entrance):
         )
 
 
+# tesseract availability test
 try:
-    tesseract_versions()
+    versions = tesseract_versions()
 except subprocess.CalledProcessError:
     raise ImportError('%r requires tesseract binary' % __name__)
+else:
+    major, minor = map(int, versions.splitlines()[0].split()[-1].split(b'.'))
+    if (major, minor) < (3, 3):
+        raise ImportError('%r requires tesseract >= 3.03' % __name__)
 
 
 if __name__ == '__main__':
