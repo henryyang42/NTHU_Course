@@ -62,6 +62,7 @@ def search(request):
     page = request.GET.get('page', '')
     size = request.GET.get('size', '')
     code = request.GET.get('code', '')
+    dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
 
@@ -72,10 +73,12 @@ def search(request):
 
     courses = SearchQuerySet()
 
-    if get_dept(q):
+    if dept_required or get_dept(q):
+        if get_dept(q):
+            dept_required = get_dept(q)
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all()
+                dept_name=dept_required).required_course.all()
         except:
             pass
         if courses:
