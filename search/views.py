@@ -62,6 +62,7 @@ def search(request):
     page = request.GET.get('page', '')
     size = request.GET.get('size', '')
     code = request.GET.get('code', '')
+    dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
 
@@ -72,10 +73,12 @@ def search(request):
 
     courses = SearchQuerySet()
 
-    if get_dept(q):
+    if dept_required or get_dept(q):
+        if get_dept(q):
+            dept_required = get_dept(q)
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all()
+                dept_name=dept_required).required_course.all()
         except:
             pass
         if courses:
@@ -134,11 +137,34 @@ def hit(request, id):
     return HttpResponse('')
 
 
+def generate_dept_required_choice():
+    choices = (('', '---'),)
+    departments = Department.objects.all()
+    for department in departments:
+        dept_name = department.dept_name
+        year = {'104': '一年級', '103': '二年級', '102': '三年級', '101': '四年級'}. \
+            get(dept_name[4:7], '')
+        degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
+            get(dept_name[7], '')
+        chi_dept_name = degree
+
+        if dept_name[7] == 'B':
+            chi_dept_name += year
+            chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
+                get(dept_name[7:], '')
+
+        choices += ((dept_name, chi_dept_name),)
+    return sorted(choices)
+
+
 class CourseSearchForm(forms.Form):
+    DEPT_REQUIRED_CHOICE = generate_dept_required_choice()
     q = forms.CharField(label='關鍵字', required=False)
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
     ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
     gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)
+    dept_required = forms.ChoiceField(
+        label='必選修', choices=DEPT_REQUIRED_CHOICE, required=False)
 
 
 def table(request):
