@@ -10,11 +10,6 @@ cou_codes = ['ANTH', 'ANTU', 'ASTR', 'BME ', 'BMES', 'CF ', 'CFGE', 'CHE ', 'CHE
 
 SENIOR = 101
 
-CLASS_NAME_MAP = {'0': 'B', '1': 'BA', '2': 'BB', '3': 'BC', '5': 'M',
-                  '6': 'M', '7': 'M', '8': 'D', '9': 'D'}
-DEPT_MAP = {'000': 'ST', '001': 'SLS', '002': 'ILS', '010': 'IPNS', '011': 'ESS', '012': 'BMES', '013': 'NES', '020': 'SCI', '021': 'MATH', '022': 'PHYS', '023': 'CHEM', '024': 'STAT', '025': 'ASTR', '030': 'IPE', '031': 'MS', '032': 'CHE', '033': 'PME', '034': 'IEEM', '035': 'NEMS', '036': 'IEM', '037': 'OET', '038': 'BME', '041': 'CL', '042': 'FL', '043': 'HIS', '044': 'LING', '045': 'SOC', '046': 'ANTH', '047': 'PHIL',
-            '048': 'HSS', '049': 'TL', '141': 'GPTS', '142': 'IACS', '060': 'EECS', '061': 'EE', '062': 'CS', '063': 'ENE', '064': 'COM', '065': 'ISA', '066': 'IPT', '067': 'RDIC', '068': 'RDDM', '069': 'RDPE', '161': 'UPPP', '162': 'SNHC', '070': 'UPMT', '071': 'QF', '072': 'ECON', '073': 'TM', '074': 'LST', '075': 'EMBA', '076': 'MBA', '077': 'IMBA', '078': 'ISS', '080': 'LSIP', '081': 'LS', '082': 'DMS', '083': 'LSIN'}
-
 DEPT_CHOICE = (('', '開課代號 Choose the course offering department'),
                ('GE', 'GE  　通識教育中心 General Education'),
                ('GEC', 'GEC 　通識核心 General Education Core Courses'),
