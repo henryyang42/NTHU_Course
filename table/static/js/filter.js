@@ -2,20 +2,31 @@ $(function() {
   var scope = angular.element('[ng-controller=CourseCtrl]').scope();
   var animation = 'animated bounceInLeft',
     animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-  var ge_option = function() {
+  var course_code_option = function() {
     code = $('#id_code').val();
+    // 4 digit code for dept-required-option
+    code_4 = code;
+    while(code_4.length < 4)
+      code_4 += ' '
     $('#ge-option').hide();
     $('#gec-option').hide();
+    $('#dept-required-option').hide();
     if (code == 'GE' || code == 'GEC') {
       id = '#' + code.toLowerCase() + '-option';
       $(id).show();
+    } else if ($('#id_dept_required  option[value^="'+code_4+'"]').length){
+      $('#dept-required-option').show();
+      $('#id_dept_required  option').hide();
+      $('#id_dept_required  option[value^="'+code_4+'"]').show();
+      $('#id_dept_required  option[value=""]').show();
     } else {
       $('#id_ge').val('');
       $('#id_gec').val('');
+      $('#id_dept_required').val('');
     }
   }
-  $('#id_code').change(ge_option);
-  ge_option();
+  $('#id_code').change(course_code_option);
+  course_code_option();
 
   $('#twocolbtn').on("click", function(event) {
     event.preventDefault();
