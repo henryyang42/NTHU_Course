@@ -6,34 +6,12 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
 from data_center.const import DEPT_CHOICE, GEC_CHOICE, \
-    GE_CHOICE, CLASS_NAME_MAP, DEPT_MAP, SENIOR
+    GE_CHOICE
 from django.views.decorators.cache import cache_page
 from django import forms
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
-
-
-def get_class_name(c):
-    return CLASS_NAME_MAP.get(c, '')
-
-
-def get_dept(no):
-    if not no.isdigit():
-        return ''
-    if len(no) not in [8, 9]:
-        return ''
-    if len(no) == 8:
-        no = '0' + no
-    year = no[0:3]
-    if int(year) < SENIOR:
-        year = SENIOR
-    dept = no[3:6]
-    dept = DEPT_MAP.get(dept, '')
-    class_name = no[6:7]
-    if dept:
-        return '%-4s%s%s' % (dept, year, get_class_name(class_name))
-    return ''
 
 
 def group_words(s):
@@ -62,6 +40,7 @@ def search(request):
     page = request.GET.get('page', '')
     size = request.GET.get('size', '')
     code = request.GET.get('code', '')
+    dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
 
@@ -72,10 +51,10 @@ def search(request):
 
     courses = SearchQuerySet()
 
-    if get_dept(q):
+    if dept_required:
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all()
+                dept_name=dept_required).required_course.all()
         except:
             pass
         if courses:
@@ -134,11 +113,34 @@ def hit(request, id):
     return HttpResponse('')
 
 
+def generate_dept_required_choice():
+    choices = (('', '---'),)
+    departments = Department.objects.all()
+    for department in departments:
+        dept_name = department.dept_name
+        year = {'104': '一年級', '103': '二年級', '102': '三年級', '101': '四年級'}. \
+            get(dept_name[4:7], '')
+        degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
+            get(dept_name[7], '')
+        chi_dept_name = degree
+
+        if dept_name[7] == 'B':
+            chi_dept_name += year
+            chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
+                get(dept_name[7:], '')
+
+        choices += ((dept_name, chi_dept_name),)
+    return sorted(choices)
+
+
 class CourseSearchForm(forms.Form):
+    DEPT_REQUIRED_CHOICE = generate_dept_required_choice()
     q = forms.CharField(label='關鍵字', required=False)
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
     ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
     gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)
+    dept_required = forms.ChoiceField(
+        label='必選修', choices=DEPT_REQUIRED_CHOICE, required=False)
 
 
 def table(request):
