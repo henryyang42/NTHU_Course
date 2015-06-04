@@ -1,4 +1,10 @@
 $("#saveAsFile").click(function() {
+  var tmp_attr = $("#course-table").attr("class");
+  $("#course-table").removeAttr("class");
+  $("#course-table").css("width", "200%");
+  $("#course-table").css("height", "auto");
+  $("#course-table td, th").css("padding", "5px");
+  $("#course-table").css("font-size", "180%");
   html2canvas($("#course-table")).then(function(canvas) {
     var bgcanvas = document.createElement("canvas");
     bgcanvas.width = canvas.width;
@@ -21,4 +27,9 @@ $("#saveAsFile").click(function() {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   });
+  $("#course-table").removeAttr("height");
+  $("#course-table").css("width", "100%");
+  $("#course-table td, th").removeAttr("padding");
+  $("#course-table").attr("class", tmp_attr);
+  $("#course-table").css("font-size", "100%");
 });
