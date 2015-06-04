@@ -42,6 +42,7 @@ def search(request):
     dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
+    time_conflicts = request.GET.getlist('time_conflict')
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
@@ -72,6 +73,9 @@ def search(request):
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = courses.filter(ge__contains=core)
+
+    for time_conflict in time_conflicts:
+        courses = courses.exclude(time__contains=time_conflict)
 
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
