@@ -5,8 +5,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
-from data_center.const import DEPT_CHOICE, GEC_CHOICE, \
-    GE_CHOICE
+from data_center.const import DEPT_CHOICE, GEC_CHOICE, GE_CHOICE
 from django.views.decorators.cache import cache_page
 from django import forms
 
