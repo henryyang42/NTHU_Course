@@ -146,4 +146,6 @@ class CourseSearchForm(forms.Form):
 def table(request):
     render_data = {}
     render_data['search_filter'] = CourseSearchForm(request.GET)
+    render_data['request'] = request
+    render_data['user'] = request.user
     return render(request, 'table.html', render_data)

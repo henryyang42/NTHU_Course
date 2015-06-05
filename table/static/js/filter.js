@@ -1,4 +1,9 @@
 $(function() {
+
+  // remove facebook disgusting hash on login redirect url
+  if (window.location.hash && window.location.hash == '#_=_')
+    window.location.hash = '';
+
   var scope = angular.element('[ng-controller=CourseCtrl]').scope();
   var animation = 'animated bounceInLeft',
     animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
