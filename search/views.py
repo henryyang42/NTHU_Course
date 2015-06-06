@@ -13,6 +13,8 @@ from django import forms
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
+from member.models import Member
+
 
 def group_words(s):
     """Split Chinese token for better search result"""
@@ -107,9 +109,10 @@ def syllabus(request, id):
 
 
 def hit(request, id):
+    """ Use this `hit` function to record the course """
+    current_user = Member.objects.get(id=request.user.id)
     course = get_object_or_404(Course, id=id)
-    course.hit += 1
-    course.save()
+    current_user.courses.add(course)
     return HttpResponse('')
 
 
@@ -146,4 +149,6 @@ class CourseSearchForm(forms.Form):
 def table(request):
     render_data = {}
     render_data['search_filter'] = CourseSearchForm(request.GET)
+    render_data['request'] = request
+    render_data['user'] = request.user
     return render(request, 'table.html', render_data)
