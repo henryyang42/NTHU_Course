@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from member.models import Member
 
 def save_userdata(backend, user, response, *args, **kwargs):
