@@ -108,12 +108,33 @@ def syllabus(request, id):
                   {'course': course, 'syllabus_path': request.path})
 
 
-def hit(request, id):
-    """ Use this `hit` function to record the course """
-    current_user = Member.objects.get(id=request.user.id)
-    course = get_object_or_404(Course, id=id)
-    current_user.courses.add(course)
+def course_manipulation(request, id):
+    """ Use this `course_manipulation` function to record the course """
+    if request.user.is_authenticated():
+        current_user = Member.objects.get(user=request.user)
+        course = get_object_or_404(Course, id=id)
+        request_type = request.GET.get('type', 'GET')
+
+        if request_type == 'POST':
+            current_user.courses.add(course)
+        elif request_type == 'DELETE':
+            current_user.courses.remove(course)
+
     return HttpResponse('')
+
+
+def courses_status(request):
+    result = {}
+    if request.user.is_authenticated():
+        user = Member.objects.get(user=request.user)
+        courses_list = user.courses. \
+            values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
+                   'time', 'time_token', 'teacher', 'room', 'credit',
+                   'prerequisite', 'ge', 'code')
+        result['total'] = courses_list.count()
+        result['courses'] = list(courses_list)
+
+    return JsonResponse(result)
 
 
 def generate_dept_required_choice():

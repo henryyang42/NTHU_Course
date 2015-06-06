@@ -25,33 +25,33 @@ moduleNTHUCourse.filter('showQuery', function() {
   };
 });
 
-moduleNTHUCourse.filter('limit', function() {
-  return function(input, limit, begin) {
-    if (Math.abs(Number(limit)) === Infinity) {
-      limit = Number(limit);
-    } else {
-      // limit = toInt(limit);
-    }
-    if (isNaN(limit)) return input;
+// moduleNTHUCourse.filter('limit', function() {
+//   return function(input, limit, begin) {
+//     if (Math.abs(Number(limit)) === Infinity) {
+//       limit = Number(limit);
+//     } else {
+//       // limit = toInt(limit);
+//     }
+//     if (isNaN(limit)) return input;
 
-    if (!input) return input;
-    // if (isNumber(input)) input = input.toString();
-    // if (!isArray(input) && !isString(input)) return input;
+//     if (!input) return input;
+//     // if (isNumber(input)) input = input.toString();
+//     // if (!isArray(input) && !isString(input)) return input;
 
-    begin = (!begin || isNaN(begin)) ? 0 : parseInt(begin);
-    begin = (begin < 0 && begin >= -input.length) ? input.length + begin : begin;
+//     begin = (!begin || isNaN(begin)) ? 0 : parseInt(begin);
+//     begin = (begin < 0 && begin >= -input.length) ? input.length + begin : begin;
 
-    if (limit >= 0) {
-      return input.slice(begin, begin + limit);
-    } else {
-      if (begin === 0) {
-        return input.slice(limit, input.length);
-      } else {
-        return input.slice(Math.max(0, begin + limit), begin);
-      }
-    }
-  };
-})
+//     if (limit >= 0) {
+//       return input.slice(begin, begin + limit);
+//     } else {
+//       if (begin === 0) {
+//         return input.slice(limit, input.length);
+//       } else {
+//         return input.slice(Math.max(0, begin + limit), begin);
+//       }
+//     }
+//   };
+// })
 
 moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   $scope.fetch = {};
@@ -178,6 +178,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.credit += c.credit;
     $scope.course_ct++;
     toastr.success(c.chi_title + ' 已成功加入您的課表。');
+    $.get('/search/course/' + c.id + '/', {'type': 'POST'});
   }
 
   $scope.add_all = function(courses) {
@@ -193,6 +194,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.course_ct--;
     del_course($scope.added_course, c);
     toastr.warning(c.chi_title + ' 已從您的課表移除。');
+    $.get('/search/course/' + c.id + '/', {'type': 'DELETE'});
   }
 
   $scope.del_all = function() {
