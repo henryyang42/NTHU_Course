@@ -1,4 +1,4 @@
-from NTHU_Course.settings.default import *  # noqa
+from NTHU_Course.settings.default import *
 
 ALLOWED_HOSTS += [
     '.c9.io',
