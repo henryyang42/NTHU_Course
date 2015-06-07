@@ -1,5 +1,6 @@
 from member.models import Member
 
+
 def save_userdata(backend, user, response, *args, **kwargs):
     if backend.name == 'facebook':
         try:

@@ -107,7 +107,6 @@ def syllabus(request, id):
                   {'course': course, 'syllabus_path': request.path})
 
 
-
 def course_manipulation(request, id):
     """ Use this `course_manipulation` function to record the course """
     if request.user.is_authenticated():
@@ -125,6 +124,7 @@ def course_manipulation(request, id):
 
 def courses_status(request):
     result = {}
+    result['total'] = 0
     if request.user.is_authenticated():
         user = Member.objects.get(user=request.user)
         courses_list = user.courses. \
