@@ -1,7 +1,8 @@
 $(function() {
   var scope = angular.element('[ng-controller=CourseCtrl]').scope();
   var animation = 'animated bounceInLeft',
-    animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+    animationend = 'webkitAnimationEnd mozAnimationEnd ' +
+                   'MSAnimationEnd oanimationend animationend';
   var course_code_option = function() {
     code = $('#id_code').val();
     // 4 digit code for dept-required-option
@@ -102,10 +103,8 @@ $(function() {
   };
 
   $('input[name=q]').keyup(function() {
-    console.log("change");
     var input_str = $(this).val();
     var SENIOR = 101;
-    console.log('input_str = ' + input_str);
     if (isNaN(input_str) === false) {
       if (input_str.length < 8)
         return;
@@ -113,14 +112,11 @@ $(function() {
         input_str = '0' + input_str;
       }
       var year = input_str.substr(0, 3);
-      console.log('ori year = ' + year);
       if (parseInt(year, 10) < SENIOR) {
         year = SENIOR;
       }
       dept = input_str.substr(3, 3);
       class_name = input_str.substr(6, 1);
-      console.log('ori dept = ' + dept);
-      console.log('ori cn = ' + class_name);
       if (DEPT_MAP[dept] !== undefined &&
         CLASS_NAME_MAP[class_name] !== undefined) {
         dept = DEPT_MAP[dept];
@@ -128,29 +124,26 @@ $(function() {
 
         while (dept.length < 4)
           dept = dept + ' ';
-        console.log('refet dept = ' + dept);
-        console.log('refet cn = ' + class_name);
         $('#dept-required-option').show();
         $('#id_dept_required  option').hide();
         $('#id_dept_required  option[value^="' + dept + '"]').show();
         $('#id_dept_required  option[value=""]').show();
-        $('#id_dept_required  option:selected').removeAttr("selected");
+        $('#id_dept_required  option:selected').removeAttr('selected');
         $('#id_code').val(dept.trim());
         $('#id_dept_required').val(dept + year + class_name);
-        console.log('final = ' + dept + year + class_name);
       }
     }
   });
 
-  $('#twocolbtn').on("click", function(event) {
+  $('#twocolbtn').on('click', function(event) {
     event.preventDefault();
     $('#main .container > div').toggleClass('col-lg-12 col-lg-6');
     $('#main .form-group label').toggleClass('col-lg-1 col-lg-2');
     $('#main .form-group div').toggleClass('col-lg-11 col-lg-10');
-    $('#main .container').toggleClass("lg-container");
+    $('#main .container').toggleClass('lg-container');
   });
 
-  $("#search-filter").on("submit", function(event) {
+  $('#search-filter').on('submit', function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
       '&page=' + 1 +
