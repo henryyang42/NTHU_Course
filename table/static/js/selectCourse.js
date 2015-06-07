@@ -109,13 +109,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   toastr.options.timeOut = 1500;
 
   $.get('/search/status/', function(remote_data) {
-    if (remote_data.total != 0) {
+    if (remote_data.total >= 0) {
       var local_data = JSON.parse(localStorage.getItem('added_course'));
       // merge remote data into local
       $.extend(local_data, remote_data.courses);
-      localStorage.removeItem('added_course');
       localStorage.setItem('added_course', JSON.stringify(local_data));
-      console.log(JSON.parse(localStorage.getItem('added_course')));
     }
     load_localStorage();
     $scope.$apply();
