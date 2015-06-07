@@ -1,4 +1,4 @@
-var moduleNTHUCourse = angular.module("ModuleNTHUCourse", ['ui.bootstrap']);
+var moduleNTHUCourse = angular.module('ModuleNTHUCourse', ['ui.bootstrap']);
 var semester = '10410';
 
 moduleNTHUCourse.filter('courseInThatTime', function() {
@@ -134,27 +134,27 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       $scope.fetch = data;
       $scope.$apply();
     });
-  }
+  };
 
   $scope.scrollTo = function(element) {
     $('html, body').animate({
       scrollTop: $(element).offset().top
     }, 500);
-  }
+  };
 
   $scope.order = function(predicate) {
     search($scope.currentPage, $scope.page_size, predicate);
-  }
+  };
 
   $scope.pageChanged = function(page) {
     search(page, $scope.page_size, $scope.predicate);
     $scope.scrollTo('#result-table');
-  }
+  };
 
   $scope.setPageSize = function(size) {
     $scope.page_size = size;
     search($scope.currentPage, size, $scope.predicate);
-  }
+  };
 
   $scope.add = function(c) {
     if (c.added)
@@ -165,14 +165,14 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.course_ct++;
     toastr.success(c.chi_title + ' 已成功加入您的課表。');
     $.get('/search/course/' + c.id + '/', {'type': 'POST'});
-  }
+  };
 
   $scope.add_all = function(courses) {
     for (var i in courses) {
       $scope.add(courses[i]);
     }
     toastr.info('您真貪心。');
-  }
+  };
 
   $scope.del = function(c) {
     timeTable(c, 'del');
@@ -181,18 +181,18 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     del_course($scope.added_course, c);
     toastr.warning(c.chi_title + ' 已從您的課表移除。');
     $.get('/search/course/' + c.id + '/', {'type': 'DELETE'});
-  }
+  };
 
   $scope.del_all = function() {
     init();
     toastr.info('已完全清空您的課表。');
-  }
+  };
 
   $scope.free = function(c) {
     if (c.added)
       return true;
     return timeTable(c, 'free');
-  }
+  };
 
   var updateChange = function() {
     setTimeout(function() {
@@ -204,12 +204,13 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       $(document).tooltip({
         track: true
       });
-      $('#id_q').attr('title', '中英文課程名稱或簡稱(普物) / 老師名稱 / 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程');
+      $('#id_q').attr('title', '中英文課程名稱或簡稱(普物) / 老師名稱' +
+                      '/ 課程時間(M1M2) / 學號查詢必選修 / 留空查詢該類課程');
       $('#id_q').tooltip({
         track: false,
         position: {
-          my: "left bottom",
-          at: "left top-5"
+          my: 'left bottom',
+          at: 'left top-5'
         }
       });
     }, 100);
@@ -220,15 +221,15 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     } else {
       //Holy shit! No Web Storage support..
     }
-  }
+  };
 
   var updateFetch = function() {
     $scope.query = $scope.fetch.courses;
     $scope.total_result = $scope.fetch.total;
-  }
+  };
 
   $scope.$watch('query', updateChange, true);
   $scope.$watch('added_course', updateChange, true);
   $scope.$watch('fetch', updateFetch, true);
 
-})
+});
