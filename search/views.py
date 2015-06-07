@@ -1,40 +1,18 @@
 # -*- coding: utf-8 -*-
-import json
 import re
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
-from data_center.const import DEPT_CHOICE, GEC_CHOICE, \
-    GE_CHOICE, CLASS_NAME_MAP, DEPT_MAP, SENIOR
+from data_center.const import DEPT_CHOICE, GEC_CHOICE, GE_CHOICE
 from django.views.decorators.cache import cache_page
 from django import forms
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
-
-def get_class_name(c):
-    return CLASS_NAME_MAP.get(c, '')
-
-
-def get_dept(no):
-    if not no.isdigit():
-        return ''
-    if len(no) not in [8, 9]:
-        return ''
-    if len(no) == 8:
-        no = '0' + no
-    year = no[0:3]
-    if int(year) < SENIOR:
-        year = SENIOR
-    dept = no[3:6]
-    dept = DEPT_MAP.get(dept, '')
-    class_name = no[6:7]
-    if dept:
-        return '%-4s%s%s' % (dept, year, get_class_name(class_name))
-    return ''
+from member.models import Member
 
 
 def group_words(s):
@@ -63,36 +41,33 @@ def search(request):
     page = request.GET.get('page', '')
     size = request.GET.get('size', '')
     code = request.GET.get('code', '')
+    dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
     reverse = True if reverse_param == 'true' else False
+    rev_sortby = '-' + sortby if reverse else sortby
 
     courses = SearchQuerySet()
 
-    if sortby == 'time':
-        sortby = 'time_token'
-    rev_sortby = u'-' + sortby if reverse else sortby
-
-    if get_dept(q):
+    if dept_required:
         try:
             courses = Department.objects.get(
-                dept_name=get_dept(q)).required_course.all()
+                dept_name=dept_required).required_course.all()
         except:
             pass
         if courses:
             result['type'] = 'required'
             page_size = courses.count()
     else:
-        courses = SearchQuerySet().filter(
-            content=AutoQuery(q))
+        courses = courses.filter(content=AutoQuery(q))
         if code:
             courses = courses.filter(code__contains=code)
 
         if courses.count() > 300:
-            return HttpResponse('TMD')  # Too many d...
+            return HttpResponse('TMD')  # Too many detail
 
         courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
@@ -122,7 +97,7 @@ def search(request):
     result['courses'] = list(courses_list)
     result['page_size'] = page_size
 
-    return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
+    return JsonResponse(result)
 
 
 @cache_page(60 * 60)
@@ -132,21 +107,69 @@ def syllabus(request, id):
                   {'course': course, 'syllabus_path': request.path})
 
 
-def hit(request, id):
-    course = get_object_or_404(Course, id=id)
-    course.hit += 1
-    course.save()
+def course_manipulation(request, id):
+    """ Use this `course_manipulation` function to record the course """
+    if request.user.is_authenticated():
+        current_user = Member.objects.get(user=request.user)
+        course = get_object_or_404(Course, id=id)
+        request_type = request.GET.get('type', 'GET')
+
+        if request_type == 'POST':
+            current_user.courses.add(course)
+        elif request_type == 'DELETE':
+            current_user.courses.remove(course)
+
     return HttpResponse('')
 
 
+def courses_status(request):
+    result = {}
+    result['total'] = 0
+    if request.user.is_authenticated():
+        user = Member.objects.get(user=request.user)
+        courses_list = user.courses. \
+            values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
+                   'time', 'time_token', 'teacher', 'room', 'credit',
+                   'prerequisite', 'ge', 'code')
+        result['total'] = courses_list.count()
+        result['courses'] = list(courses_list)
+
+    return JsonResponse(result)
+
+
+def generate_dept_required_choice():
+    choices = (('', '---'),)
+    departments = Department.objects.all()
+    for department in departments:
+        dept_name = department.dept_name
+        year = {'104': '一年級', '103': '二年級', '102': '三年級', '101': '四年級'}. \
+            get(dept_name[4:7], '')
+        degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
+            get(dept_name[7], '')
+        chi_dept_name = degree
+
+        if dept_name[7] == 'B':
+            chi_dept_name += year
+            chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
+                get(dept_name[7:], '')
+
+        choices += ((dept_name, chi_dept_name),)
+    return sorted(choices)
+
+
 class CourseSearchForm(forms.Form):
+    DEPT_REQUIRED_CHOICE = generate_dept_required_choice()
     q = forms.CharField(label='關鍵字', required=False)
     code = forms.ChoiceField(label='開課代號', choices=DEPT_CHOICE, required=False)
     ge = forms.ChoiceField(label='向度', choices=GE_CHOICE, required=False)
     gec = forms.ChoiceField(label='向度', choices=GEC_CHOICE, required=False)
+    dept_required = forms.ChoiceField(
+        label='必選修', choices=DEPT_REQUIRED_CHOICE, required=False)
 
 
 def table(request):
     render_data = {}
     render_data['search_filter'] = CourseSearchForm(request.GET)
+    render_data['request'] = request
+    render_data['user'] = request.user
     return render(request, 'table.html', render_data)

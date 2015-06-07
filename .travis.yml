@@ -3,19 +3,16 @@ language: python
 
 python:
     - "2.7"
-    - "pypy"
 
 
 install:
     - pip install --upgrade pip
-    - pip install -r requirement.txt
-    - pip install pep8
-    - pip install pyflakes
+    - pip install -r requirements.txt
+    - pip install flake8
 
 
 before_script:
-    - pyflakes .
-
+    - flake8 --exclude=const.py .
 
 script:
     - sh ./test.sh
@@ -26,6 +23,5 @@ notifications:
         recipients:
             - z54981220@gmail.com
             - henryyang42@gmail.com
-        on_success: always
         on_failure: always
 

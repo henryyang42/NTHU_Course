@@ -40,7 +40,7 @@ window.fbAsyncInit = function() {
   js.src = "//connect.facebook.net/en_US/sdk.js";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-</script-->
+</script>-->
 {% endblock source_block %}
 
 
@@ -53,6 +53,9 @@ window.fbAsyncInit = function() {
       <ul>
         <li class="active"><a href="/">首頁</a></li>
         <li>
+          <button id="twocolbtn" class="btn btn-info">切換單欄/兩欄式</button>
+        </li>
+        <li>
           <!--
           <button class="btn btn-primary" id="postToFB">透過 Facebook 分享課表</button>
           -->
@@ -61,6 +64,18 @@ window.fbAsyncInit = function() {
         <li>
           <button class="btn btn-primary" onclick=window.open("http://goo.gl/forms/YGNZryl4o7")>意見回饋</button>
         </li>
+        {% if user.is_authenticated %}
+        <li>
+          <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+        </li>
+        <li>
+          <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+        </li>
+        {% else %}
+        <li>
+          <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>
+        </li>
+        {% endif %}
       </ul>
     </nav>
   </div>
@@ -77,6 +92,8 @@ window.fbAsyncInit = function() {
 <!-- Main -->
 <div id="main" ng-app="ModuleNTHUCourse">
   <div class="container" ng-controller="CourseCtrl">
+    <center><p></p></center>
+    <div class="col-lg-12">
     <alert ng-show="alerts>0" close="closeAlert()">
       本系統並無與校務資訊系統接合，正式選課時請別忘記到校務資訊系統選課喔！<br>
       此外，因為課程資料課務組可能更動，我們每天至少更新一次，最終結果以課務組為準。
@@ -89,6 +106,9 @@ window.fbAsyncInit = function() {
       </div>
       <div id="gec-option">
         {{ search_filter.gec|bootstrap_horizontal:"col-lg-1" }}
+      </div>
+      <div id="dept-required-option">
+        {{ search_filter.dept_required|bootstrap_horizontal:"col-lg-1" }}
       </div>
       <div class="modal-footer">
         <button type="reset" class="btn btn-info">清除條件</button>
@@ -157,6 +177,8 @@ window.fbAsyncInit = function() {
         </tr>
       </tbody>
     </table>
+    </div>
+    <div class="col-lg-12">
     <table class="table table-bordered table-hover col-lg-8 col-offset-lg-2" id="course-table" style="border-style: solid; border-width: 1px;">
       <thead>
         <tr>
@@ -226,11 +248,12 @@ window.fbAsyncInit = function() {
         </tr>
       </tbody>
     </table>
+    </div>
     {% endverbatim %}
   </div>
 </div>
 <!-- /Main -->
-<script src="{% static 'js/postToFB.js' %}"></script>
+<!--<script src="{% static 'js/postToFB.js' %}"></script>-->
 <script src="{% static 'js/saveAsFile.js' %}"></script>
 {% endblock body_block %}
 
