@@ -74,10 +74,6 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     return true;
   }
 
-  // Init data
-  init();
-  toastr.options.timeOut = 1500;
-
   function load_localStorage() {
     if (typeof(Storage) !== 'undefined') {
       // Code for localStorage
@@ -92,11 +88,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
             }
           }
         }
-        // $scope.$apply();
       } catch (e) {
-        localStorage.setItem('added_course', JSON.stringify($scope.added_course));
+        console.log(e);
+        // localStorage.setItem('added_course', JSON.stringify($scope.added_course));
       }
-  
     } else {
       //Holy shit! No Web Storage support..
     }
@@ -109,15 +104,21 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     }
   }
 
-  load_localStorage();
+  // Init data
+  init();
+  toastr.options.timeOut = 1500;
 
-  $.get('/search/status/', function(data) {
-    if (data.total != 0) {
+  $.get('/search/status/', function(remote_data) {
+    if (remote_data.total != 0) {
       var local_data = JSON.parse(localStorage.getItem('added_course'));
-      $.extend(local_data, data.courses);
+      // merge remote data into local
+      $.extend(local_data, remote_data.courses);
+      localStorage.removeItem('added_course');
       localStorage.setItem('added_course', JSON.stringify(local_data));
-      load_localStorage();
+      console.log(JSON.parse(localStorage.getItem('added_course')));
     }
+    load_localStorage();
+    $scope.$apply();
   });
 
   $scope.closeAlert = function() {
@@ -164,7 +165,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.credit += c.credit;
     $scope.course_ct++;
     toastr.success(c.chi_title + ' 已成功加入您的課表。');
-    $.get('/search/course/' + c.id + '/', {'type': 'POST'});
+    $.get('/search/course/' + c.id + '/', {'type': 'PUT'});
   };
 
   $scope.add_all = function(courses) {
@@ -184,6 +185,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   };
 
   $scope.del_all = function() {
+    for (var i in $scope.added_course) {
+      var c = $scope.added_course[i];
+      $.get('/search/course/' + c.id + '/', {'type': 'DELETE'});
+    }
     init();
     toastr.info('已完全清空您的課表。');
   };

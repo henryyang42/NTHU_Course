@@ -114,7 +114,7 @@ def course_manipulation(request, id):
         course = get_object_or_404(Course, id=id)
         request_type = request.GET.get('type', 'GET')
 
-        if request_type == 'POST':
+        if request_type == 'PUT':
             current_user.courses.add(course)
         elif request_type == 'DELETE':
             current_user.courses.remove(course)
