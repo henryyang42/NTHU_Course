@@ -88,12 +88,11 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
           for (var i in added_course) {
             c = added_course[i];
             if (c.no.indexOf(semester) >= 0) {
-              console.log(c);
               $scope.added_course.push(c);
-              $scope.$apply();
             }
           }
         }
+        // $scope.$apply();
       } catch (e) {
         localStorage.setItem('added_course', JSON.stringify($scope.added_course));
       }
@@ -113,9 +112,10 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   load_localStorage();
 
   $.get('/search/status/', function(data) {
-    console.log(data);
     if (data.total != 0) {
-      localStorage.setItem('added_course', JSON.stringify(data.courses));
+      var local_data = JSON.parse(localStorage.getItem('added_course'));
+      $.extend(local_data, data.courses);
+      localStorage.setItem('added_course', JSON.stringify(local_data));
       load_localStorage();
     }
   });
