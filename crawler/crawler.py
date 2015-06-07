@@ -139,7 +139,6 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
         trs = soup.find_all('tr', class_='class3')
         trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
         cou_code = cou_code.strip()
-        threads = []
         for tr in trs:
             class_info = tr_2_class_info(tr)
             if not class_info['credit'].isdigit():
