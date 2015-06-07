@@ -180,10 +180,4 @@ $(function() {
         });
     });
   });
-
-  $.get('/search/status/', function(data) {
-    console.log(data.courses);
-    localStorage.setItem('added_course', JSON.stringify(data.courses));
-  });
-
 });

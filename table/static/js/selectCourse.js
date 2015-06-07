@@ -25,34 +25,6 @@ moduleNTHUCourse.filter('showQuery', function() {
   };
 });
 
-// moduleNTHUCourse.filter('limit', function() {
-//   return function(input, limit, begin) {
-//     if (Math.abs(Number(limit)) === Infinity) {
-//       limit = Number(limit);
-//     } else {
-//       // limit = toInt(limit);
-//     }
-//     if (isNaN(limit)) return input;
-
-//     if (!input) return input;
-//     // if (isNumber(input)) input = input.toString();
-//     // if (!isArray(input) && !isString(input)) return input;
-
-//     begin = (!begin || isNaN(begin)) ? 0 : parseInt(begin);
-//     begin = (begin < 0 && begin >= -input.length) ? input.length + begin : begin;
-
-//     if (limit >= 0) {
-//       return input.slice(begin, begin + limit);
-//     } else {
-//       if (begin === 0) {
-//         return input.slice(limit, input.length);
-//       } else {
-//         return input.slice(Math.max(0, begin + limit), begin);
-//       }
-//     }
-//   };
-// })
-
 moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   $scope.fetch = {};
   $scope.query = [];
@@ -105,34 +77,48 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   // Init data
   init();
   toastr.options.timeOut = 1500;
-  if (typeof(Storage) !== 'undefined') {
-    // Code for localStorage
-    try {
-      var added_course = localStorage.getItem('added_course');
-      if (added_course != null) {
-        added_course = JSON.parse(added_course);
-        for (var i in added_course) {
-          c = added_course[i];
-          if (c.no.indexOf(semester) >= 0) {
-            $scope.added_course.push(c);
 
+  function load_localStorage() {
+    if (typeof(Storage) !== 'undefined') {
+      // Code for localStorage
+      try {
+        var added_course = localStorage.getItem('added_course');
+        if (added_course != null) {
+          added_course = JSON.parse(added_course);
+          for (var i in added_course) {
+            c = added_course[i];
+            if (c.no.indexOf(semester) >= 0) {
+              console.log(c);
+              $scope.added_course.push(c);
+              $scope.$apply();
+            }
           }
         }
+      } catch (e) {
+        localStorage.setItem('added_course', JSON.stringify($scope.added_course));
       }
-    } catch (e) {
-      localStorage.setItem('added_course', JSON.stringify($scope.added_course));
+  
+    } else {
+      //Holy shit! No Web Storage support..
     }
-
-  } else {
-    //Holy shit! No Web Storage support..
+  
+    for (var i in $scope.added_course) {
+      var c = $scope.added_course[i];
+      $scope.credit += c.credit;
+      $scope.course_ct++;
+      timeTable(c, 'add');
+    }
   }
 
-  for (var i in $scope.added_course) {
-    var c = $scope.added_course[i];
-    $scope.credit += c.credit;
-    $scope.course_ct++;
-    timeTable(c, 'add');
-  }
+  load_localStorage();
+
+  $.get('/search/status/', function(data) {
+    console.log(data);
+    if (data.total != 0) {
+      localStorage.setItem('added_course', JSON.stringify(data.courses));
+      load_localStorage();
+    }
+  });
 
   $scope.closeAlert = function() {
     $scope.alerts = 0;
