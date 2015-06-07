@@ -8,13 +8,11 @@ python:
 install:
     - pip install --upgrade pip
     - pip install -r requirements.txt
-    - pip install pep8
-    - pip install pyflakes
+    - pip install flake8
 
 
 before_script:
-    - pyflakes .
-    - pep8 --exclude=const.py .
+    - flake8 --exclude=const.py .
 
 script:
     - sh ./test.sh
