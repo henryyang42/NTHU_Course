@@ -89,8 +89,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
           }
         }
       } catch (e) {
-        console.log(e);
-        // localStorage.setItem('added_course', JSON.stringify($scope.added_course));
+        localStorage.setItem('added_course', JSON.stringify($scope.added_course));
       }
     } else {
       //Holy shit! No Web Storage support..
@@ -109,7 +108,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
   toastr.options.timeOut = 1500;
 
   $.get('/search/status/', function(remote_data) {
-    if (remote_data.total >= 0) {
+    if (remote_data.total > 0) {
       var local_data = JSON.parse(localStorage.getItem('added_course'));
       // merge remote data into local
       $.extend(local_data, remote_data.courses);
