@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 
 week_dict = {'M': 'a', 'T': 'b', 'W': 'c', 'R': 'd', 'F': 'e', 'S': 'f'}
 
