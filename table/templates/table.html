@@ -64,7 +64,7 @@ window.fbAsyncInit = function() {
         <li>
           <button class="btn btn-primary" onclick=window.open("http://goo.gl/forms/YGNZryl4o7")>意見回饋</button>
         </li>
-        {% if user.is_authenticated %}
+        {% if user and not user.is_anonymous %}
         <li>
           <a>Hello {{ user.get_full_name|default:user.username }}!</a>
         </li>
