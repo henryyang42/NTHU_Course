@@ -3,12 +3,12 @@ import bs4
 import requests
 import traceback
 import progressbar
+from threading import Thread
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
 
 url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
-dept_url = \
-    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'
+dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'  # noqa
 YS = '104|10'
 cond = 'a'
 T_YEAR = 104
@@ -71,9 +71,7 @@ def trim_syllabus(ACIXSTORE, soup):
 
 
 def syllabus_2_html(ACIXSTORE, course):
-    url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/' \
-        'common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % \
-        (ACIXSTORE, course.no.replace(' ', '%20'))
+    url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % (ACIXSTORE, course.no.replace(' ', '%20'))  # noqa
     try:
         while True:
             r = requests.get(url)
@@ -137,9 +135,11 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
     for cou_code in progress(cou_codes):
         html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
         soup = bs4.BeautifulSoup(html, 'html.parser')
+
         trs = soup.find_all('tr', class_='class3')
         trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
         cou_code = cou_code.strip()
+        threads = []
         for tr in trs:
             class_info = tr_2_class_info(tr)
             if not class_info['credit'].isdigit():
@@ -152,23 +152,22 @@ def crawl_course_info(ACIXSTORE, auth_num, cou_codes):
                 if cou_code not in course.code:
                     course.code = '%s %s' % (course.code, cou_code)
                     course.save()
-                syllabus_2_html(ACIXSTORE, course)
-                continue
-            course = Course.objects.create(
-                no=class_info['no'],
-                credit=int(class_info['credit']),
-                time=class_info['time'],
-                time_token=get_token(class_info['time']),
-                limit=int(class_info['limit']),
-                note=class_info['note'],
-                objective=class_info['objective'],
-                prerequisite=class_info['prerequisite'] != '',
-                code=cou_code,
-                ge=get_ge(class_info['title']),
-            )
+            else:
+                course = Course.objects.create(
+                    no=class_info['no'],
+                    credit=int(class_info['credit']),
+                    time=class_info['time'],
+                    time_token=get_token(class_info['time']),
+                    limit=int(class_info['limit']),
+                    note=class_info['note'],
+                    objective=class_info['objective'],
+                    prerequisite=class_info['prerequisite'] != '',
+                    code=cou_code,
+                    ge=get_ge(class_info['title']),
+                )
+                total_collected += 1
 
-            syllabus_2_html(ACIXSTORE, course)
-            total_collected += 1
+            Thread(target=syllabus_2_html, args=(ACIXSTORE, course)).start()
 
     print '%d course information collected.' % total_collected
 
@@ -211,9 +210,7 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_codes):
 
 def update_syllabus():
     update = 0
-    r = requests.get(
-        'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php'
-    )
+    r = requests.get('https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php')  # noqa
     ACIXSTORE = bs4.BeautifulSoup(r.text, 'html.parser').find('input')['value']
     progress = progressbar.ProgressBar()
     for course in progress(Course.objects.all()):
