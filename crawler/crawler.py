@@ -59,11 +59,12 @@ def trim_syllabus(ACIXSTORE, soup):
             del tag['width']
     # Replace link
     for a in soup.find_all('a'):
-        a['href'] = a['href'].replace(href_garbage, '').replace(' ', '%20')
+        href = a.get('href', '').replace(href_garbage, '').replace(' ', '%20')
         # Make relative path to absolute path
-        if 'http' not in a['href']:
-            a['href'] = host + a['href']
-
+        if 'http' not in href:
+            href = host + href
+        a['href'] = href
+        a['target'] = '_blank'
     syllabus = ''.join(map(unicode, soup.body.contents))
     syllabus = syllabus.replace('</br></br></br></br></br>', '')
     syllabus = syllabus.replace('<br><br><br><br><br>', '')
