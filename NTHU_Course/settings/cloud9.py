@@ -13,3 +13,7 @@ DATABASES = {
         },
     }
 }
+
+MIDDLEWARE_CLASSES += (
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+)
