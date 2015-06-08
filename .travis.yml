@@ -24,7 +24,7 @@ notifications:
         recipients:
             - z54981220@gmail.com
             - henryyang42@gmail.com
-        on_success: always
+        on_success: change
         on_failure: always
     webhooks:
         urls:
