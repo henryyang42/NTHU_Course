@@ -25,8 +25,7 @@ def dept_2_html(dept, ACIXSTORE, auth_num):
                               'C_TERM': C_TERM,
                               'DEPT': dept,
                               'auth_num': auth_num})
-        return r.text.encode('latin1', 'ignore') \
-            .decode('big5', 'ignore').encode('utf8', 'ignore')
+        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
     except:
         print traceback.format_exc()
         print dept
@@ -42,8 +41,7 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
                               'cond': cond,
                               'cou_code': cou_code,
                               'auth_num': auth_num})
-        return r.text.encode('latin1', 'ignore') \
-            .decode('big5', 'ignore').encode('utf8', 'ignore')
+        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
     except:
         print traceback.format_exc()
         print cou_code
@@ -76,8 +74,7 @@ def syllabus_2_html(ACIXSTORE, course):
     try:
         while True:
             r = requests.get(url)
-            html = r.text.encode('latin1', 'ignore'). \
-                decode('big5', 'ignore').encode('utf8', 'ignore')
+            html = r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
             soup = bs4.BeautifulSoup(html, 'html.parser')
             tables = soup.find_all('table')
             if tables:
