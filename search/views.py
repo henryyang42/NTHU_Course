@@ -12,8 +12,6 @@ from django import forms
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
-from member.models import Member
-
 
 def group_words(s):
     """Split Chinese token for better search result"""
