@@ -10,9 +10,11 @@ class Member(models.Model):
     # Facebook field
     uuid = models.CharField('User ID', max_length=100)
     email = models.EmailField('Email')
-    access_token = models.TextField('access token')
 
     courses = models.ManyToManyField(Course)
 
     def __str__(self):
+        return self.user.get_username()
+
+    def __unicode__(self):
         return self.user.get_username()
