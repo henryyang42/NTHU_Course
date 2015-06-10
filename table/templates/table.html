@@ -21,13 +21,24 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 <link rel="stylesheet" media="screen" href="{% static 'css/table.css' %}" />
-<!-- Facebook
+<!-- Facebook -->
 <script>
 window.fbAsyncInit = function() {
   FB.init({
-    appId: '348628832000015',
+    appId: '1641398682741033',//'348628832000015',
     xfbml: true,
     version: 'v2.3'
+  });
+  
+  FB.getLoginStatus(function(response) {
+    console.log(response);
+  });
+  
+  
+  $('#logout').click(function(){
+    FB.logout(function(response) {
+      location.href = "{% url 'auth:logout' %}?next={{ request.path }}";
+    });
   });
 };
 
@@ -41,7 +52,7 @@ window.fbAsyncInit = function() {
   js.src = "//connect.facebook.net/en_US/sdk.js";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-</script>-->
+</script>
 {% endblock source_block %}
 
 
@@ -70,11 +81,14 @@ window.fbAsyncInit = function() {
           <a>Hello {{ user.get_full_name|default:user.username }}!</a>
         </li>
         <li>
-          <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+          <a href="{% url 'auth:logout' %}?next={{ request.path }}">登出</a>
+        </li>
+        <li>
+          <a id="logout" class="btn">換個帳號</a>
         </li>
         {% else %}
         <li>
-          <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>
+          <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">用Facebook登入</a>
         </li>
         {% endif %}
       </ul>
