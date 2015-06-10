@@ -70,6 +70,8 @@ def get_prerequisites():
             target.append(Any(req_pairs))
         elif note == u'修過「先修科目」者，不可修「欲修科目」':
             target.extend(map(Not, req_pairs))
+        else:
+            assert False, 'unexpected note %r' % note
     return result
 
 
