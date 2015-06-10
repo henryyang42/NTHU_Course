@@ -1,4 +1,4 @@
-var moduleNTHUCourse = angular.module('ModuleNTHUCourse', ['ui.bootstrap']);
+var moduleNTHUCourse = angular.module('ModuleNTHUCourse', ['ui.bootstrap', 'ngCookies']);
 var semester = '10410';
 
 moduleNTHUCourse.filter('courseInThatTime', function() {
@@ -25,7 +25,7 @@ moduleNTHUCourse.filter('showQuery', function() {
   };
 });
 
-moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
+moduleNTHUCourse.controller("CourseCtrl", function($scope, $cookies) {
   $scope.fetch = {};
   $scope.query = [];
   $scope.currentPage = 0;
@@ -72,6 +72,16 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
       }
     }
     return true;
+  }
+
+  function register_course(method, cid) {
+    $.ajax({
+      url:'/search/course/' + cid + '/',
+      method: method,
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('X-CSRFToken', $cookies['csrftoken']);
+      }
+    });
   }
 
   function load_localStorage() {
@@ -162,7 +172,7 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.credit += c.credit;
     $scope.course_ct++;
     toastr.success(c.chi_title + ' 已成功加入您的課表。');
-    $.get('/search/course/' + c.id + '/', {'type': 'PUT'});
+    register_course('PUT', c.id);
   };
 
   $scope.add_all = function(courses) {
@@ -178,13 +188,13 @@ moduleNTHUCourse.controller("CourseCtrl", function($scope, $filter) {
     $scope.course_ct--;
     del_course($scope.added_course, c);
     toastr.warning(c.chi_title + ' 已從您的課表移除。');
-    $.get('/search/course/' + c.id + '/', {'type': 'DELETE'});
+    register_course('DELETE', c.id);
   };
 
   $scope.del_all = function() {
     for (var i in $scope.added_course) {
       var c = $scope.added_course[i];
-      $.get('/search/course/' + c.id + '/', {'type': 'DELETE'});
+      register_course('DELETE', c.id);
     }
     init();
     toastr.info('已完全清空您的課表。');

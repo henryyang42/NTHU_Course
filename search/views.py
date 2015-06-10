@@ -111,22 +111,20 @@ def course_manipulation(request, id):
     """ Use this `course_manipulation` function to record the course """
     if request.user.is_authenticated():
         course = get_object_or_404(Course, id=id)
-        request_type = request.GET.get('type', 'GET')
 
-        if request_type == 'PUT':
+        if request.method == 'PUT':
             request.user.member.courses.add(course)
-        elif request_type == 'DELETE':
+        elif request.method == 'DELETE':
             request.user.member.courses.remove(course)
 
-    return HttpResponse('')
+    return JsonResponse('')
 
 
 def courses_status(request):
     result = {}
     result['total'] = 0
     if request.user.is_authenticated():
-        user = Member.objects.get(user=request.user)
-        courses_list = user.courses. \
+        courses_list = request.user.member.courses. \
             values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                    'time', 'time_token', 'teacher', 'room', 'credit',
                    'prerequisite', 'ge', 'code')
