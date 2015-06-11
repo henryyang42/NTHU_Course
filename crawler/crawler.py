@@ -96,7 +96,7 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
             for cou_code in cou_codes
         ]
 
-    progress = progressbar.ProgressBar()
+    progress = progressbar.ProgressBar(maxval=len(cou_codes))
     for future, cou_code in progress(
         itertools.izip(curriculum_futures, cou_codes)
     ):
@@ -121,9 +121,9 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
 
         progress = progressbar.ProgressBar(maxval=len(course_list))
         with transaction.atomic():
-            for future, course in progress(
-                course_futures, course_list)
-            ):
+            for future, course in progress(itertools.izip_longest(
+                course_futures, course_list
+            )):
                 response = future.result()
                 response.encoding = 'cp950'
                 save_syllabus(response.text, course)
