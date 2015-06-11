@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import re
 import bs4
 import requests
@@ -5,6 +7,9 @@ import traceback
 import progressbar
 import threadpool
 from threading import Thread
+from crawler.course import (
+    curriculum_to_trs, course_from_tr, get_syllabus, course_from_syllabus
+)
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
 
@@ -26,7 +31,8 @@ def dept_2_html(dept, ACIXSTORE, auth_num):
                               'C_TERM': C_TERM,
                               'DEPT': dept,
                               'auth_num': auth_num})
-        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
+        r.encoding = 'cp950'
+        return r.text
     except:
         print traceback.format_exc()
         print dept
@@ -42,7 +48,8 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
                               'cond': cond,
                               'cou_code': cou_code,
                               'auth_num': auth_num})
-        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
+        r.encoding = 'cp950'
+        return r.text
     except:
         print traceback.format_exc()
         print cou_code
@@ -50,25 +57,15 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
 
 
 def syllabus_2_html(ACIXSTORE, course):
-    url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % (ACIXSTORE, course.no.replace(' ', '%20'))  # noqa
     try:
-        while True:
-            r = requests.get(url)
-            html = r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
-            soup = bs4.BeautifulSoup(html, 'html.parser')
-            tables = soup.find_all('table')
-            if tables:
-                trs = tables[0].find_all('tr')
-                break
-            else:
-                continue
-        for i in range(2, 5):
-            trs[i].find_all('td')[1]['colspan'] = 5
-        course.chi_title = trs[2].find_all('td')[1].get_text()
-        course.eng_title = trs[3].find_all('td')[1].get_text()
-        course.teacher = trs[4].find_all('td')[1].get_text()
-        course.room = trs[5].find_all('td')[3].get_text()
-        course.syllabus = trim_syllabus(ACIXSTORE, soup)
+        response = get_syllabus(course, ACIXSTORE)
+        course_dict = course_from_syllabus(response.text)
+
+        course.chi_title = course_dict['name_zh']
+        course.eng_title = course_dict['name_en']
+        course.teacher = course_dict['teacher']
+        course.room = course_dict['room']
+        course.syllabus = course_dict['syllabus']
         course.save()
     except:
         print traceback.format_exc()
@@ -76,63 +73,22 @@ def syllabus_2_html(ACIXSTORE, course):
         return 'QAQ, what can I do?'
 
 
-def trim_syllabus(ACIXSTORE, soup):
-    href_garbage = '?ACIXSTORE=%s' % ACIXSTORE
-    host = 'https://www.ccxp.nthu.edu.tw'
-    # Remove width
-    for tag in soup.find_all():
-        if 'width' in tag:
-            del tag['width']
-    # Replace link
-    for a in soup.find_all('a'):
-        href = a.get('href', '').replace(href_garbage, '').replace(' ', '%20')
-        # Make relative path to absolute path
-        if 'http' not in href:
-            href = host + href
-        a['href'] = href
-        a['target'] = '_blank'
-    syllabus = ''.join(map(unicode, soup.body.contents))
-    syllabus = syllabus.replace('</br></br></br></br></br>', '')
-    syllabus = syllabus.replace('<br><br><br><br><br>', '')
-    return syllabus
-
-
-def trim_td(td):
-    return td.get_text().strip()
-
-
 def collect_class_info(tr, cou_code):
-    tds = tr.find_all('td')
+    course_dict = course_from_tr(tr)
 
-    no = trim_td(tds[0])
-    time = trim_td(tds[3])
-    note = trim_td(tds[7])
-    objective = trim_td(tds[9])
-    prerequisite = trim_td(tds[10])
-    credit = trim_td(tds[2])
-    credit = int(credit) if credit.isdigit() else 0
-    limit = trim_td(tds[6])
-    limit = int(limit) if limit.isdigit() else 0
-    ge = ''
-    title = tds[1].contents
-    if len(title) > 1:
-        title = title[1].contents
-        if len(title) > 1:
-            ge = title[1].get_text().strip()
-
-    course, create = Course.objects.get_or_create(no=no)
+    course, create = Course.objects.get_or_create(no=course_dict['no'])
 
     if cou_code not in course.code:
         course.code = '%s %s' % (course.code, cou_code)
 
-    course.credit = credit
-    course.time = time
-    course.time_token = get_token(time)
-    course.limit = limit
-    course.note = note
-    course.objective = objective
-    course.prerequisite = prerequisite
-    course.ge = ge
+    course.credit = course_dict['credit']
+    course.time = course_dict['time']
+    course.time_token = get_token(course_dict['time'])
+    course.limit = course_dict['size_limit']
+    course.note = course_dict['note']
+    course.objective = course_dict['object']
+    course.prerequisite = course_dict['prerequisite']
+    course.ge = course_dict['ge_hint'] or ''
     course.save()
 
     return create
@@ -140,14 +96,10 @@ def collect_class_info(tr, cou_code):
 
 def crawl_course_info(ACIXSTORE, auth_num, cou_code):
     html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
-    soup = bs4.BeautifulSoup(html, 'html.parser')
 
-    trs = soup.find_all('tr', class_='class3')
-    trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
-    for tr in trs:
-        collect_class_info(
-            tr, cou_code.strip()
-        )
+    cou_code_stripped = cou_code.strip()
+    for tr in curriculum_to_trs(html):
+        collect_class_info(tr, cou_code_stripped)
 
 
 def crawl_course(ACIXSTORE, auth_num, cou_codes):
