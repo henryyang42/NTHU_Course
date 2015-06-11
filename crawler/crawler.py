@@ -166,7 +166,7 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
         t.join()
 
     print 'Crawling syllabus...'
-    pool = threadpool.ThreadPool(250)
+    pool = threadpool.ThreadPool(50)
     reqs = threadpool.makeRequests(
         syllabus_2_html,
         [([ACIXSTORE, course], {}) for course in Course.objects.all()]
