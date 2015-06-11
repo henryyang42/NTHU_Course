@@ -96,13 +96,14 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
             for cou_code in cou_codes
         ]
 
-    progress = progressbar.ProgressBar(maxval=len(cou_codes))
-    for future, cou_code in progress(
-        itertools.izip(curriculum_futures, cou_codes)
-    ):
-        response = future.result()
-        response.encoding = 'cp950'
-        handle_curriculum_html(response.text, cou_code)
+        progress = progressbar.ProgressBar(maxval=len(cou_codes))
+        with transaction.atomic():
+            for future, cou_code in progress(
+                itertools.izip(curriculum_futures, cou_codes)
+            ):
+                response = future.result()
+                response.encoding = 'cp950'
+                handle_curriculum_html(response.text, cou_code)
 
     print 'Crawling syllabus...'
     course_list = list(Course.objects.all())
