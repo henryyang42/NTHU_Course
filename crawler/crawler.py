@@ -73,31 +73,6 @@ def syllabus_2_html(ACIXSTORE, course):
         return 'QAQ, what can I do?'
 
 
-def trim_syllabus(ACIXSTORE, soup):
-    href_garbage = '?ACIXSTORE=%s' % ACIXSTORE
-    host = 'https://www.ccxp.nthu.edu.tw'
-    # Remove width
-    for tag in soup.find_all():
-        if 'width' in tag:
-            del tag['width']
-    # Replace link
-    for a in soup.find_all('a'):
-        href = a.get('href', '').replace(href_garbage, '').replace(' ', '%20')
-        # Make relative path to absolute path
-        if 'http' not in href:
-            href = host + href
-        a['href'] = href
-        a['target'] = '_blank'
-    syllabus = ''.join(map(unicode, soup.body.contents))
-    syllabus = syllabus.replace('</br></br></br></br></br>', '')
-    syllabus = syllabus.replace('<br><br><br><br><br>', '')
-    return syllabus
-
-
-def trim_td(td):
-    return td.get_text().strip()
-
-
 def collect_class_info(tr, cou_code):
     course_dict = course_from_tr(tr)
 
