@@ -233,7 +233,7 @@ class AISEntrance(Entrance):
 # tesseract availability test
 try:
     versions = tesseract_versions()
-except subprocess.CalledProcessError:
+except (subprocess.CalledProcessError, OSError):
     raise ImportError('%r requires tesseract binary' % __name__)
 else:
     major, minor = map(int, versions.splitlines()[0].split()[-1].split(b'.'))
