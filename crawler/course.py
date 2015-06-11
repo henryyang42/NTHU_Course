@@ -81,6 +81,13 @@ get = with_retry(requests.get)
 post = with_retry(requests.post)
 
 
+def curriculum_to_trs(html):
+    document = lxml.html.fromstring(html)
+    course_trs = document.xpath("//tr[contains(@class, 'class3')]")
+    assert len(course_trs) % 2 == 0, len(course_trs)
+    return course_trs[::2]
+
+
 def course_from_tr(main_tr):
     '''
     main_tr -> dict: course data

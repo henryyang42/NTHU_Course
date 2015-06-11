@@ -7,7 +7,9 @@ import traceback
 import progressbar
 import threadpool
 from threading import Thread
-from crawler.course import get_syllabus, course_from_syllabus
+from crawler.course import (
+    curriculum_to_trs, course_from_tr, get_syllabus, course_from_syllabus
+)
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
 
@@ -29,7 +31,8 @@ def dept_2_html(dept, ACIXSTORE, auth_num):
                               'C_TERM': C_TERM,
                               'DEPT': dept,
                               'auth_num': auth_num})
-        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
+        r.encoding = 'cp950'
+        return r.text
     except:
         print traceback.format_exc()
         print dept
@@ -45,7 +48,8 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
                               'cond': cond,
                               'cou_code': cou_code,
                               'auth_num': auth_num})
-        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
+        r.encoding = 'cp950'
+        return r.text
     except:
         print traceback.format_exc()
         print cou_code
@@ -95,37 +99,21 @@ def trim_td(td):
 
 
 def collect_class_info(tr, cou_code):
-    tds = tr.find_all('td')
+    course_dict = course_from_tr(tr)
 
-    no = trim_td(tds[0])
-    time = trim_td(tds[3])
-    note = trim_td(tds[7])
-    objective = trim_td(tds[9])
-    prerequisite = trim_td(tds[10])
-    credit = trim_td(tds[2])
-    credit = int(credit) if credit.isdigit() else 0
-    limit = trim_td(tds[6])
-    limit = int(limit) if limit.isdigit() else 0
-    ge = ''
-    title = tds[1].contents
-    if len(title) > 1:
-        title = title[1].contents
-        if len(title) > 1:
-            ge = title[1].get_text().strip()
-
-    course, create = Course.objects.get_or_create(no=no)
+    course, create = Course.objects.get_or_create(no=course_dict['no'])
 
     if cou_code not in course.code:
         course.code = '%s %s' % (course.code, cou_code)
 
-    course.credit = credit
-    course.time = time
-    course.time_token = get_token(time)
-    course.limit = limit
-    course.note = note
-    course.objective = objective
-    course.prerequisite = prerequisite
-    course.ge = ge
+    course.credit = course_dict['credit']
+    course.time = course_dict['time']
+    course.time_token = get_token(course_dict['time'])
+    course.limit = course_dict['size_limit']
+    course.note = course_dict['note']
+    course.objective = course_dict['object']
+    course.prerequisite = course_dict['prerequisite']
+    course.ge = course_dict['ge_hint'] or ''
     course.save()
 
     return create
@@ -133,14 +121,10 @@ def collect_class_info(tr, cou_code):
 
 def crawl_course_info(ACIXSTORE, auth_num, cou_code):
     html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
-    soup = bs4.BeautifulSoup(html, 'html.parser')
 
-    trs = soup.find_all('tr', class_='class3')
-    trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
-    for tr in trs:
-        collect_class_info(
-            tr, cou_code.strip()
-        )
+    cou_code_stripped = cou_code.strip()
+    for tr in curriculum_to_trs(html):
+        collect_class_info(tr, cou_code_stripped)
 
 
 def crawl_course(ACIXSTORE, auth_num, cou_codes):
