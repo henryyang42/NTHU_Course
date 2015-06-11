@@ -142,6 +142,12 @@ $(function() {
     $('#main .container').toggleClass('lg-container');
   });
 
+  $('#reset-filter').on('click', function(event) {
+    $('#ge-option').hide();
+    $('#gec-option').hide();
+    $('#dept-required-option').hide();
+  });
+
   $('#search-filter').on('submit', function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
