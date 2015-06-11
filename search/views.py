@@ -5,35 +5,12 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from data_center.models import Course, Department
-from data_center.const import DEPT_CHOICE, GEC_CHOICE, \
-    GE_CHOICE, CLASS_NAME_MAP, DEPT_MAP, SENIOR
+from data_center.const import DEPT_CHOICE, GEC_CHOICE, GE_CHOICE
 from django.views.decorators.cache import cache_page
 from django import forms
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
-
-
-def get_class_name(c):
-    return CLASS_NAME_MAP.get(c, '')
-
-
-def get_dept(no):
-    if not no.isdigit():
-        return ''
-    if len(no) not in [8, 9]:
-        return ''
-    if len(no) == 8:
-        no = '0' + no
-    year = no[0:3]
-    if int(year) < SENIOR:
-        year = SENIOR
-    dept = no[3:6]
-    dept = DEPT_MAP.get(dept, '')
-    class_name = no[6:7]
-    if dept:
-        return '%-4s%s%s' % (dept, year, get_class_name(class_name))
-    return ''
 
 
 def group_words(s):
@@ -73,9 +50,7 @@ def search(request):
 
     courses = SearchQuerySet()
 
-    if dept_required or get_dept(q):
-        if get_dept(q):
-            dept_required = get_dept(q)
+    if dept_required:
         try:
             courses = Department.objects.get(
                 dept_name=dept_required).required_course.all()
