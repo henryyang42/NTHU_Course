@@ -2,6 +2,7 @@
 # NTHU Course
 
 [![Join the chat at https://gitter.im/henryyang42/NTHU_Course](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/henryyang42/NTHU_Course?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A system that fetch the course data and provide service that is insinctive, easy to use.
 
 Typing the commands below may help you build this system.
