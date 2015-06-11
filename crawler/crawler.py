@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import re
 import bs4
 import requests
@@ -5,6 +7,7 @@ import traceback
 import progressbar
 import threadpool
 from threading import Thread
+from crawler.course import get_syllabus, course_from_syllabus
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
 
@@ -50,25 +53,15 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
 
 
 def syllabus_2_html(ACIXSTORE, course):
-    url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % (ACIXSTORE, course.no.replace(' ', '%20'))  # noqa
     try:
-        while True:
-            r = requests.get(url)
-            html = r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
-            soup = bs4.BeautifulSoup(html, 'html.parser')
-            tables = soup.find_all('table')
-            if tables:
-                trs = tables[0].find_all('tr')
-                break
-            else:
-                continue
-        for i in range(2, 5):
-            trs[i].find_all('td')[1]['colspan'] = 5
-        course.chi_title = trs[2].find_all('td')[1].get_text()
-        course.eng_title = trs[3].find_all('td')[1].get_text()
-        course.teacher = trs[4].find_all('td')[1].get_text()
-        course.room = trs[5].find_all('td')[3].get_text()
-        course.syllabus = trim_syllabus(ACIXSTORE, soup)
+        response = get_syllabus(course, ACIXSTORE)
+        course_dict = course_from_syllabus(response.text)
+
+        course.chi_title = course_dict['name_zh']
+        course.eng_title = course_dict['name_en']
+        course.teacher = course_dict['teacher']
+        course.room = course_dict['room']
+        course.syllabus = course_dict['syllabus']
         course.save()
     except:
         print traceback.format_exc()
