@@ -2,10 +2,10 @@ from __future__ import absolute_import
 
 import re
 import bs4
-import grequests
 import traceback
 import progressbar
 import itertools
+from requests_futures.sessions import FuturesSession
 from django.db import transaction
 from crawler.course import (
     curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus
@@ -20,11 +20,11 @@ cond = 'a'
 T_YEAR = 104
 C_TERM = 10
 
-G_IMAP_SIZE = 4  # concurrent requests running the same time for grequests
+MAX_WORKERS = 8  # max_workers for FuturesSession
 
 
-def dept_2_response(dept, ACIXSTORE, auth_num):
-    return grequests.post(
+def dept_2_future(session, dept, ACIXSTORE, auth_num):
+    return session.post(
         dept_url,
         data={
             'SEL_FUNC': 'DEP',
@@ -35,8 +35,8 @@ def dept_2_response(dept, ACIXSTORE, auth_num):
             'auth_num': auth_num})
 
 
-def cou_code_2_response(cou_code, ACIXSTORE, auth_num):
-    return grequests.post(
+def cou_code_2_future(session, cou_code, ACIXSTORE, auth_num):
+    return session.post(
         url,
         data={
             'ACIXSTORE': ACIXSTORE,
@@ -90,40 +90,45 @@ def handle_curriculum_html(html, cou_code):
 
 
 def crawl_course(ACIXSTORE, auth_num, cou_codes):
-    grs = (
-        cou_code_2_response(cou_code, ACIXSTORE, auth_num)
-        for cou_code in cou_codes
-    )
-    progress = progressbar.ProgressBar(maxval=len(cou_codes))
-    for response, cou_code in progress(
-        itertools.izip(grequests.imap(grs, size=G_IMAP_SIZE), cou_codes)
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        curriculum_futures = [
+            cou_code_2_future(session, cou_code, ACIXSTORE, auth_num)
+            for cou_code in cou_codes
+        ]
+
+    progress = progressbar.ProgressBar()
+    for future, cou_code in progress(
+        itertools.izip(curriculum_futures, cou_codes)
     ):
+        response = future.result()
         response.encoding = 'cp950'
         handle_curriculum_html(response.text, cou_code)
 
     print 'Crawling syllabus...'
     course_list = list(Course.objects.all())
 
-    grs = (
-        grequests.get(
-            syllabus_url,
-            params={
-                'c_key': course.no,
-                'ACIXSTORE': ACIXSTORE,
-            }
-        )
-        for course in course_list
-    )
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        course_futures = [
+            session.get(
+                syllabus_url,
+                params={
+                    'c_key': course.no,
+                    'ACIXSTORE': ACIXSTORE,
+                }
+            )
+            for course in course_list
+        ]
 
-    progress = progressbar.ProgressBar(maxval=len(course_list))
-    with transaction.atomic():
-        for response, course in progress(
-            itertools.izip(grequests.imap(grs, size=G_IMAP_SIZE), course_list)
-        ):
-            response.encoding = 'cp950'
-            save_syllabus(response.text, course)
+        progress = progressbar.ProgressBar(maxval=len(course_list))
+        with transaction.atomic():
+            for future, course in progress(
+                course_futures, course_list)
+            ):
+                response = future.result()
+                response.encoding = 'cp950'
+                save_syllabus(response.text, course)
 
-    print 'Total course information: %d' % Course.objects.count()
+        print 'Total course information: %d' % Course.objects.count()
 
 
 def handle_dept_html(html):
@@ -156,16 +161,18 @@ def handle_dept_html(html):
 
 
 def crawl_dept(ACIXSTORE, auth_num, dept_codes):
-    grs = (
-        dept_2_response(dept_code, ACIXSTORE, auth_num)
-        for dept_code in dept_codes
-    )
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        future_depts = [
+            dept_2_future(session, dept_code, ACIXSTORE, auth_num)
+            for dept_code in dept_codes
+        ]
 
-    progress = progressbar.ProgressBar(maxval=len(dept_codes))
-    with transaction.atomic():
-        for response in progress(grequests.imap(grs, size=G_IMAP_SIZE)):
-            response.encoding = 'cp950'
-            handle_dept_html(response.text)
+        progress = progressbar.ProgressBar()
+        with transaction.atomic():
+            for future in progress(future_depts):
+                response = future.result()
+                response.encoding = 'cp950'
+                handle_dept_html(response.text)
 
     print 'Total department information: %d' % Department.objects.count()
 
