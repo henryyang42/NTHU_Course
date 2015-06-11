@@ -20,6 +20,8 @@ cond = 'a'
 T_YEAR = 104
 C_TERM = 10
 
+G_IMAP_SIZE = 4  # concurrent requests running the same time for grequests
+
 
 def dept_2_response(dept, ACIXSTORE, auth_num):
     return grequests.post(
@@ -94,7 +96,7 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
     )
     progress = progressbar.ProgressBar(maxval=len(cou_codes))
     for response, cou_code in progress(
-        itertools.izip(grequests.imap(grs), cou_codes)
+        itertools.izip(grequests.imap(grs, size=G_IMAP_SIZE), cou_codes)
     ):
         response.encoding = 'cp950'
         handle_curriculum_html(response.text, cou_code)
@@ -116,7 +118,7 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
     progress = progressbar.ProgressBar(maxval=len(course_list))
     with transaction.atomic():
         for response, course in progress(
-            itertools.izip(grequests.imap(grs), course_list)
+            itertools.izip(grequests.imap(grs, size=G_IMAP_SIZE), course_list)
         ):
             response.encoding = 'cp950'
             save_syllabus(response.text, course)
@@ -161,7 +163,7 @@ def crawl_dept(ACIXSTORE, auth_num, dept_codes):
 
     progress = progressbar.ProgressBar(maxval=len(dept_codes))
     with transaction.atomic():
-        for response in progress(grequests.imap(grs)):
+        for response in progress(grequests.imap(grs, size=G_IMAP_SIZE)):
             response.encoding = 'cp950'
             handle_dept_html(response.text)
 
