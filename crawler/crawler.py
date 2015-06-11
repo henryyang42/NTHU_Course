@@ -2,13 +2,11 @@ from __future__ import absolute_import
 
 import re
 import bs4
-import requests
 import grequests
 import traceback
 import progressbar
 import itertools
 from django.db import transaction
-from threading import Thread
 from crawler.course import (
     curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus
 )
@@ -23,39 +21,27 @@ T_YEAR = 104
 C_TERM = 10
 
 
-def dept_2_html(dept, ACIXSTORE, auth_num):
-    try:
-        r = requests.post(dept_url,
-                          data={
-                              'SEL_FUNC': 'DEP',
-                              'ACIXSTORE': ACIXSTORE,
-                              'T_YEAR': T_YEAR,
-                              'C_TERM': C_TERM,
-                              'DEPT': dept,
-                              'auth_num': auth_num})
-        r.encoding = 'cp950'
-        return r.text
-    except:
-        print traceback.format_exc()
-        print dept
-        return 'QAQ, what can I do?'
+def dept_2_response(dept, ACIXSTORE, auth_num):
+    return grequests.post(
+        dept_url,
+        data={
+            'SEL_FUNC': 'DEP',
+            'ACIXSTORE': ACIXSTORE,
+            'T_YEAR': T_YEAR,
+            'C_TERM': C_TERM,
+            'DEPT': dept,
+            'auth_num': auth_num})
 
 
-def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
-    try:
-        r = requests.post(url,
-                          data={
-                              'ACIXSTORE': ACIXSTORE,
-                              'YS': YS,
-                              'cond': cond,
-                              'cou_code': cou_code,
-                              'auth_num': auth_num})
-        r.encoding = 'cp950'
-        return r.text
-    except:
-        print traceback.format_exc()
-        print cou_code
-        return 'QAQ, what can I do?'
+def cou_code_2_response(cou_code, ACIXSTORE, auth_num):
+    return grequests.post(
+        url,
+        data={
+            'ACIXSTORE': ACIXSTORE,
+            'YS': YS,
+            'cond': cond,
+            'cou_code': cou_code,
+            'auth_num': auth_num})
 
 
 def save_syllabus(html, course):
@@ -95,31 +81,27 @@ def collect_class_info(tr, cou_code):
     return create
 
 
-def crawl_course_info(ACIXSTORE, auth_num, cou_code):
-    html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
-
+def handle_curriculum_html(html, cou_code):
     cou_code_stripped = cou_code.strip()
     for tr in curriculum_to_trs(html):
         collect_class_info(tr, cou_code_stripped)
 
 
 def crawl_course(ACIXSTORE, auth_num, cou_codes):
-    threads = []
-
-    for cou_code in cou_codes:
-        t = Thread(
-            target=crawl_course_info,
-            args=(ACIXSTORE, auth_num, cou_code)
-        )
-        threads.append(t)
-        t.start()
-
-    progress = progressbar.ProgressBar()
-    for t in progress(threads):
-        t.join()
+    grs = (
+        cou_code_2_response(cou_code, ACIXSTORE, auth_num)
+        for cou_code in cou_codes
+    )
+    progress = progressbar.ProgressBar(maxval=len(cou_codes))
+    for response, cou_code in progress(
+        itertools.izip(grequests.imap(grs), cou_codes)
+    ):
+        response.encoding = 'cp950'
+        handle_curriculum_html(response.text, cou_code)
 
     print 'Crawling syllabus...'
     course_list = list(Course.objects.all())
+
     grs = (
         grequests.get(
             syllabus_url,
@@ -142,8 +124,7 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
     print 'Total course information: %d' % Course.objects.count()
 
 
-def crawl_dept_info(ACIXSTORE, auth_num, dept_code):
-    html = dept_2_html(dept_code, ACIXSTORE, auth_num)
+def handle_dept_html(html):
     soup = bs4.BeautifulSoup(html, 'html.parser')
     divs = soup.find_all('div', class_='newpage')
 
@@ -173,19 +154,16 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_code):
 
 
 def crawl_dept(ACIXSTORE, auth_num, dept_codes):
-    threads = []
+    grs = (
+        dept_2_response(dept_code, ACIXSTORE, auth_num)
+        for dept_code in dept_codes
+    )
 
-    for dept_code in dept_codes:
-        t = Thread(
-            target=crawl_dept_info,
-            args=(ACIXSTORE, auth_num, dept_code)
-        )
-        threads.append(t)
-        t.start()
-
-    progress = progressbar.ProgressBar()
-    for t in progress(threads):
-        t.join()
+    progress = progressbar.ProgressBar(maxval=len(dept_codes))
+    with transaction.atomic():
+        for response in progress(grequests.imap(grs)):
+            response.encoding = 'cp950'
+            handle_dept_html(response.text)
 
     print 'Total department information: %d' % Department.objects.count()
 
