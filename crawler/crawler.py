@@ -3,12 +3,14 @@ from __future__ import absolute_import
 import re
 import bs4
 import requests
+import grequests
 import traceback
 import progressbar
-import threadpool
+import itertools
+from django.db import transaction
 from threading import Thread
 from crawler.course import (
-    curriculum_to_trs, course_from_tr, get_syllabus, course_from_syllabus
+    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus
 )
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
@@ -56,10 +58,9 @@ def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
         return 'QAQ, what can I do?'
 
 
-def syllabus_2_html(ACIXSTORE, course):
+def save_syllabus(html, course):
     try:
-        response = get_syllabus(course, ACIXSTORE)
-        course_dict = course_from_syllabus(response.text)
+        course_dict = course_from_syllabus(html)
 
         course.chi_title = course_dict['name_zh']
         course.eng_title = course_dict['name_en']
@@ -118,13 +119,25 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
         t.join()
 
     print 'Crawling syllabus...'
-    pool = threadpool.ThreadPool(50)
-    reqs = threadpool.makeRequests(
-        syllabus_2_html,
-        [([ACIXSTORE, course], {}) for course in Course.objects.all()]
+    course_list = list(Course.objects.all())
+    grs = (
+        grequests.get(
+            syllabus_url,
+            params={
+                'c_key': course.no,
+                'ACIXSTORE': ACIXSTORE,
+            }
+        )
+        for course in course_list
     )
-    [pool.putRequest(req) for req in reqs]
-    pool.wait()
+
+    progress = progressbar.ProgressBar(maxval=len(course_list))
+    with transaction.atomic():
+        for response, course in progress(
+            itertools.izip(grequests.imap(grs), course_list)
+        ):
+            response.encoding = 'cp950'
+            save_syllabus(response.text, course)
 
     print 'Total course information: %d' % Course.objects.count()
 
