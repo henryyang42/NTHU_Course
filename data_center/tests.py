@@ -9,6 +9,3 @@ class ModelTest(TestCase):
         Course.objects.create(no='12345QAQ 010101')
 
         self.assertEqual(1, Course.objects.count())
-
-    def test_this_test_shall_fail(self):
-        self.fail()
