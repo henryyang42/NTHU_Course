@@ -5,6 +5,10 @@ python:
     - "2.7"
 
 
+env:
+    - DJANGO_SETTINGS_MODULE=NTHU_Course.settings.testing_sqlite
+
+
 install:
     - pip install --upgrade pip
     - pip install -r requirements.txt
