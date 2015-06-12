@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from crawler.crawler import crawl_course_info, crawl_dept_info
+from crawler.crawler import crawl_course, crawl_dept
 try:
     from crawler.decaptcha import Entrance, DecaptchaFailure
 except ImportError:
@@ -30,18 +30,21 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         if len(args) == 0:
+            import time
+            start_time = time.time()
             ACIXSTORE, auth_num = get_auth_pair(
                 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
                 '/JH/6/6.2/6.2.9/JH629001.php'
             )
-            crawl_course_info(ACIXSTORE, auth_num, cou_codes)
+            crawl_course(ACIXSTORE, auth_num, cou_codes)
 
             ACIXSTORE, auth_num = get_auth_pair(
                 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
                 '/JH/6/6.2/6.2.3/JH623001.php'
             )
-            crawl_dept_info(ACIXSTORE, auth_num, cou_codes)
-
+            crawl_dept(ACIXSTORE, auth_num, cou_codes)
+            elapsed_time = time.time() - start_time
+            print 'Total %.3f second used.' % elapsed_time
         if len(args) == 1:
             if args[0] == 'clear':
                 Course.objects.all().delete()
