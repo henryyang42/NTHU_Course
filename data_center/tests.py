@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from data_center.modules import Course
+from data_center.models import Course
 
 
 class ModelTest(TestCase):
