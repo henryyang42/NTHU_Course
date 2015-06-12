@@ -9,6 +9,9 @@ $(function() {
     animationend = 'webkitAnimationEnd mozAnimationEnd ' +
                    'MSAnimationEnd oanimationend animationend';
   var course_code_option = function() {
+    $('#id_ge').val('');
+    $('#id_gec').val('');
+    $('#id_dept_required').val('');
     code = $('#id_code').val();
     // 4 digit code for dept-required-option
     code_4 = code;
@@ -25,10 +28,6 @@ $(function() {
       $('#id_dept_required  option').hide();
       $('#id_dept_required  option[value^="' + code_4 + '"]').show();
       $('#id_dept_required  option[value=""]').show();
-    } else {
-      $('#id_ge').val('');
-      $('#id_gec').val('');
-      $('#id_dept_required').val('');
     }
   };
   $('#id_code').change(course_code_option);
@@ -146,6 +145,12 @@ $(function() {
     $('#main .form-group label').toggleClass('col-lg-1 col-lg-2');
     $('#main .form-group div').toggleClass('col-lg-11 col-lg-10');
     $('#main .container').toggleClass('lg-container');
+  });
+
+  $('#reset-filter').on('click', function(event) {
+    $('#ge-option').hide();
+    $('#gec-option').hide();
+    $('#dept-required-option').hide();
   });
 
   $('#search-filter').on('submit', function(event) {
