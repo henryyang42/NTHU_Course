@@ -80,7 +80,7 @@ def collect_class_info(tr, cou_code):
     course.limit = course_dict['size_limit']
     course.note = course_dict['note']
     course.objective = course_dict['object']
-    course.prerequisite = course_dict['prerequisite']
+    course.prerequisite = course_dict['has_prerequisite']
     course.ge = course_dict['ge_hint'] or ''
     course.save()
 
