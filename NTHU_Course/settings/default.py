@@ -59,6 +59,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
 )
 
 
@@ -86,9 +87,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details'
 )
 
-MIDDLEWARE_CLASSES += (
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
-)
 
 ROOT_URLCONF = 'NTHU_Course.urls'
 
