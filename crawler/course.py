@@ -17,7 +17,7 @@ attachment_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.
 
 def xpath0(element, xpath):
     result = element.xpath(xpath)
-    assert len(result), result
+    assert len(result) == 1, result
     return result[0]
 
 

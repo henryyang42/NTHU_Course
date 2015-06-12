@@ -2,13 +2,13 @@ from __future__ import absolute_import
 
 import re
 import bs4
-import requests
 import traceback
 import progressbar
-import threadpool
-from threading import Thread
+import itertools
+from requests_futures.sessions import FuturesSession
+from django.db import transaction
 from crawler.course import (
-    curriculum_to_trs, course_from_tr, get_syllabus, course_from_syllabus
+    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus
 )
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
@@ -20,46 +20,35 @@ cond = 'a'
 T_YEAR = 104
 C_TERM = 10
 
+MAX_WORKERS = 8  # max_workers for FuturesSession
 
-def dept_2_html(dept, ACIXSTORE, auth_num):
+
+def dept_2_future(session, dept, ACIXSTORE, auth_num):
+    return session.post(
+        dept_url,
+        data={
+            'SEL_FUNC': 'DEP',
+            'ACIXSTORE': ACIXSTORE,
+            'T_YEAR': T_YEAR,
+            'C_TERM': C_TERM,
+            'DEPT': dept,
+            'auth_num': auth_num})
+
+
+def cou_code_2_future(session, cou_code, ACIXSTORE, auth_num):
+    return session.post(
+        url,
+        data={
+            'ACIXSTORE': ACIXSTORE,
+            'YS': YS,
+            'cond': cond,
+            'cou_code': cou_code,
+            'auth_num': auth_num})
+
+
+def save_syllabus(html, course):
     try:
-        r = requests.post(dept_url,
-                          data={
-                              'SEL_FUNC': 'DEP',
-                              'ACIXSTORE': ACIXSTORE,
-                              'T_YEAR': T_YEAR,
-                              'C_TERM': C_TERM,
-                              'DEPT': dept,
-                              'auth_num': auth_num})
-        r.encoding = 'cp950'
-        return r.text
-    except:
-        print traceback.format_exc()
-        print dept
-        return 'QAQ, what can I do?'
-
-
-def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
-    try:
-        r = requests.post(url,
-                          data={
-                              'ACIXSTORE': ACIXSTORE,
-                              'YS': YS,
-                              'cond': cond,
-                              'cou_code': cou_code,
-                              'auth_num': auth_num})
-        r.encoding = 'cp950'
-        return r.text
-    except:
-        print traceback.format_exc()
-        print cou_code
-        return 'QAQ, what can I do?'
-
-
-def syllabus_2_html(ACIXSTORE, course):
-    try:
-        response = get_syllabus(course, ACIXSTORE)
-        course_dict = course_from_syllabus(response.text)
+        course_dict = course_from_syllabus(html)
 
         course.chi_title = course_dict['name_zh']
         course.eng_title = course_dict['name_en']
@@ -94,43 +83,56 @@ def collect_class_info(tr, cou_code):
     return create
 
 
-def crawl_course_info(ACIXSTORE, auth_num, cou_code):
-    html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
-
+def handle_curriculum_html(html, cou_code):
     cou_code_stripped = cou_code.strip()
     for tr in curriculum_to_trs(html):
         collect_class_info(tr, cou_code_stripped)
 
 
 def crawl_course(ACIXSTORE, auth_num, cou_codes):
-    threads = []
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        curriculum_futures = [
+            cou_code_2_future(session, cou_code, ACIXSTORE, auth_num)
+            for cou_code in cou_codes
+        ]
 
-    for cou_code in cou_codes:
-        t = Thread(
-            target=crawl_course_info,
-            args=(ACIXSTORE, auth_num, cou_code)
-        )
-        threads.append(t)
-        t.start()
-
-    progress = progressbar.ProgressBar()
-    for t in progress(threads):
-        t.join()
+        progress = progressbar.ProgressBar(maxval=len(cou_codes))
+        with transaction.atomic():
+            for future, cou_code in progress(
+                itertools.izip(curriculum_futures, cou_codes)
+            ):
+                response = future.result()
+                response.encoding = 'cp950'
+                handle_curriculum_html(response.text, cou_code)
 
     print 'Crawling syllabus...'
-    pool = threadpool.ThreadPool(50)
-    reqs = threadpool.makeRequests(
-        syllabus_2_html,
-        [([ACIXSTORE, course], {}) for course in Course.objects.all()]
-    )
-    [pool.putRequest(req) for req in reqs]
-    pool.wait()
+    course_list = list(Course.objects.all())
 
-    print 'Total course information: %d' % Course.objects.count()
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        course_futures = [
+            session.get(
+                syllabus_url,
+                params={
+                    'c_key': course.no,
+                    'ACIXSTORE': ACIXSTORE,
+                }
+            )
+            for course in course_list
+        ]
+
+        progress = progressbar.ProgressBar(maxval=len(course_list))
+        with transaction.atomic():
+            for future, course in progress(itertools.izip_longest(
+                course_futures, course_list
+            )):
+                response = future.result()
+                response.encoding = 'cp950'
+                save_syllabus(response.text, course)
+
+        print 'Total course information: %d' % Course.objects.count()
 
 
-def crawl_dept_info(ACIXSTORE, auth_num, dept_code):
-    html = dept_2_html(dept_code, ACIXSTORE, auth_num)
+def handle_dept_html(html):
     soup = bs4.BeautifulSoup(html, 'html.parser')
     divs = soup.find_all('div', class_='newpage')
 
@@ -160,19 +162,18 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_code):
 
 
 def crawl_dept(ACIXSTORE, auth_num, dept_codes):
-    threads = []
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        future_depts = [
+            dept_2_future(session, dept_code, ACIXSTORE, auth_num)
+            for dept_code in dept_codes
+        ]
 
-    for dept_code in dept_codes:
-        t = Thread(
-            target=crawl_dept_info,
-            args=(ACIXSTORE, auth_num, dept_code)
-        )
-        threads.append(t)
-        t.start()
-
-    progress = progressbar.ProgressBar()
-    for t in progress(threads):
-        t.join()
+        progress = progressbar.ProgressBar()
+        with transaction.atomic():
+            for future in progress(future_depts):
+                response = future.result()
+                response.encoding = 'cp950'
+                handle_dept_html(response.text)
 
     print 'Total department information: %d' % Department.objects.count()
 
