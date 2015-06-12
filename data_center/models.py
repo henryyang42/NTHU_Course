@@ -6,7 +6,7 @@ from django.db import models
 
 class Course(models.Model):
     """Course database schema"""
-    no = models.CharField(max_length=20, blank=True)
+    no = models.CharField(max_length=20, unique=True, db_index=True)
     code = models.CharField(max_length=20, blank=True)
     eng_title = models.CharField(max_length=200, blank=True)
     chi_title = models.CharField(max_length=200, blank=True)
