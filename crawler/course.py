@@ -37,7 +37,7 @@ def extract_multirow_text(element):
     return re.sub(
         r'\n{4,}',
         '\n' * 3,
-        ''.join(
+        '\n'.join(
             s.strip() for s in element.itertext()
         )
     )
