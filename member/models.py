@@ -9,7 +9,6 @@ class Member(models.Model):
     uuid = models.CharField('User ID', max_length=100)
     email = models.EmailField('Email')
 
-
     def __str__(self):
         return self.user.get_username()
 
