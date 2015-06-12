@@ -92,14 +92,14 @@ def course_from_tr(main_tr):
     '''
     main_tr -> dict: course data
 
-    data info:
+    data info: ([x] means implemented but disabled)
     no                  text            course number
     name_zh             text            Chinese course name
     name_en             text / None     English course name
     ge_hint             text / None     GE line text
-    credit              int             credit
-    time                text            time
-    rc                  text            room & capacity
+    credit [x]          int             credit
+    time [x]            text            time
+    rc [x]              text            room & capacity
     teacher             text            teacher name, may contain English
     size_limit          int / None      quota size limit
     fr                  int             quota reserved for freshmen
@@ -111,9 +111,9 @@ def course_from_tr(main_tr):
     tds = main_tr.xpath('td')
     part = {
         'no': extract_text(tds[0]),
-        'credit': extract_int(tds[2]),
-        'time': extract_text(tds[3]),
-        'room/capacity': extract_text(tds[4]),
+        # 'credit': extract_int(tds[2]),
+        # 'time': extract_text(tds[3]),
+        # 'room/capacity': extract_text(tds[4]),
         'teacher': extract_text(tds[5]),
         'note': extract_text(tds[7]),
         'enrollment': extract_int(tds[8]),
