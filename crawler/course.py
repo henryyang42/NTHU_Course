@@ -130,7 +130,7 @@ def course_from_tr(main_tr):
 
 def course_from_syllabus(html):
     '''
-    lxml document -> dict: course data
+    syllabus html -> dict: course data
 
     data info:
     no              text            course number
