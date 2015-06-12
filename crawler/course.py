@@ -169,7 +169,7 @@ def course_from_syllabus(html):
         'credit': xpath_text('/html/body/div/table[1]/tr[2]/td[4]'),
         'teacher': xpath_text('/html/body/div/table[1]/tr[5]/td[2]'),
         'time': xpath_text('/html/body/div/table[1]/tr[6]/td[2]'),
-        'room': xpath_text('/html/body/div/table[1]/tr[6]/td[4]'),
+        'room': xpath_text('/html/body/div/table[1]/tr[6]/td[4]', joiner=' '),
         'syllabus': extract_multirow_text(
             xpath0(document, '/html/body/div/table[4]/tr[2]/td')),
         'has_attachment': bool(
