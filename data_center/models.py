@@ -24,7 +24,7 @@ class Course(models.Model):
 
     hit = models.IntegerField(default=0)
 
-    syllabus = models.TextField(blank=True)  # A html div
+    syllabus = models.TextField(blank=True)  # pure text
 
     def __str__(self):
         return self.no

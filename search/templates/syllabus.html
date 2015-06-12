@@ -22,7 +22,11 @@
 
   <div class="jumbotron center">
     <center><h2>{{ course.chi_title }}</h2><h4>{{ course.eng_title }}</h4></center>
-    {{ course.syllabus|safe|escape }}
+    <div>
+      <pre>
+        {{ course.syllabus }}
+      </pre>
+    </div>
     <div class="">
       <div id="disqus_thread"></div>
       <script type="text/javascript">
