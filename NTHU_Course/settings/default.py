@@ -86,6 +86,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details'
 )
 
+MIDDLEWARE_CLASSES += (
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+)
 
 ROOT_URLCONF = 'NTHU_Course.urls'
 
@@ -136,7 +139,7 @@ STATIC_URL = '/static/'
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 LOGIN_REDIRECT_URL = '/'
-LOGIN_ERROR_URL = '/'
+LOGIN_ERROR_URL = '/table.html'
 
 SOCIAL_AUTH_FACEBOOK_KEY = secret_key.FACEBOOK_KEY
 SOCIAL_AUTH_FACEBOOK_SECRET = secret_key.FACEBOOK_SECRET
