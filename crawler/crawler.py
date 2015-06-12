@@ -58,6 +58,7 @@ def save_syllabus(html, course):
         course.teacher = course_dict['teacher']
         course.room = course_dict['room']
         course.syllabus = course_dict['syllabus']
+        course.has_attachment = course_dict['has_attachment']
         course.save()
     except:
         print traceback.format_exc()
