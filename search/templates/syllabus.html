@@ -1,7 +1,7 @@
 <div id="syllabus">
   <style>
-  .class1 {  background-color: #6699ff; font-size: 11pt; color: #ffffff; line-height: 2em}
-  .class2 {  background-color: #f0f0f0; font-size: 10pt; color: #333}
+  .class1 {  background-color: #6699ff; font-size: 11pt; color: #ffffff; text-align: center;}
+  .class2 {  background-color: #f0f0f0; font-size: 10pt; color: #333; text-align: center;}
   .class3 {  background-color: #ffffee; font-size: 10pt; color: #333; vertical-align: middle; text-align: center}
   .class4 {  background-color: #ffffee; font-size: 14pt; color: #000099}
   .center {
@@ -12,20 +12,53 @@
     padding: 15px;
   }
   .jumbotron {background-color: #fff}
-  .jumbotron table:nth-of-type(2),
-  .jumbotron table:nth-of-type(3),
-  .jumbotron table:nth-of-type(1) tbody tr:nth-child(3),
-  .jumbotron table:nth-of-type(1) tbody tr:nth-child(4) {display: none}
-  .jumbotron tr:nth-of-type(1) td {padding: 3px 25px}
-  .jumbotron table:nth-of-type(4) tr:nth-of-type(2) td {padding: 25px; padding-bottom: 0}
+  td.syllabus>* {margin: 10px;}
+  td.syllabus>div {white-space: pre-line;}
   </style>
 
   <div class="jumbotron center">
     <center><h2>{{ course.chi_title }}</h2><h4>{{ course.eng_title }}</h4></center>
     <div>
-      <pre>
-        {{ course.syllabus }}
-      </pre>
+      <table width="650">
+        <tr class="class1">
+          <td colspan="2">
+            課程資訊
+          </td>
+        </tr>
+        <tr>
+          <td class="class2">科號</td>
+          <td class="class3">{{ course.no }}</td>
+        </tr>
+        <tr>
+          <td class="class2">時間</td>
+          <td class="class3">{{ course.time }}</td>
+        </tr>
+        <tr>
+          <td class="class2">任課教師</td>
+          <td class="class3">{{ course.teacher }}</td>
+        </tr>
+        <tr>
+          <td class="class2">人數限制</td>
+          <td class="class3">{{ course.size_limit }}</td>
+        </tr>
+        <tr></tr><!--somebody please fix this LOL-->
+        <tr class="class1">
+          <td colspan="2">
+            課程大綱
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="syllabus">
+            {% if course.has_attachment %}
+            <a class="btn btn-primary" target="_blank" href="{{ course.attachment_url }}">PDF</a>
+            {% else %}
+            <div>
+              {{ course.syllabus }}
+            </div>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
     </div>
     <div class="">
       <div id="disqus_thread"></div>
