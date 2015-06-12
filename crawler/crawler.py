@@ -77,7 +77,7 @@ def collect_class_info(tr, cou_code):
     # course.credit = course_dict['credit']
     # course.time = course_dict['time']
     # course.time_token = get_token(course_dict['time'])
-    course.limit = course_dict['size_limit']
+    course.limit = course_dict['size_limit'] or 0
     course.note = course_dict['note']
     course.objective = course_dict['object']
     course.prerequisite = course_dict['has_prerequisite']
