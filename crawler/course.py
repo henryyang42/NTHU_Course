@@ -131,7 +131,7 @@ def course_from_tr(main_tr):
     if prerequisite == u'擋修':
         part['has_prerequisite'] = True
     else:
-        assert prerequisite == u'-', 'unknown prerequisite %r' % prerequisite
+        assert not prerequisite, 'unknown prerequisite %r' % prerequisite
         part['has_prerequisite'] = False
     return part
 
