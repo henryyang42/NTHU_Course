@@ -2,6 +2,9 @@
 
 from datetime import datetime
 from django.db import models
+from django.utils.http import urlquote
+
+attachment_url_format = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.12/%s.pdf'  # noqa
 
 
 class Course(models.Model):
@@ -24,10 +27,15 @@ class Course(models.Model):
 
     hit = models.IntegerField(default=0)
 
-    syllabus = models.TextField(blank=True)  # A html div
+    syllabus = models.TextField(blank=True)  # pure text
+    has_attachment = models.BooleanField(default=False)  # has pdf
 
     def __str__(self):
         return self.no
+
+    @property
+    def attachment_url(self):
+        return attachment_url_format % urlquote(self.no)
 
 
 class Department(models.Model):

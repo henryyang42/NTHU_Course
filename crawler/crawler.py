@@ -52,9 +52,13 @@ def save_syllabus(html, course):
 
         course.chi_title = course_dict['name_zh']
         course.eng_title = course_dict['name_en']
+        course.credit = course_dict['credit']
+        course.time = course_dict['time']
+        course.time_token = get_token(course_dict['time'])
         course.teacher = course_dict['teacher']
         course.room = course_dict['room']
         course.syllabus = course_dict['syllabus']
+        course.has_attachment = course_dict['has_attachment']
         course.save()
     except:
         print traceback.format_exc()
@@ -70,13 +74,14 @@ def collect_class_info(tr, cou_code):
     if cou_code not in course.code:
         course.code = '%s %s' % (course.code, cou_code)
 
-    course.credit = course_dict['credit']
-    course.time = course_dict['time']
-    course.time_token = get_token(course_dict['time'])
-    course.limit = course_dict['size_limit']
+    # these data are available in the syllabus, use those!
+    # course.credit = course_dict['credit']
+    # course.time = course_dict['time']
+    # course.time_token = get_token(course_dict['time'])
+    course.limit = course_dict['size_limit'] or 0
     course.note = course_dict['note']
     course.objective = course_dict['object']
-    course.prerequisite = course_dict['prerequisite']
+    course.prerequisite = course_dict['has_prerequisite']
     course.ge = course_dict['ge_hint'] or ''
     course.save()
 
