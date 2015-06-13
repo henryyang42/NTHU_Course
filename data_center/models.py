@@ -6,7 +6,7 @@ from django.db import models
 
 class Course(models.Model):
     """Course database schema"""
-    no = models.CharField(max_length=20, blank=True)
+    no = models.CharField(max_length=20, unique=True, db_index=True)
     code = models.CharField(max_length=20, blank=True)
     eng_title = models.CharField(max_length=200, blank=True)
     chi_title = models.CharField(max_length=200, blank=True)
@@ -16,8 +16,8 @@ class Course(models.Model):
     time_token = models.CharField(max_length=20, blank=True)
     teacher = models.CharField(max_length=40, blank=True)  # Only save Chinese
     room = models.CharField(max_length=20, blank=True)
-    credit = models.IntegerField(blank=True, null=True)
-    limit = models.IntegerField(blank=True, null=True)
+    credit = models.IntegerField(default=0)
+    limit = models.IntegerField(default=0)
     prerequisite = models.BooleanField(default=False, blank=True)
 
     ge = models.CharField(max_length=80, blank=True)
