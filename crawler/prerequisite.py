@@ -11,17 +11,27 @@ listing_url = (
 )
 
 
-class Any(list):
+class Container(list):
+    iscontainer = True
+
+
+class Any(Container):
+    iscontainerany = True
+
     def __repr__(self):
         return 'Any({})'.format(super(Any, self).__repr__())
 
 
-class All(list):
+class All(Container):
+    iscontainerall = True
+
     def __repr__(self):
         return 'All({})'.format(super(All, self).__repr__())
 
 
 class Not(tuple):
+    negative = True
+
     def __repr__(self):
         return 'Not{}'.format(super(Not, self).__repr__())
 
