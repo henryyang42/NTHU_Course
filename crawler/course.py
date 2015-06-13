@@ -37,7 +37,7 @@ def extract_multirow_text(element):
     return re.sub(
         r'\n{4,}',
         '\n' * 3,
-        ''.join(
+        '\n'.join(
             s.strip() for s in element.itertext()
         )
     )
@@ -92,30 +92,32 @@ def course_from_tr(main_tr):
     '''
     main_tr -> dict: course data
 
-    data info:
-    no          text            course number
-    name_zh     text            Chinese course name
-    name_en     text / None     English course name
-    ge_hint     text / None     GE hint
-    credit      int             credit
-    time        text            time
-    rc          text            room & capacity
-    teacher     text            teacher name, may contain English
-    size_limit  int / None      quota size limit
-    fr          int             quota reserved for freshmen
-    note        text            note
-    object      text            object
+    data info: ([x] means implemented but disabled)
+    no                  text            course number
+    name_zh             text            Chinese course name
+    name_en             text / None     English course name
+    ge_hint             text / None     GE line text
+    credit [x]          int             credit
+    time [x]            text            time
+    rc [x]              text            room & capacity
+    teacher             text            teacher name, may contain English
+    size_limit          int / None      quota size limit
+    fr                  int             quota reserved for freshmen
+    note                text            note
+    enrollment          int             quota enrollment
+    object              text            object
+    has_prerequisite    bool            has prerequisite
     '''
     tds = main_tr.xpath('td')
     part = {
         'no': extract_text(tds[0]),
-        'credit': extract_int(tds[2]),
-        'time': extract_text(tds[3]),
-        'room/capacity': extract_text(tds[4]),
+        # 'credit': extract_int(tds[2]),
+        # 'time': extract_text(tds[3]),
+        # 'room/capacity': extract_text(tds[4]),
         'teacher': extract_text(tds[5]),
-        'prerequisite': extract_text(tds[6]),
         'note': extract_text(tds[7]),
-        'object': extract_text(tds[8]),
+        'enrollment': extract_int(tds[8]),
+        'object': extract_text(tds[9]),
     }
     part['size_limit'], part['fr'] = get_slfr(extract_text(tds[6]))
     for key, text in itertools.izip_longest(
@@ -125,12 +127,18 @@ def course_from_tr(main_tr):
         if text is not None:
             text = text.strip()
         part[key] = text
+    prerequisite = extract_text(tds[10])
+    if prerequisite == u'擋修':
+        part['has_prerequisite'] = True
+    else:
+        assert not prerequisite, 'unknown prerequisite %r' % prerequisite
+        part['has_prerequisite'] = False
     return part
 
 
 def course_from_syllabus(html):
     '''
-    lxml document -> dict: course data
+    syllabus html -> dict: course data
 
     data info:
     no              text            course number
@@ -161,7 +169,7 @@ def course_from_syllabus(html):
         'credit': xpath_text('/html/body/div/table[1]/tr[2]/td[4]'),
         'teacher': xpath_text('/html/body/div/table[1]/tr[5]/td[2]'),
         'time': xpath_text('/html/body/div/table[1]/tr[6]/td[2]'),
-        'room': xpath_text('/html/body/div/table[1]/tr[6]/td[4]'),
+        'room': xpath_text('/html/body/div/table[1]/tr[6]/td[4]', joiner=' '),
         'syllabus': extract_multirow_text(
             xpath0(document, '/html/body/div/table[4]/tr[2]/td')),
         'has_attachment': bool(
