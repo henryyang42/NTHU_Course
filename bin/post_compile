@@ -1,3 +1,5 @@
+pip install django-toolbelt  # heroku specific dependencies
+
 ./manage.py makemigrations --noinput
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput

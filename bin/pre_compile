@@ -1,1 +1,0 @@
-pip install django-toolbelt  # heroku specific dependencies
