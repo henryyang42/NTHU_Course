@@ -1,0 +1,35 @@
+<table class="table table-striped">
+{% for cospec, prerequisites in pdata %}
+<tr>
+  <td id="{{ cospec.0 }}">{{ cospec.0 }}{% if cospec.1 %}（{{ cospec.1 }}）{% endif %}</td>
+  <td>
+    <ul class="list-unstyled">
+      {% for prerequisite in prerequisites %}
+      <li>
+        {% if prerequisite.iscontainerany %}
+        任意：
+        <ul>
+          {% for subprerequisite in prerequisite %}
+          <li>
+            {% if subprerequisite.negative %}
+            <span class="label label-default">不</span>
+            {% endif %}
+            <span class="label label-default">{{ subprerequisite.1 }}</span>
+            {{ subprerequisite.0 }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        {% if prerequisite.negative %}
+        <span class="label label-default">不</span>
+        {% endif %}
+        <span class="label label-default">{{ prerequisite.1 }}</span>
+        {{ prerequisite.0 }}
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </td>
+</tr>
+{% endfor %}
+</table>

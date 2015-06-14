@@ -59,3 +59,22 @@ class Announcement(models.Model):
 
     def __unicode__(self):
         return '%s|%s' % (self.time, self.tag)
+
+
+class FlatPrerequisite(models.Model):
+    '''
+    store rendered prerequisite in the database
+    alternative: django.contrib.flatpage
+    '''
+    updated_at = models.DateTimeField(auto_now=True)
+    html = models.TextField()
+
+    @classmethod
+    def update_html(cls, html):
+        if cls.objects.exists():
+            ins = cls.objects.get()
+            ins.html = html
+            ins.save()
+            return ins
+        else:
+            return cls.objects.create(html=html)
