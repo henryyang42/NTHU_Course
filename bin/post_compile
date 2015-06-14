@@ -1,5 +1,6 @@
 pip install django-toolbelt  # heroku specific dependencies
 
+export DJANGO_SETTINGS_MODULE=NTHU_Course.settings.heroku
 ./manage.py makemigrations --noinput
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput
