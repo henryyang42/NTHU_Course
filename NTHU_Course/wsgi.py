@@ -12,3 +12,8 @@ https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "NTHU_Course.settings.default")
 
 application = get_wsgi_application()
+
+
+if os.environ['DJANGO_SETTINGS_MODULE'] == 'NTHU_Course.settings.heroku':
+    from dj_static import Cling
+    application = Cling(application)
