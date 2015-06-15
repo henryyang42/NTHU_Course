@@ -5,6 +5,9 @@ whoosh_index
 # DB
 mysql.ini
 
+# Key
+secret_key.py
+
 # Garbage
 .DS_Store
 
