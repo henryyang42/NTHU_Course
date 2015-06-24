@@ -126,13 +126,12 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
         ]
 
         progress = progressbar.ProgressBar(maxval=len(course_list))
-        with transaction.atomic():
-            for future, course in progress(itertools.izip_longest(
-                course_futures, course_list
-            )):
-                response = future.result()
-                response.encoding = 'cp950'
-                save_syllabus(response.text, course)
+        for future, course in progress(itertools.izip_longest(
+            course_futures, course_list
+        )):
+            response = future.result()
+            response.encoding = 'cp950'
+            save_syllabus(response.text, course)
 
         print 'Total course information: %d' % Course.objects.count()
 
