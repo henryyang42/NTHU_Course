@@ -162,14 +162,23 @@ def course_from_syllabus(html):
     def xpath_int(xpath):
         return extract_int(xpath0(document, xpath))
 
+    def patch_teacher(text):
+        '''
+        Save only Chinese names for teachers.
+
+        See issue #86.
+        '''
+        return re.sub(r'\([^)]*\)', '', text)
+
     return {
         'no': xpath_text('/html/body/div/table[1]/tr[2]/td[2]'),
         'name_zh': xpath_text('/html/body/div/table[1]/tr[3]/td[2]'),
         'name_en': xpath_text('/html/body/div/table[1]/tr[4]/td[2]'),
         'credit': xpath_text('/html/body/div/table[1]/tr[2]/td[4]'),
-        'teacher': xpath_text('/html/body/div/table[1]/tr[5]/td[2]'),
+        'teacher': patch_teacher(xpath_text(
+            '/html/body/div/table[1]/tr[5]/td[2]', joiner=', ')),
         'time': xpath_text('/html/body/div/table[1]/tr[6]/td[2]'),
-        'room': xpath_text('/html/body/div/table[1]/tr[6]/td[4]', joiner=' '),
+        'room': xpath_text('/html/body/div/table[1]/tr[6]/td[4]', joiner=', '),
         'syllabus': extract_multirow_text(
             xpath0(document, '/html/body/div/table[4]/tr[2]/td')),
         'has_attachment': bool(
