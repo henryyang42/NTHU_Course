@@ -18,7 +18,7 @@ class Course(models.Model):
     time = models.CharField(max_length=20, blank=True)
     time_token = models.CharField(max_length=20, blank=True)
     teacher = models.CharField(max_length=40, blank=True)  # Only save Chinese
-    room = models.CharField(max_length=20, blank=True)
+    room = models.CharField(max_length=80, blank=True)
     credit = models.IntegerField(default=0)
     limit = models.IntegerField(default=0)
     prerequisite = models.BooleanField(default=False, blank=True)
