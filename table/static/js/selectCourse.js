@@ -1,6 +1,6 @@
 var moduleNTHUCourse = angular.module('ModuleNTHUCourse', ['ui.bootstrap']);
-var semester = '10410';
-
+var semester = '10420';
+var localStorageName = 'added_course' + semester; // Prevent loading 10410 data
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {
     var out = [];
@@ -108,7 +108,7 @@ moduleNTHUCourse.controller('CourseCtrl', function($scope, $filter) {
   if (typeof(Storage) !== 'undefined') {
     // Code for localStorage
     try {
-      var added_course = localStorage.getItem('added_course');
+      var added_course = localStorage.getItem(localStorageName);
       if (added_course != null) {
         added_course = JSON.parse(added_course);
         for (var i in added_course) {
@@ -120,7 +120,7 @@ moduleNTHUCourse.controller('CourseCtrl', function($scope, $filter) {
         }
       }
     } catch (e) {
-      localStorage.setItem('added_course', JSON.stringify($scope.added_course));
+      localStorage.setItem(localStorageName, JSON.stringify($scope.added_course));
     }
 
   } else {
@@ -229,7 +229,7 @@ moduleNTHUCourse.controller('CourseCtrl', function($scope, $filter) {
     // Save data
     if (typeof(Storage) !== 'undefined') {
       // Code for localStorage
-      localStorage.setItem('added_course', JSON.stringify($scope.added_course));
+      localStorage.setItem(localStorageName, JSON.stringify($scope.added_course));
     } else {
       //Holy shit! No Web Storage support..
     }

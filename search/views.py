@@ -42,18 +42,20 @@ def search(request):
     dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
+    ys = request.GET.get('ys', '104|20')
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
     reverse = True if reverse_param == 'true' else False
     rev_sortby = '-' + sortby if reverse else sortby
 
-    courses = SearchQuerySet()
-
+    courses = SearchQuerySet().filter()
+    print courses
     if dept_required:
         try:
             courses = Department.objects.get(
-                dept_name=dept_required).required_course.all()
+                ys=ys, dept_name=dept_required).required_course.all()
+            print courses
         except:
             pass
         if courses:
@@ -63,7 +65,6 @@ def search(request):
         courses = courses.filter(content=AutoQuery(q))
         if code:
             courses = courses.filter(code__contains=code)
-
         if courses.count() > 300:
             return HttpResponse('TMD')  # Too many detail
 
@@ -75,6 +76,7 @@ def search(request):
 
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
+    print courses, type(courses)
 
     try:
         courses_page = paginator.page(page)
@@ -84,11 +86,11 @@ def search(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
-
+    print courses_page.object_list
     courses_list = courses_page.object_list. \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit',
-               'prerequisite', 'ge', 'code')
+               'prerequisite', 'ge', 'code', 'ys')
 
     result['total'] = courses.count()
     result['page'] = courses_page.number
@@ -99,14 +101,14 @@ def search(request):
 
 
 @cache_page(60 * 60)
-def syllabus(request, id):
-    course = get_object_or_404(Course, id=id)
+def syllabus(request, no):
+    course = get_object_or_404(Course, no=no)
     return render(request, 'syllabus.html',
                   {'course': course, 'syllabus_path': request.path})
 
 
-def hit(request, id):
-    course = get_object_or_404(Course, id=id)
+def hit(request, no):
+    course = get_object_or_404(Course, no=no)
     course.hit += 1
     course.save()
     return HttpResponse('')
