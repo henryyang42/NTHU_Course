@@ -18,10 +18,12 @@ except ImportError:
 import lxml.html
 import requests
 
+from utils.config import get_config_section
 
 logger = logging.getLogger(__name__)
+decaptcha_config = get_config_section('decaptcha')
 
-captcha_url_base = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/mod/auth_img/auth_img.php'  # noqa
+captcha_url_base = decaptcha_config['captcha_url_base']
 
 
 class DecaptchaFailure(Exception):
@@ -122,7 +124,7 @@ class Entrance(object):
                 log_hint,
                 captcha,
                 self.captcha_length_hint
-                )
+            )
             return False
         return True
 

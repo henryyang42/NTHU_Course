@@ -6,13 +6,17 @@ import itertools
 import requests
 import lxml.html
 
+from utils.config import get_config_section
 
-encoding = 'cp950'  # big5 superset
+crawler_config = get_config_section('crawler')
 
-form_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629001.php'  # noqa
-form_action_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'  # noqa
-syllabus_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php'  # noqa
-attachment_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.12/%s.pdf'  # noqa
+encoding = crawler_config['encoding']  # big5 superset
+
+form_url = crawler_config['form_url']
+form_action_url = crawler_config['form_action_url']
+syllabus_url = crawler_config['syllabus_url']
+attachment_url = crawler_config['attachment_url']
+dept_url = crawler_config['dept_url']
 
 
 def xpath0(element, xpath):

@@ -8,45 +8,44 @@ import itertools
 from requests_futures.sessions import FuturesSession
 from django.db import transaction
 from crawler.course import (
-    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus
+    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus, form_action_url, dept_url, encoding  # noqa
 )
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
 
-url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
-dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'  # noqa
-YS = '104|10'
-cond = 'a'
-T_YEAR = 104
-C_TERM = 10
-
 MAX_WORKERS = 8  # max_workers for FuturesSession
 
 
-def dept_2_future(session, dept, ACIXSTORE, auth_num):
+def ys_2_year_term(ys):
+    return tuple(ys.split('|'))
+
+
+def dept_2_future(session, dept, acixstore, auth_num, ys):
+    year, term = ys_2_year_term(ys)
+
     return session.post(
         dept_url,
         data={
             'SEL_FUNC': 'DEP',
-            'ACIXSTORE': ACIXSTORE,
-            'T_YEAR': T_YEAR,
-            'C_TERM': C_TERM,
+            'ACIXSTORE': acixstore,
+            'T_YEAR': year,
+            'C_TERM': term,
             'DEPT': dept,
             'auth_num': auth_num})
 
 
-def cou_code_2_future(session, cou_code, ACIXSTORE, auth_num):
+def cou_code_2_future(session, cou_code, acixstore, auth_num, ys):
     return session.post(
-        url,
+        form_action_url,
         data={
-            'ACIXSTORE': ACIXSTORE,
-            'YS': YS,
-            'cond': cond,
+            'ACIXSTORE': acixstore,
+            'YS': ys,  # year|term
+            'cond': 'a',
             'cou_code': cou_code,
             'auth_num': auth_num})
 
 
-def save_syllabus(html, course):
+def save_syllabus(html, course, ys):
     try:
         course_dict = course_from_syllabus(html)
 
@@ -59,6 +58,7 @@ def save_syllabus(html, course):
         course.room = course_dict['room']
         course.syllabus = course_dict['syllabus']
         course.has_attachment = course_dict['has_attachment']
+        course.ys = ys
         course.save()
     except:
         print traceback.format_exc()
@@ -94,10 +94,10 @@ def handle_curriculum_html(html, cou_code):
         collect_class_info(tr, cou_code_stripped)
 
 
-def crawl_course(ACIXSTORE, auth_num, cou_codes):
+def crawl_course(acixstore, auth_num, cou_codes, ys):
     with FuturesSession(max_workers=MAX_WORKERS) as session:
         curriculum_futures = [
-            cou_code_2_future(session, cou_code, ACIXSTORE, auth_num)
+            cou_code_2_future(session, cou_code, acixstore, auth_num, ys)
             for cou_code in cou_codes
         ]
 
@@ -119,7 +119,7 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
                 syllabus_url,
                 params={
                     'c_key': course.no,
-                    'ACIXSTORE': ACIXSTORE,
+                    'ACIXSTORE': acixstore,
                 }
             )
             for course in course_list
@@ -131,9 +131,9 @@ def crawl_course(ACIXSTORE, auth_num, cou_codes):
         )):
             response = future.result()
             response.encoding = 'cp950'
-            save_syllabus(response.text, course)
+            save_syllabus(response.text, course, ys)
 
-        print 'Total course information: %d' % Course.objects.count()
+        print 'Total course information: %d' % Course.objects.filter(ys=ys).count()  # noqa
 
 
 def handle_dept_html(html):
@@ -163,12 +163,13 @@ def handle_dept_html(html):
             except:
                 print cou_no, 'gg'
         department.save()
+        return department
 
 
-def crawl_dept(ACIXSTORE, auth_num, dept_codes):
+def crawl_dept(acixstore, auth_num, dept_codes, ys):
     with FuturesSession(max_workers=MAX_WORKERS) as session:
         future_depts = [
-            dept_2_future(session, dept_code, ACIXSTORE, auth_num)
+            dept_2_future(session, dept_code, acixstore, auth_num, ys)
             for dept_code in dept_codes
         ]
 
@@ -176,10 +177,13 @@ def crawl_dept(ACIXSTORE, auth_num, dept_codes):
         with transaction.atomic():
             for future in progress(future_depts):
                 response = future.result()
-                response.encoding = 'cp950'
-                handle_dept_html(response.text)
+                response.encoding = encoding
+                dept = handle_dept_html(response.text)
+                if dept:
+                    dept.ys = ys
+                    dept.save()
 
-    print 'Total department information: %d' % Department.objects.count()
+    print 'Total department information: %d' % Department.objects.filter(ys=ys).count()  # noqa
 
 
 def get_token(s):

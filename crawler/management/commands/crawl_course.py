@@ -32,17 +32,21 @@ class Command(BaseCommand):
         if len(args) == 0:
             import time
             start_time = time.time()
-            ACIXSTORE, auth_num = get_auth_pair(
-                'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
-                '/JH/6/6.2/6.2.9/JH629001.php'
-            )
-            crawl_course(ACIXSTORE, auth_num, cou_codes)
+            for ys in ['104|20', '104|10']:
+                ACIXSTORE, auth_num = get_auth_pair(
+                    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
+                    '/JH/6/6.2/6.2.9/JH629001.php'
+                )
+                print 'Crawling course for ' + ys
+                crawl_course(ACIXSTORE, auth_num, cou_codes[:5], ys)
 
-            ACIXSTORE, auth_num = get_auth_pair(
-                'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
-                '/JH/6/6.2/6.2.3/JH623001.php'
-            )
-            crawl_dept(ACIXSTORE, auth_num, cou_codes)
+                ACIXSTORE, auth_num = get_auth_pair(
+                    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
+                    '/JH/6/6.2/6.2.3/JH623001.php'
+                )
+                print 'Crawling dept for ' + ys
+                crawl_dept(ACIXSTORE, auth_num, cou_codes[:5], ys)
+                print '===============================\n'
             elapsed_time = time.time() - start_time
             print 'Total %.3f second used.' % elapsed_time
         if len(args) == 1:
