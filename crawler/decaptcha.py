@@ -236,7 +236,14 @@ try:
 except subprocess.CalledProcessError:
     raise ImportError('%r requires tesseract binary' % __name__)
 else:
-    major, minor = map(int, versions.splitlines()[0].split()[-1].split(b'.'))
+    major, minor = map(
+        int,
+        versions.splitlines()[0].split()[-1].split(b'.')
+    )[:2]
+    # $ tesseract --version
+    # tesseract 3.04.00
+    #  leptonica-1.72
+    #   libgif 5.1.1 : libjpeg 8d (libjpeg-turbo 1.4.1)...
     if (major, minor) < (3, 3):
         raise ImportError('%r requires tesseract >= 3.03' % __name__)
 
