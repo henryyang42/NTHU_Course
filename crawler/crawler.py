@@ -136,8 +136,8 @@ def crawl_course(acixstore, auth_num, cou_codes, ys):
         print 'Total course information: %d' % Course.objects.filter(ys=ys).count()  # noqa
 
 
-def handle_dept_html(html):
-    soup = bs4.BeautifulSoup(html, 'html.parser')
+def handle_dept_html(html, ys):
+    soup = bs4.BeautifulSoup(html)
     divs = soup.find_all('div', class_='newpage')
 
     for div in divs:
@@ -153,17 +153,17 @@ def handle_dept_html(html):
 
         trs = div.find_all('tr', bgcolor="#D8DAEB")
         department = Department.objects.get_or_create(
-            dept_name=dept_name)[0]
+            ys=ys, dept_name=dept_name)[0]
+        print department
         for tr in trs:
             tds = tr.find_all('td')
             cou_no = tds[0].get_text()
             try:
-                course = Course.objects.get(no__contains=cou_no)
+                course = Course.objects.get(ys=ys, no__contains=cou_no)
                 department.required_course.add(course)
+                department.save()
             except:
                 print cou_no, 'gg'
-        department.save()
-        return department
 
 
 def crawl_dept(acixstore, auth_num, dept_codes, ys):
@@ -178,10 +178,8 @@ def crawl_dept(acixstore, auth_num, dept_codes, ys):
             for future in progress(future_depts):
                 response = future.result()
                 response.encoding = encoding
-                dept = handle_dept_html(response.text)
-                if dept:
-                    dept.ys = ys
-                    dept.save()
+                handle_dept_html(response.text, ys)
+
 
     print 'Total department information: %d' % Department.objects.filter(ys=ys).count()  # noqa
 
