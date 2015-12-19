@@ -50,12 +50,11 @@ def search(request):
     rev_sortby = '-' + sortby if reverse else sortby
 
     courses = SearchQuerySet().filter()
-    print courses
+
     if dept_required:
         try:
             courses = Department.objects.get(
                 ys=ys, dept_name=dept_required).required_course.all()
-            print courses
         except:
             pass
         if courses:
