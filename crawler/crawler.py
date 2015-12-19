@@ -180,7 +180,6 @@ def crawl_dept(acixstore, auth_num, dept_codes, ys):
                 response.encoding = encoding
                 handle_dept_html(response.text, ys)
 
-
     print 'Total department information: %d' % Department.objects.filter(ys=ys).count()  # noqa
 
 
