@@ -22,6 +22,7 @@ class Course(models.Model):
     credit = models.IntegerField(default=0)
     limit = models.IntegerField(default=0)
     prerequisite = models.BooleanField(default=False, blank=True)
+    ys = models.CharField(max_length=10, blank=True)
 
     ge = models.CharField(max_length=80, blank=True)
 
@@ -41,6 +42,7 @@ class Course(models.Model):
 class Department(models.Model):
     dept_name = models.CharField(max_length=20, blank=True)
     required_course = models.ManyToManyField(Course, blank=True)
+    ys = models.CharField(max_length=10, blank=True)
 
     def __unicode__(self):
         return self.dept_name
