@@ -4,7 +4,7 @@ import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.search),
-    url(r'^syllabus/(?P<id>\d+)/$',
+    url(r'^syllabus/(?P<no>.+)/$',
         views.syllabus, name='syllabus'),
-    url(r'^hit/(?P<id>\d+)/$', views.hit, name='hit'),
+    url(r'^hit/(?P<no>.+)/$', views.hit, name='hit'),
 )

@@ -2,11 +2,14 @@
 
 from datetime import datetime
 from django.db import models
+from django.utils.http import urlquote
+
+attachment_url_format = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.12/%s.pdf'  # noqa
 
 
 class Course(models.Model):
     """Course database schema"""
-    no = models.CharField(max_length=20, blank=True)
+    no = models.CharField(max_length=20, unique=True, db_index=True)
     code = models.CharField(max_length=20, blank=True)
     eng_title = models.CharField(max_length=200, blank=True)
     chi_title = models.CharField(max_length=200, blank=True)
@@ -15,24 +18,31 @@ class Course(models.Model):
     time = models.CharField(max_length=20, blank=True)
     time_token = models.CharField(max_length=20, blank=True)
     teacher = models.CharField(max_length=40, blank=True)  # Only save Chinese
-    room = models.CharField(max_length=20, blank=True)
-    credit = models.IntegerField(blank=True, null=True)
-    limit = models.IntegerField(blank=True, null=True)
+    room = models.CharField(max_length=80, blank=True)
+    credit = models.IntegerField(default=0)
+    limit = models.IntegerField(default=0)
     prerequisite = models.BooleanField(default=False, blank=True)
+    ys = models.CharField(max_length=10, blank=True)
 
     ge = models.CharField(max_length=80, blank=True)
 
     hit = models.IntegerField(default=0)
 
-    syllabus = models.TextField(blank=True)  # A html div
+    syllabus = models.TextField(blank=True)  # pure text
+    has_attachment = models.BooleanField(default=False)  # has pdf
 
     def __str__(self):
         return self.no
+
+    @property
+    def attachment_url(self):
+        return attachment_url_format % urlquote(self.no)
 
 
 class Department(models.Model):
     dept_name = models.CharField(max_length=20, blank=True)
     required_course = models.ManyToManyField(Course, blank=True)
+    ys = models.CharField(max_length=10, blank=True)
 
     def __unicode__(self):
         return self.dept_name
@@ -51,3 +61,22 @@ class Announcement(models.Model):
 
     def __unicode__(self):
         return '%s|%s' % (self.time, self.tag)
+
+
+class FlatPrerequisite(models.Model):
+    '''
+    store rendered prerequisite in the database
+    alternative: django.contrib.flatpage
+    '''
+    updated_at = models.DateTimeField(auto_now=True)
+    html = models.TextField()
+
+    @classmethod
+    def update_html(cls, html):
+        if cls.objects.exists():
+            ins = cls.objects.get()
+            ins.html = html
+            ins.save()
+            return ins
+        else:
+            return cls.objects.create(html=html)

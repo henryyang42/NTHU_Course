@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title_block %}<title>擋修列表 - NTHU Course</title>{% endblock %}
+
+{% block source_block %}
+<style>
+  td:first-child {
+    text-align: right;
+    vertical-align: middle!important;
+  }
+  td li {
+    margin: 5px 0;
+    list-style-position: outside;
+  }
+  li ul {
+    padding-left: 40px;
+  }
+  li ul li {
+    list-style-type: disc;
+  }
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div id="main">
+  <div id="content" class="container">
+    <section>
+      <header>
+        <h2>擋修列表</h2>
+      </header>
+      <small>updated: {{ data.updated_at }}</small>
+      {{ data.html|safe }}
+    </section>
+  </div>
+</div>
+{% endblock %}

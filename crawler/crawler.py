@@ -1,74 +1,64 @@
+from __future__ import absolute_import
+
 import re
 import bs4
-import requests
 import traceback
 import progressbar
-import threadpool
-from threading import Thread
+import itertools
+from requests_futures.sessions import FuturesSession
+from django.db import transaction
+from crawler.course import (
+    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus, form_action_url, dept_url, encoding  # noqa
+)
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
 
-url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.9/JH629002.php'
-dept_url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/6/6.2/6.2.3/JH623002.php'  # noqa
-YS = '104|10'
-cond = 'a'
-T_YEAR = 104
-C_TERM = 10
+MAX_WORKERS = 8  # max_workers for FuturesSession
 
 
-def dept_2_html(dept, ACIXSTORE, auth_num):
+def ys_2_year_term(ys):
+    return tuple(ys.split('|'))
+
+
+def dept_2_future(session, dept, acixstore, auth_num, ys):
+    year, term = ys_2_year_term(ys)
+
+    return session.post(
+        dept_url,
+        data={
+            'SEL_FUNC': 'DEP',
+            'ACIXSTORE': acixstore,
+            'T_YEAR': year,
+            'C_TERM': term,
+            'DEPT': dept,
+            'auth_num': auth_num})
+
+
+def cou_code_2_future(session, cou_code, acixstore, auth_num, ys):
+    return session.post(
+        form_action_url,
+        data={
+            'ACIXSTORE': acixstore,
+            'YS': ys,  # year|term
+            'cond': 'a',
+            'cou_code': cou_code,
+            'auth_num': auth_num})
+
+
+def save_syllabus(html, course, ys):
     try:
-        r = requests.post(dept_url,
-                          data={
-                              'SEL_FUNC': 'DEP',
-                              'ACIXSTORE': ACIXSTORE,
-                              'T_YEAR': T_YEAR,
-                              'C_TERM': C_TERM,
-                              'DEPT': dept,
-                              'auth_num': auth_num})
-        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
-    except:
-        print traceback.format_exc()
-        print dept
-        return 'QAQ, what can I do?'
+        course_dict = course_from_syllabus(html)
 
-
-def cou_code_2_html(cou_code, ACIXSTORE, auth_num):
-    try:
-        r = requests.post(url,
-                          data={
-                              'ACIXSTORE': ACIXSTORE,
-                              'YS': YS,
-                              'cond': cond,
-                              'cou_code': cou_code,
-                              'auth_num': auth_num})
-        return r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
-    except:
-        print traceback.format_exc()
-        print cou_code
-        return 'QAQ, what can I do?'
-
-
-def syllabus_2_html(ACIXSTORE, course):
-    url = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/common/Syllabus/1.php?ACIXSTORE=%s&c_key=%s' % (ACIXSTORE, course.no.replace(' ', '%20'))  # noqa
-    try:
-        while True:
-            r = requests.get(url)
-            html = r.content.decode('big5', 'ignore').encode('utf8', 'ignore')
-            soup = bs4.BeautifulSoup(html, 'html.parser')
-            tables = soup.find_all('table')
-            if tables:
-                trs = tables[0].find_all('tr')
-                break
-            else:
-                continue
-        for i in range(2, 5):
-            trs[i].find_all('td')[1]['colspan'] = 5
-        course.chi_title = trs[2].find_all('td')[1].get_text()
-        course.eng_title = trs[3].find_all('td')[1].get_text()
-        course.teacher = trs[4].find_all('td')[1].get_text()
-        course.room = trs[5].find_all('td')[3].get_text()
-        course.syllabus = trim_syllabus(ACIXSTORE, soup)
+        course.chi_title = course_dict['name_zh']
+        course.eng_title = course_dict['name_en']
+        course.credit = course_dict['credit']
+        course.time = course_dict['time']
+        course.time_token = get_token(course_dict['time'])
+        course.teacher = course_dict['teacher']
+        course.room = course_dict['room']
+        course.syllabus = course_dict['syllabus']
+        course.has_attachment = course_dict['has_attachment']
+        course.ys = ys
         course.save()
     except:
         print traceback.format_exc()
@@ -76,110 +66,78 @@ def syllabus_2_html(ACIXSTORE, course):
         return 'QAQ, what can I do?'
 
 
-def trim_syllabus(ACIXSTORE, soup):
-    href_garbage = '?ACIXSTORE=%s' % ACIXSTORE
-    host = 'https://www.ccxp.nthu.edu.tw'
-    # Remove width
-    for tag in soup.find_all():
-        if 'width' in tag:
-            del tag['width']
-    # Replace link
-    for a in soup.find_all('a'):
-        href = a.get('href', '').replace(href_garbage, '').replace(' ', '%20')
-        # Make relative path to absolute path
-        if 'http' not in href:
-            href = host + href
-        a['href'] = href
-        a['target'] = '_blank'
-    syllabus = ''.join(map(unicode, soup.body.contents))
-    syllabus = syllabus.replace('</br></br></br></br></br>', '')
-    syllabus = syllabus.replace('<br><br><br><br><br>', '')
-    return syllabus
-
-
-def trim_td(td):
-    return td.get_text().strip()
-
-
 def collect_class_info(tr, cou_code):
-    tds = tr.find_all('td')
+    course_dict = course_from_tr(tr)
 
-    no = trim_td(tds[0])
-    time = trim_td(tds[3])
-    note = trim_td(tds[7])
-    objective = trim_td(tds[9])
-    prerequisite = trim_td(tds[10])
-    credit = trim_td(tds[2])
-    credit = int(credit) if credit.isdigit() else 0
-    limit = trim_td(tds[6])
-    limit = int(limit) if limit.isdigit() else 0
-    ge = ''
-    title = tds[1].contents
-    if len(title) > 1:
-        title = title[1].contents
-        if len(title) > 1:
-            ge = title[1].get_text().strip()
-
-    course, create = Course.objects.get_or_create(no=no)
+    course, create = Course.objects.get_or_create(no=course_dict['no'])
 
     if cou_code not in course.code:
         course.code = '%s %s' % (course.code, cou_code)
 
-    course.credit = credit
-    course.time = time
-    course.time_token = get_token(time)
-    course.limit = limit
-    course.note = note
-    course.objective = objective
-    course.prerequisite = prerequisite
-    course.ge = ge
+    # these data are available in the syllabus, use those!
+    # course.credit = course_dict['credit']
+    # course.time = course_dict['time']
+    # course.time_token = get_token(course_dict['time'])
+    course.limit = course_dict['size_limit'] or 0
+    course.note = course_dict['note']
+    course.objective = course_dict['object']
+    course.prerequisite = course_dict['has_prerequisite']
+    course.ge = course_dict['ge_hint'] or ''
     course.save()
 
     return create
 
 
-def crawl_course_info(ACIXSTORE, auth_num, cou_code):
-    html = cou_code_2_html(cou_code, ACIXSTORE, auth_num)
-    soup = bs4.BeautifulSoup(html, 'html.parser')
-
-    trs = soup.find_all('tr', class_='class3')
-    trs = [tr for tr in trs if len(tr.find_all('td')) > 1]
-    for tr in trs:
-        collect_class_info(
-            tr, cou_code.strip()
-        )
+def handle_curriculum_html(html, cou_code):
+    cou_code_stripped = cou_code.strip()
+    for tr in curriculum_to_trs(html):
+        collect_class_info(tr, cou_code_stripped)
 
 
-def crawl_course(ACIXSTORE, auth_num, cou_codes):
-    threads = []
+def crawl_course(acixstore, auth_num, cou_codes, ys):
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        curriculum_futures = [
+            cou_code_2_future(session, cou_code, acixstore, auth_num, ys)
+            for cou_code in cou_codes
+        ]
 
-    for cou_code in cou_codes:
-        t = Thread(
-            target=crawl_course_info,
-            args=(ACIXSTORE, auth_num, cou_code)
-        )
-        threads.append(t)
-        t.start()
-
-    progress = progressbar.ProgressBar()
-    for t in progress(threads):
-        t.join()
+        progress = progressbar.ProgressBar(maxval=len(cou_codes))
+        with transaction.atomic():
+            for future, cou_code in progress(
+                itertools.izip(curriculum_futures, cou_codes)
+            ):
+                response = future.result()
+                response.encoding = 'cp950'
+                handle_curriculum_html(response.text, cou_code)
 
     print 'Crawling syllabus...'
-    pool = threadpool.ThreadPool(50)
-    reqs = threadpool.makeRequests(
-        syllabus_2_html,
-        [([ACIXSTORE, course], {}) for course in Course.objects.all()]
-    )
-    [pool.putRequest(req) for req in reqs]
-    pool.wait()
+    course_list = list(Course.objects.all())
 
-    print 'Total course information: %d' % Course.objects.count()
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        course_futures = [
+            session.get(
+                syllabus_url,
+                params={
+                    'c_key': course.no,
+                    'ACIXSTORE': acixstore,
+                }
+            )
+            for course in course_list
+        ]
+
+        progress = progressbar.ProgressBar(maxval=len(course_list))
+        for future, course in progress(itertools.izip_longest(
+            course_futures, course_list
+        )):
+            response = future.result()
+            response.encoding = 'cp950'
+            save_syllabus(response.text, course, ys)
+
+        print 'Total course information: %d' % Course.objects.filter(ys=ys).count()  # noqa
 
 
-def crawl_dept_info(ACIXSTORE, auth_num, dept_code):
-    html = dept_2_html(dept_code, ACIXSTORE, auth_num)
-    soup = bs4.BeautifulSoup(html, 'html.parser')
+def handle_dept_html(html, ys):
+    soup = bs4.BeautifulSoup(html)
     divs = soup.find_all('div', class_='newpage')
 
     for div in divs:
@@ -195,34 +153,34 @@ def crawl_dept_info(ACIXSTORE, auth_num, dept_code):
 
         trs = div.find_all('tr', bgcolor="#D8DAEB")
         department = Department.objects.get_or_create(
-            dept_name=dept_name)[0]
+            ys=ys, dept_name=dept_name)[0]
+
         for tr in trs:
             tds = tr.find_all('td')
             cou_no = tds[0].get_text()
             try:
-                course = Course.objects.get(no__contains=cou_no)
+                course = Course.objects.get(ys=ys, no__contains=cou_no)
                 department.required_course.add(course)
+                department.save()
             except:
                 print cou_no, 'gg'
-        department.save()
 
 
-def crawl_dept(ACIXSTORE, auth_num, dept_codes):
-    threads = []
+def crawl_dept(acixstore, auth_num, dept_codes, ys):
+    with FuturesSession(max_workers=MAX_WORKERS) as session:
+        future_depts = [
+            dept_2_future(session, dept_code, acixstore, auth_num, ys)
+            for dept_code in dept_codes
+        ]
 
-    for dept_code in dept_codes:
-        t = Thread(
-            target=crawl_dept_info,
-            args=(ACIXSTORE, auth_num, dept_code)
-        )
-        threads.append(t)
-        t.start()
+        progress = progressbar.ProgressBar()
+        with transaction.atomic():
+            for future in progress(future_depts):
+                response = future.result()
+                response.encoding = encoding
+                handle_dept_html(response.text, ys)
 
-    progress = progressbar.ProgressBar()
-    for t in progress(threads):
-        t.join()
-
-    print 'Total department information: %d' % Department.objects.count()
+    print 'Total department information: %d' % Department.objects.filter(ys=ys).count()  # noqa
 
 
 def get_token(s):

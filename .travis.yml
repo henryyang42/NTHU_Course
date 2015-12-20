@@ -5,6 +5,10 @@ python:
     - "2.7"
 
 
+env:
+    - DJANGO_SETTINGS_MODULE=NTHU_Course.settings.testing_sqlite
+
+
 install:
     - pip install --upgrade pip
     - pip install -r requirements.txt
@@ -13,6 +17,8 @@ install:
 
 before_script:
     - flake8 --exclude=const.py .
+    - ./manage.py makemigrations
+    # we have to do this because migrations are currently not tracked by git
 
 
 script:
@@ -31,4 +37,4 @@ notifications:
             - https://webhooks.gitter.im/e/70c147dedbec7df5429e
         on_success: always
         on_failure: always
-        on_start: false   
+        on_start: false

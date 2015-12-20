@@ -151,7 +151,7 @@ window.fbAsyncInit = function() {
             <span ng-show="course.added" class="blue"> (已選)</span>
             <a class="btn btn-primary table-btn" ng-hide="course.added" ng-click="add(course)">加選</a>
             <a class="btn btn-danger table-btn" ng-show="course.added" ng-click="del(course)">退選</a>
-            <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+            <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.no}}">大綱</a>
           </td>
         </tr>
         <tr ng-show="filtered.length>0&&fetch.type!='required'">
@@ -231,7 +231,7 @@ window.fbAsyncInit = function() {
           <td>{{ course.room }}</td>
           <td>{{ course.time }}
             <a class="btn btn-danger table-btn" ng-click="del(course)">退選</a>
-            <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.id}}">大綱</a>
+            <a class="btn btn-info table-btn ajax-popup-link" href="/search/syllabus/{{course.no}}">大綱</a>
           </td>
         </tr>
       </tbody>

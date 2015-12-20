@@ -18,10 +18,12 @@ except ImportError:
 import lxml.html
 import requests
 
+from utils.config import get_config_section
 
 logger = logging.getLogger(__name__)
+decaptcha_config = get_config_section('decaptcha')
 
-captcha_url_base = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/mod/auth_img/auth_img.php'  # noqa
+captcha_url_base = decaptcha_config['captcha_url_base']
 
 
 class DecaptchaFailure(Exception):
@@ -122,7 +124,7 @@ class Entrance(object):
                 log_hint,
                 captcha,
                 self.captcha_length_hint
-                )
+            )
             return False
         return True
 
@@ -236,7 +238,14 @@ try:
 except (subprocess.CalledProcessError, OSError):
     raise ImportError('%r requires tesseract binary' % __name__)
 else:
-    major, minor = map(int, versions.splitlines()[0].split()[-1].split(b'.'))
+    major, minor = map(
+        int,
+        versions.splitlines()[0].split()[-1].split(b'.')
+    )[:2]
+    # $ tesseract --version
+    # tesseract 3.04.00
+    #  leptonica-1.72
+    #   libgif 5.1.1 : libjpeg 8d (libjpeg-turbo 1.4.1)...
     if (major, minor) < (3, 3):
         raise ImportError('%r requires tesseract >= 3.03' % __name__)
 

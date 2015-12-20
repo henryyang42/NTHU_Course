@@ -7,3 +7,4 @@
 {{ object.time}}
 {{ object.time_token}}
 {{ object.room }}
+{{ object.ys }}

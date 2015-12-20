@@ -21,6 +21,8 @@ class CourseIndex(indexes.SearchIndex, indexes.Indexable):
     limit = indexes.IntegerField(model_attr='limit')
     prerequisite = indexes.BooleanField(model_attr='prerequisite')
 
+    ys = indexes.CharField(model_attr='ys')
+
     hit = indexes.IntegerField(model_attr='hit')
 
     syllabus = indexes.CharField(model_attr='syllabus')

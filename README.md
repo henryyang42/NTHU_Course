@@ -38,3 +38,16 @@ host = <mysql server ip>
 port = <mysql server port>
 default-character-set = utf8
 ```
+
+
+# Heroku settings
+To use it in heroku, you have to set the following environment variables
+
+```bash
+TESSDATA_PREFIX=/app/.apt/usr/share/tesseract-ocr/tessdata
+BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+DJANGO_SETTINGS_MODULE=NTHU_Course.settings.heroku
+SECRET_KEY=hard-to-guess-string
+```
+
+this can be achieved by ``heroku config:set`` or the web panel
