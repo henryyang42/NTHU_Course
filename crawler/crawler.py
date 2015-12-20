@@ -154,7 +154,7 @@ def handle_dept_html(html, ys):
         trs = div.find_all('tr', bgcolor="#D8DAEB")
         department = Department.objects.get_or_create(
             ys=ys, dept_name=dept_name)[0]
-        print department
+
         for tr in trs:
             tds = tr.find_all('td')
             cou_no = tds[0].get_text()
