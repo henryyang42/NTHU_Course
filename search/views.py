@@ -85,7 +85,7 @@ def search(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
-    print courses_page.object_list
+
     courses_list = courses_page.object_list. \
         values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
                'time', 'time_token', 'teacher', 'room', 'credit',
