@@ -75,7 +75,6 @@ def search(request):
 
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
-    print courses, type(courses)
 
     try:
         courses_page = paginator.page(page)
