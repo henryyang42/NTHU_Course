@@ -10,6 +10,7 @@ import logging
 import re
 import subprocess
 import tempfile
+import io
 try:
     from urllib.parse import urljoin
 except ImportError:
@@ -17,13 +18,18 @@ except ImportError:
 
 import lxml.html
 import requests
+from PIL import Image
 
-from utils.config import get_config_section
+try:
+    from utils.config import get_config_section
+except ImportError:
+    captcha_url_base = \
+    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/mod/auth_img/auth_img.php'
+else:
+    decaptcha_config = get_config_section('decaptcha')
+    captcha_url_base = decaptcha_config['captcha_url_base']
 
 logger = logging.getLogger(__name__)
-decaptcha_config = get_config_section('decaptcha')
-
-captcha_url_base = decaptcha_config['captcha_url_base']
 
 
 class DecaptchaFailure(Exception):
@@ -46,9 +52,18 @@ def tesseract_versions():
     )
 
 
+def preprocess(b):
+    color = Image.open(io.BytesIO(b))
+    gray = color.convert('L')
+    bw = gray.point(lambda c: (c > 150) * 255, '1')
+    fp = io.BytesIO()
+    bw.save(fp, 'png')
+    return fp.getvalue()
+
+
 def decaptcha_url(url, params=None):
     with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmpimg:
-        tmpimg.write(requests.get(url, params=params).content)
+        tmpimg.write(preprocess(requests.get(url, params=params).content))
         tmpimg.flush()
         return tesseract(tmpimg.name).replace(b' ', b'')
 
@@ -68,6 +83,22 @@ class Entrance(object):
             self.form_action_url = urljoin(form_url, form_action_url)
         self.page_encoding = page_encoding
         self.captcha_length_hint = captcha_length_hint
+
+    @property
+    def form_action_url(self):
+        try:
+            return self._form_action_url
+        except AttributeError:
+            self._form_action_url = self.guess_form_action_url()
+            logger.info(
+                'form_action_url not provided, assuming %r',
+                self._form_action_url)
+            return self._form_action_url
+
+    @form_action_url.setter
+    def form_action_url(self, val):
+        if val is not None:
+            self._form_action_url = val
 
     def get_key_from_new_form(self, xpath_hint):
         response = requests.get(self.form_url)
@@ -149,11 +180,6 @@ class Entrance(object):
         raises DecaptchaFailure if cannot guess captcha in limited retries
         '''
         logger.info('trying acixstore-captcha pair for %r', self.form_url)
-        if self.form_action_url is None:
-            self.form_action_url = self.guess_form_action_url()
-            logger.info(
-                'form_action_url not provided, assuming %r',
-                self.form_action_url)
         for try_ in range(retries):
             result = self._get_ticket()
             if self.validate(result):
@@ -232,6 +258,20 @@ class AISEntrance(Entrance):
         )
 
 
+def benchmark(ent, count):
+    correct_count = 0
+    for try_ in range(count):
+        result = ent._get_ticket()
+        correct_count += ent.validate(result)
+    print(
+        '{} of {} correct, ({:.2%})'.format(
+            correct_count,
+            count,
+            float(correct_count) / count
+        )
+    )
+
+
 # tesseract availability test
 try:
     versions = tesseract_versions()
@@ -294,6 +334,13 @@ if __name__ == '__main__':
         help='password for AIS',
         default=None
     )
+    parser.add_argument(
+        '--benchmark',
+        type=int,
+        default=None,
+        help='test correct rate',
+        metavar='COUNT'
+    )
 
     args = parser.parse_args()
 
@@ -306,20 +353,16 @@ if __name__ == '__main__':
         import getpass
         if sys.version_info.major == 2:
             input = raw_input  # noqa (python 3 does not have raw_input)
-        print(
-            AISEntrance(
-                args.username or input('Username: '),
-                args.password or getpass.getpass()
-            ).get_ticket(
-                args.retries
-            )
+        ent = AISEntrance(
+            args.username or input('Username: '),
+            args.password or getpass.getpass()
         )
     else:
-        print(
-            Entrance(
-                args.form_url,
-                args.form_action_url
-            ).get_ticket(
-                args.retries
-            )
+        ent = Entrance(
+            args.form_url,
+            args.form_action_url
         )
+    if args.benchmark:
+        benchmark(ent, args.benchmark)
+    else:
+        print(ent.get_ticket(args.retries))
