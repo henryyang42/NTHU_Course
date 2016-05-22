@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand
 
 from crawler.crawler import crawl_course, crawl_dept
+from crawler.course import get_cou_codes
 try:
     from crawler.decaptcha import Entrance, DecaptchaFailure
 except ImportError:
     Entrance = None
-from data_center.const import cou_codes
 from data_center.models import Course, Department
 
 
@@ -32,6 +32,7 @@ class Command(BaseCommand):
         if len(args) == 0:
             import time
             start_time = time.time()
+            cou_codes = get_cou_codes()
             for ys in ['104|20']:
                 ACIXSTORE, auth_num = get_auth_pair(
                     'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
