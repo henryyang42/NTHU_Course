@@ -192,3 +192,9 @@ def course_from_syllabus(html):
 
 def get_syllabus(c_key, acixstore):
     return get(syllabus_url, params={'c_key': c_key, 'ACIXSTORE': acixstore})
+
+
+def get_cou_codes():
+    html = get(form_url).text
+    document = lxml.html.fromstring(html)
+    return document.xpath('//select[@name="cou_code"]/option/@value')
