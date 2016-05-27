@@ -2,21 +2,25 @@ from django.core.management.base import BaseCommand
 
 from crawler.crawler import crawl_course, crawl_dept
 from crawler.course import get_cou_codes
-try:
-    from crawler.decaptcha import Entrance, DecaptchaFailure
-except ImportError:
-    Entrance = None
+from crawler.decaptcha import (
+    Entrance, DecaptchaFailure,
+    test_tesseract_availablilty, TesseractNotAvailable
+)
 from data_center.models import Course, Department
 
 
 def get_auth_pair(url):
-    if Entrance is not None:
-        try:
-            return Entrance(url).get_ticket()
-        except DecaptchaFailure:
-            print 'Automated decaptcha failed.'
-    else:
+    try:
+        test_tesseract_availablilty()
+    except TesseractNotAvailable:
         print 'crawler.decaptcha not available (requires tesseract >= 3.03).'
+    else:
+        if Entrance is not None:
+            try:
+                return Entrance(url).get_ticket()
+            except DecaptchaFailure:
+                print 'Automated decaptcha failed.'
+
     print 'Please provide valid ACIXSTORE and auth_num from'
     print url
     ACIXSTORE = raw_input('ACIXSTORE: ')

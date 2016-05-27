@@ -271,22 +271,27 @@ def benchmark(ent, count):
     )
 
 
-# tesseract availability test
-try:
-    versions = tesseract_versions()
-except (subprocess.CalledProcessError, OSError):
-    raise ImportError('%r requires tesseract binary' % __name__)
-else:
-    major, minor = map(
-        int,
-        versions.splitlines()[0].split()[-1].split(b'.')
-    )[:2]
-    # $ tesseract --version
-    # tesseract 3.04.00
-    #  leptonica-1.72
-    #   libgif 5.1.1 : libjpeg 8d (libjpeg-turbo 1.4.1)...
-    if (major, minor) < (3, 3):
-        raise ImportError('%r requires tesseract >= 3.03' % __name__)
+class TesseractNotAvailable(Exception):
+    pass
+
+
+def test_tesseract_availablilty():
+    try:
+        versions = tesseract_versions()
+    except (subprocess.CalledProcessError, OSError):
+        raise TesseractNotAvailable('%r requires tesseract binary' % __name__)
+    else:
+        major, minor = list(map(
+            int,
+            versions.splitlines()[0].split()[-1].split(b'.')
+        ))[:2]
+        # $ tesseract --version
+        # tesseract 3.04.00
+        #  leptonica-1.72
+        #   libgif 5.1.1 : libjpeg 8d (libjpeg-turbo 1.4.1)...
+        if (major, minor) < (3, 3):
+            raise TesseractNotAvailable(
+                '%r requires tesseract >= 3.03' % __name__)
 
 
 if __name__ == '__main__':
