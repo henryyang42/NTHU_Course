@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import re
-import itertools
+from itertools import zip_longest
 
 import requests
 import lxml.html
@@ -124,7 +124,7 @@ def course_from_tr(main_tr):
         'object': extract_text(tds[9]),
     }
     part['size_limit'], part['fr'] = get_slfr(extract_text(tds[6]))
-    for key, text in itertools.izip_longest(
+    for key, text in zip_longest(
         ('name_zh', 'name_en', 'ge_hint'),
         tds[1].itertext(),
     ):

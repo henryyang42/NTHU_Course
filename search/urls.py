@@ -1,10 +1,9 @@
-from django.conf.urls import patterns, url
-import views
+from django.conf.urls import url
+from .views import search, syllabus, hit
 
-urlpatterns = patterns(
-    '',
-    url(r'^$', views.search),
+urlpatterns = [
+    url(r'^$', search),
     url(r'^syllabus/(?P<no>.+)/$',
-        views.syllabus, name='syllabus'),
-    url(r'^hit/(?P<no>.+)/$', views.hit, name='hit'),
-)
+        syllabus, name='syllabus'),
+    url(r'^hit/(?P<no>.+)/$', hit, name='hit'),
+]

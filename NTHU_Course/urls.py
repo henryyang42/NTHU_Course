@@ -1,8 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # Examples:
     # url(r'^$', 'NTHU_Course.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
@@ -11,4 +10,4 @@ urlpatterns = patterns(
     url(r'^search/', include('search.urls')),
     url(r'^', include('index.urls')),
     url(r'^', include('table.urls')),
-)
+]

@@ -84,7 +84,7 @@ HAYSTACK_CONNECTIONS = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'zh-tw'
+LANGUAGE_CODE = 'zh-hant'
 
 TIME_ZONE = 'Asia/Taipei'
 

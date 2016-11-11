@@ -18,13 +18,13 @@ def group_words(s):
     regex = []
 
     # Match a whole word:
-    regex += [ur'\w+']
+    regex += [r'\w+']
 
     # Match a single CJK character:
-    regex += [ur'[\u4e00-\ufaff]']
+    regex += [r'[\u4e00-\ufaff]']
 
     # Match one of anything else, except for spaces:
-    regex += [ur'[^\s]']
+    regex += [r'[^\s]']
 
     regex = "|".join(regex)
     r = re.compile(regex)
@@ -114,21 +114,24 @@ def hit(request, no):
 
 def generate_dept_required_choice():
     choices = (('', '---'),)
-    departments = Department.objects.all()
-    for department in departments:
-        dept_name = department.dept_name
-        year = {'104': '一年級', '103': '二年級', '102': '三年級', '101': '四年級'}. \
-            get(dept_name[4:7], '')
-        degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
-            get(dept_name[7], '')
-        chi_dept_name = degree
+    try:
+        departments = Department.objects.all()
+        for department in departments:
+            dept_name = department.dept_name
+            year = {'104': '一年級', '103': '二年級', '102': '三年級', '101': '四年級'}. \
+                get(dept_name[4:7], '')
+            degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
+                get(dept_name[7], '')
+            chi_dept_name = degree
 
-        if dept_name[7] == 'B':
-            chi_dept_name += year
-            chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
-                get(dept_name[7:], '')
+            if dept_name[7] == 'B':
+                chi_dept_name += year
+                chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
+                    get(dept_name[7:], '')
 
-        choices += ((dept_name, chi_dept_name),)
+            choices += ((dept_name, chi_dept_name),)
+    except:
+        pass
     return sorted(choices)
 
 

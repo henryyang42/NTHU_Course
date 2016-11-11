@@ -4,8 +4,6 @@ NTHU CCXP Decaptcha
 Requires tesseract >= 3.03
 '''
 
-from __future__ import print_function
-
 import logging
 import re
 import subprocess
@@ -277,10 +275,10 @@ try:
 except (subprocess.CalledProcessError, OSError):
     raise ImportError('%r requires tesseract binary' % __name__)
 else:
-    major, minor = map(
+    major, minor = list(map(
         int,
         versions.splitlines()[0].split()[-1].split(b'.')
-    )[:2]
+    ))[:2]
     # $ tesseract --version
     # tesseract 3.04.00
     #  leptonica-1.72

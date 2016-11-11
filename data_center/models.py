@@ -44,7 +44,7 @@ class Department(models.Model):
     required_course = models.ManyToManyField(Course, blank=True)
     ys = models.CharField(max_length=10, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.dept_name
 
 
@@ -59,7 +59,7 @@ class Announcement(models.Model):
     time = models.DateTimeField(default=datetime.now)
     tag = models.CharField(max_length=10, choices=TAG_CHOICE, default='Info')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s|%s' % (self.time, self.tag)
 
 

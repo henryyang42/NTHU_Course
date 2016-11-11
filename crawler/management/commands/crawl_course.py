@@ -14,11 +14,11 @@ def get_auth_pair(url):
         try:
             return Entrance(url).get_ticket()
         except DecaptchaFailure:
-            print 'Automated decaptcha failed.'
+            print ('Automated decaptcha failed.')
     else:
-        print 'crawler.decaptcha not available (requires tesseract >= 3.03).'
-    print 'Please provide valid ACIXSTORE and auth_num from'
-    print url
+        print ('crawler.decaptcha not available (requires tesseract >= 3.03).')
+    print ('Please provide valid ACIXSTORE and auth_num from')
+    print (url)
     ACIXSTORE = raw_input('ACIXSTORE: ')
     auth_num = raw_input('auth_num: ')
     return ACIXSTORE, auth_num
@@ -38,18 +38,18 @@ class Command(BaseCommand):
                     'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
                     '/JH/6/6.2/6.2.9/JH629001.php'
                 )
-                print 'Crawling course for ' + ys
+                print ('Crawling course for ' + ys)
                 crawl_course(ACIXSTORE, auth_num, cou_codes, ys)
 
                 ACIXSTORE, auth_num = get_auth_pair(
                     'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
                     '/JH/6/6.2/6.2.3/JH623001.php'
                 )
-                print 'Crawling dept for ' + ys
+                print ('Crawling dept for ' + ys)
                 crawl_dept(ACIXSTORE, auth_num, cou_codes, ys)
-                print '===============================\n'
+                print ('===============================\n')
             elapsed_time = time.time() - start_time
-            print 'Total %.3f second used.' % elapsed_time
+            print ('Total %.3f second used.' % elapsed_time)
         if len(args) == 1:
             if args[0] == 'clear':
                 Course.objects.all().delete()
