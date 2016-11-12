@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 from django.contrib import admin
-# from utils.error_handler import error404
+from utils.error_handler import error404
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -9,4 +9,4 @@ urlpatterns = [
     url(r'^', include('table.urls')),
 ]
 
-# handler404 = error404
+handler404 = error404
