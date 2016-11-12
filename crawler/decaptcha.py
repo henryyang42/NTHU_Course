@@ -23,7 +23,7 @@ try:
 except ImportError:
     captcha_url_base = (
         'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/'
-        +'mod/auth_img/auth_img.php')
+        'mod/auth_img/auth_img.php')
 else:
     decaptcha_config = get_config_section('decaptcha')
     captcha_url_base = decaptcha_config['captcha_url_base']
