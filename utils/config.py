@@ -23,5 +23,5 @@ def get_config_section(section, filename='nthu_course.cfg'):
         return dict(config.items(section))
     except Exception as ex:
         # no config found
-        print (ex)
+        print(ex)
         return {}

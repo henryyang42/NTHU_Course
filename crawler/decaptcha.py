@@ -243,7 +243,7 @@ class AISEntrance(Entrance):
                             result
                         )
                         return True
-            logger.warn(
+            logger.warning(
                 '%(fnstr)r: %(passwd2)r'
                 'cannot find ACIXSTORE for meta/@content',
                 result
