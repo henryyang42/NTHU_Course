@@ -4,7 +4,9 @@ from datetime import datetime
 from django.db import models
 from django.utils.http import urlquote
 
-attachment_url_format = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.12/%s.pdf'  # noqa
+attachment_url_format = (
+    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/'
+    +'output/6_6.1_6.1.12/%s.pdf')
 
 
 class Course(models.Model):
