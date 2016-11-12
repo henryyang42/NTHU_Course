@@ -6,6 +6,6 @@ from data_center.models import FlatPrerequisite
 def prerequisite(request):
     return render(
         request,
-        'prerequisites.html',
+        'table/prerequisites.html',
         {'data': FlatPrerequisite.objects.get()}
     )

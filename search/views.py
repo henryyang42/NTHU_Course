@@ -101,7 +101,7 @@ def search(request):
 @cache_page(60 * 60)
 def syllabus(request, no):
     course = get_object_or_404(Course, no=no)
-    return render(request, 'syllabus.html',
+    return render(request, 'search/syllabus.html',
                   {'course': course, 'syllabus_path': request.path})
 
 
@@ -148,4 +148,4 @@ class CourseSearchForm(forms.Form):
 def table(request):
     render_data = {}
     render_data['search_filter'] = CourseSearchForm(request.GET)
-    return render(request, 'table.html', render_data)
+    return render(request, 'table/table.html', render_data)
