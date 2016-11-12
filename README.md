@@ -67,6 +67,12 @@ To clear all contents in db, use ``python manage.py crawl_course clear``
 To update all syllabus, use ``python manage.py update_syllabus``
 
 
+## Launch
+
+```bash
+$ python manager.py collectstatic
+$ python manager.py runserver --insecure
+```
 
 
 
