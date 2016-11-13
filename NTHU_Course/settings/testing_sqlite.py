@@ -9,6 +9,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         # https://docs.djangoproject.com/en/1.10/topics/testing/overview/#the-test-database
         # django uses in memory database for testing
-        'NAME': 'test_sqlite'
+        'NAME': ':memory:'
     }
 }
