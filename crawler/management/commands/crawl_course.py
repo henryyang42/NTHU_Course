@@ -19,8 +19,8 @@ def get_auth_pair(url):
         print('crawler.decaptcha not available (requires tesseract >= 3.03).')
     print('Please provide valid ACIXSTORE and auth_num from')
     print(url)
-    ACIXSTORE = raw_input('ACIXSTORE: ')
-    auth_num = raw_input('auth_num: ')
+    ACIXSTORE = input('ACIXSTORE: ')
+    auth_num = input('auth_num: ')
     return ACIXSTORE, auth_num
 
 
