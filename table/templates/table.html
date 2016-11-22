@@ -20,13 +20,24 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 <link rel="stylesheet" media="screen" href="{% static 'css/table.css' %}" />
-<!-- Facebook
+<!-- Facebook -->
 <script>
 window.fbAsyncInit = function() {
   FB.init({
     appId: '348628832000015',
     xfbml: true,
     version: 'v2.3'
+  });
+  
+  FB.getLoginStatus(function(response) {
+    console.log(response);
+  });
+  
+  
+  $('#logout').click(function(){
+    FB.logout(function(response) {
+      location.href = "{% url 'auth:logout' %}?next={{ request.path }}";
+    });
   });
 };
 
@@ -40,7 +51,7 @@ window.fbAsyncInit = function() {
   js.src = "//connect.facebook.net/en_US/sdk.js";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-</script-->
+</script>
 {% endblock source_block %}
 
 
@@ -64,6 +75,21 @@ window.fbAsyncInit = function() {
         <li>
           <button class="btn btn-primary" onclick=window.open("http://goo.gl/forms/YGNZryl4o7")>意見回饋</button>
         </li>
+        {% if user.is_authenticated %}
+        <li>
+          <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+        </li>
+        <li>
+          <a href="{% url 'auth:logout' %}?next={{ request.path }}">登出</a>
+        </li>
+        <li>
+          <a id="logout" class="btn">換個帳號</a>
+        </li>
+        {% else %}
+        <li>
+          <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">用Facebook登入</a>
+        </li>
+        {% endif %}
       </ul>
     </nav>
   </div>
@@ -241,7 +267,7 @@ window.fbAsyncInit = function() {
   </div>
 </div>
 <!-- /Main -->
-<script src="{% static 'js/postToFB.js' %}"></script>
+<!--<script src="{% static 'js/postToFB.js' %}"></script>-->
 <script src="{% static 'js/saveAsFile.js' %}"></script>
 {% endblock body_block %}
 
