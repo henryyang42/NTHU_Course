@@ -18,7 +18,7 @@ def group_words(s):
     regex = []
 
     # Match a whole word:
-    regex += [r'\w+']
+    regex += [r'[a-zA-Z0-9_]+']
 
     # Match a single CJK character:
     regex += [r'[\u4e00-\ufaff]']
