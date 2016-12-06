@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core import serializers
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -61,23 +62,17 @@ def search(request):
             result['type'] = 'required'
             page_size = courses.count()
     else:
-        print (q)
         courses = courses.filter(content=AutoQuery(q))
-        print (courses.count())
         if code:
             courses = courses.filter(code__contains=code)
-        if courses.count() > 300:
-            return HttpResponse('TMD')  # Too many detail
 
-        courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = courses.filter(ge__contains=core)
-
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
-
+    courses_page = paginator.page(page)
     try:
         courses_page = paginator.page(page)
     except PageNotAnInteger:
@@ -87,14 +82,14 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-    courses_list = courses_page.object_list. \
-        values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-               'time', 'time_token', 'teacher', 'room', 'credit',
-               'prerequisite', 'ge', 'code', 'ys')
+    course_list = [x.object.__dict__ for x in courses_page.object_list]
+    for x in course_list:
+        for key in [k for k in x.keys() if k.startswith('_')]:
+            x.pop(key, None)
 
     result['total'] = courses.count()
     result['page'] = courses_page.number
-    result['courses'] = list(courses_list)
+    result['courses'] = course_list
     result['page_size'] = page_size
 
     return JsonResponse(result)
