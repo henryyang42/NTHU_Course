@@ -61,7 +61,9 @@ def search(request):
             result['type'] = 'required'
             page_size = courses.count()
     else:
+        print (q)
         courses = courses.filter(content=AutoQuery(q))
+        print (courses.count())
         if code:
             courses = courses.filter(code__contains=code)
         if courses.count() > 300:
