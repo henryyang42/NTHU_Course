@@ -156,10 +156,6 @@ $(function() {
       '&sort=' + scope.predicate +
       '&reverse=' + scope.reverse;
     $.get(url, function(result) {
-      if (result == 'TMD') {
-        toastr.warning('搜尋結果過多，請加強搜尋條件。');
-        return;
-      }
       scope.fetch = result;
       scope.currentPage = 1;
       scope.$apply();
