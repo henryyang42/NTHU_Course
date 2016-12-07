@@ -176,5 +176,5 @@ $(function() {
           $(this).removeClass(animation);
         });
     });
-  })
+  });
 });
