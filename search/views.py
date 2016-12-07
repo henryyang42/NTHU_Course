@@ -95,9 +95,24 @@ def search(request):
 
 
 def autocomplete(request):
-    q = request.GET.get('q', '')
-    print (q)
-    return HttpResponse(q)
+    q = request.GET.get('term', '')
+    q = ' '.join(group_words(q))
+    code = request.GET.get('code', '')
+    result = []
+    courses = SearchQuerySet().filter(content=AutoQuery(q))
+
+    if code:
+        courses = courses.filter(code__contains=code)
+    if code in ['GE', 'GEC']:
+        core = request.GET.get(code.lower(), '')
+        if core:
+            courses = courses.filter(ge__contains=core)
+    if courses.count() < 100:
+        course_list = [x.chi_title for x in courses]
+        result = [{'value': c} for c in set(course_list)]
+
+    return  JsonResponse(result, safe=False)
+
 
 @cache_page(60 * 60)
 def syllabus(request, no):

@@ -148,6 +148,14 @@ $(function() {
     $('#dept-required-option').hide();
   });
 
+  $('#id_q').autocomplete({
+    source: '/search/autocomplete?' + $('#search-filter').serialize(),
+    minLength: 1,
+    select: function() {
+      $('#search-filter').submit();
+    }
+  });
+
   $('#search-filter').on('submit', function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
@@ -168,12 +176,5 @@ $(function() {
           $(this).removeClass(animation);
         });
     });
-  }).on('keyup', function(event) {
-    if (event.which != 13) {
-      var url = '/search/autocomplete?' + $(this).serialize();
-      $.get(url, function(result) {
-        console.log(result);
-      });
-    }
-  });
+  })
 });
