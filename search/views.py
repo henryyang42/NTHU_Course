@@ -111,7 +111,7 @@ def autocomplete(request):
         course_list = [x.chi_title for x in courses]
         result = [{'value': c} for c in set(course_list)]
 
-    return  JsonResponse(result, safe=False)
+    return JsonResponse(result, safe=False)
 
 
 @cache_page(60 * 60)
