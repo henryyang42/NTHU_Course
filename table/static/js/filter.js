@@ -168,5 +168,12 @@ $(function() {
           $(this).removeClass(animation);
         });
     });
+  }).on('keyup', function(event) {
+    if (event.which != 13) {
+      var url = '/search/autocomplete?' + $(this).serialize();
+      $.get(url, function(result) {
+        console.log(result);
+      });
+    }
   });
 });

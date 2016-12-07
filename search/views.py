@@ -94,6 +94,11 @@ def search(request):
     return JsonResponse(result)
 
 
+def autocomplete(request):
+    q = request.GET.get('q', '')
+    print (q)
+    return HttpResponse(q)
+
 @cache_page(60 * 60)
 def syllabus(request, no):
     course = get_object_or_404(Course, no=no)
