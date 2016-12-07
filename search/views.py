@@ -81,10 +81,10 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-    course_list = [x.object.__dict__ for x in courses_page.object_list]
-    for x in course_list:
-        for key in [k for k in x.keys() if k.startswith('_')]:
-            x.pop(key, None)
+    course_list = [
+        {k: v for (k, v) in x.object.__dict__.items() if not k.startswith('_')}
+        for x in courses_page.object_list
+    ]
 
     result['total'] = courses.count()
     result['page'] = courses_page.number
