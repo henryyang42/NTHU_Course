@@ -69,7 +69,7 @@ def with_retry(request_function):
 
 
 def get_slfr(text):
-    sl, s, fr = text.partition(u'大一新生保留')
+    sl, s, fr = text.partition(u'新生保留')
     if not sl:
         return None, 0
     sl = int(sl)
