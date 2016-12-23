@@ -70,8 +70,8 @@ To update all syllabus, use ``python manage.py update_syllabus``
 ## Launch
 
 ```bash
-$ python manager.py collectstatic
-$ python manager.py runserver --insecure
+$ python manage.py collectstatic
+$ python manage.py runserver --insecure
 ```
 
 
