@@ -42,7 +42,7 @@ def search(request):
     dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
-    ys = request.GET.get('ys', '104|20')
+    ys = request.GET.get('ys', '105|20')
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
@@ -82,8 +82,9 @@ def search(request):
         courses_page = paginator.page(paginator.num_pages)
 
     course_list = [
-        {k: v for (k, v) in x.object.__dict__.items() if not k.startswith('_')}
-        for x in courses_page.object_list
+        {k: v for (k, v) in x.__dict__.items() if not k.startswith('_')}
+        for x in [
+            x if dept_required else x.object for x in courses_page.object_list]
     ]
 
     result['total'] = courses.count()
