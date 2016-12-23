@@ -18,7 +18,7 @@ def group_words(s):
     regex = []
 
     # Match a whole word:
-    regex += [r'\w+']
+    regex += [r'[a-zA-Z0-9_]+']
 
     # Match a single CJK character:
     regex += [r'[\u4e00-\ufaff]']
@@ -64,15 +64,11 @@ def search(request):
         courses = courses.filter(content=AutoQuery(q))
         if code:
             courses = courses.filter(code__contains=code)
-        if courses.count() > 300:
-            return HttpResponse('TMD')  # Too many detail
 
-        courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = courses.filter(ge__contains=core)
-
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
 
@@ -85,17 +81,37 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-    courses_list = courses_page.object_list. \
-        values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-               'time', 'time_token', 'teacher', 'room', 'credit',
-               'prerequisite', 'ge', 'code', 'ys')
+    course_list = [
+        {k: v for (k, v) in x.object.__dict__.items() if not k.startswith('_')}
+        for x in courses_page.object_list
+    ]
 
     result['total'] = courses.count()
     result['page'] = courses_page.number
-    result['courses'] = list(courses_list)
+    result['courses'] = course_list
     result['page_size'] = page_size
 
     return JsonResponse(result)
+
+
+def autocomplete(request):
+    q = request.GET.get('term', '')
+    q = ' '.join(group_words(q))
+    code = request.GET.get('code', '')
+    result = []
+    courses = SearchQuerySet().filter(content=AutoQuery(q))
+
+    if code:
+        courses = courses.filter(code__contains=code)
+    if code in ['GE', 'GEC']:
+        core = request.GET.get(code.lower(), '')
+        if core:
+            courses = courses.filter(ge__contains=core)
+    if courses.count() < 100:
+        course_list = [x.chi_title for x in courses]
+        result = [{'value': c} for c in set(course_list)]
+
+    return JsonResponse(result, safe=False)
 
 
 @cache_page(60 * 60)

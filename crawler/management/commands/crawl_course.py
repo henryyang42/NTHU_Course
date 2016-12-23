@@ -33,7 +33,7 @@ class Command(BaseCommand):
             import time
             start_time = time.time()
             cou_codes = get_cou_codes()
-            for ys in ['104|20']:
+            for ys in ['105|20']:
                 ACIXSTORE, auth_num = get_auth_pair(
                     'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
                     '/JH/6/6.2/6.2.9/JH629001.php'

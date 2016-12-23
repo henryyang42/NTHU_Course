@@ -8,5 +8,5 @@ Pillow==3.4.2
 requests==2.11.1
 requests-futures==0.9.7
 Whoosh==2.7.4
-git+https://github.com/hydai/django-haystack.git@nthu_course
+git+https://github.com/henryyang42/django-haystack.git@chinese-analyzer
 git+https://github.com/coagulant/progressbar-python3.git
