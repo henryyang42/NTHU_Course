@@ -1,33 +1,43 @@
 [![Build Status](https://travis-ci.org/henryyang42/NTHU_Course.svg?branch=master)](https://travis-ci.org/henryyang42/NTHU_Course)
-[![Join the chat at https://gitter.im/henryyang42/NTHU_Course](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/henryyang42/NTHU_Course?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 # NTHU Course
 
-A system that fetch the course data and provide service that is insinctive, easy to use.
+A system that fetch the course data and provide service that is instinctive, easy to use.
 
-Typing the commands below may help you build this system.
-```
-pip install -r requirements.txt
-python manage.py syncdb
-python manage.py makemigrations
-python manage.py migrate
-python manage.py crawl_course
-python manage.py update_index
-```
 
-To clear all contents in db, use ``python manage.py crawl_course clear``
+# Getting Started
 
-To update all syllabus, use ``python manage.py update_syllabus``
 
-For auto decaptcha feature, it requires ``tesseract 3.03``
+## Install dependency
 
-# Install dependency
+- python
+    - version: >= 3.5
+
 - tesseract
+    - version: >= 3.03
     - mac: `brew install tesseract --devel # Without --devel, it will install tesseract 3.02`
-    - ubuntu: `sudo apt-get install tesseract-ocr`
+    - ubuntu: `sudo apt install tesseract-ocr`
+    - arch linux: `sudo pacman -S tesseract tesseract-data-eng`
+
+- mariadb
+    - version: >= 10.0.27
+    - mac: `brew install mariadb`
+    - ubuntu: `sudo apt install mariadb-server`
+    - arch linux: `sudo pacman -S mariadb`
 
 
-# Setting
-We use mysql as database. The default setting will find a config file in 'NTHU_Course/mysql.ini'. The following is a sample config file:
+## Install and Setup Virtualenv (optional)
+
+We highly recommend developers to setup environment with **virtualenv**.
+
+You can install this package by typing `pip install virtualenv` in your console.
+
+
+## Basic Settings for Database
+
+By default, the system will find a configuration file in `NTHU_Course/mysql.ini`.
+
+So you need to create it and put your settings in this file. The following
+ script is the example for `mysql.ini`.
 
 ```ini
 [client]
@@ -38,6 +48,32 @@ host = <mysql server ip>
 port = <mysql server port>
 default-character-set = utf8
 ```
+
+
+## Build the System.
+
+Typing the commands below may help you build this system.
+
+```bash
+$ pip install -r requirements.txt
+$ python manage.py makemigrations
+$ python manage.py migrate
+$ python manage.py crawl_course
+$ python manage.py update_index
+```
+
+To clear all contents in db, use ``python manage.py crawl_course clear``
+
+To update all syllabus, use ``python manage.py update_syllabus``
+
+
+## Launch
+
+```bash
+$ python manage.py collectstatic
+$ python manage.py runserver --insecure
+```
+
 
 
 # Heroku settings

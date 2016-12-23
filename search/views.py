@@ -18,13 +18,13 @@ def group_words(s):
     regex = []
 
     # Match a whole word:
-    regex += [ur'\w+']
+    regex += [r'[a-zA-Z0-9_]+']
 
     # Match a single CJK character:
-    regex += [ur'[\u4e00-\ufaff]']
+    regex += [r'[\u4e00-\ufaff]']
 
     # Match one of anything else, except for spaces:
-    regex += [ur'[^\s]']
+    regex += [r'[^\s]']
 
     regex = "|".join(regex)
     r = re.compile(regex)
@@ -42,7 +42,7 @@ def search(request):
     dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
-    ys = request.GET.get('ys', '104|20')
+    ys = request.GET.get('ys', '105|20')
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
@@ -64,15 +64,11 @@ def search(request):
         courses = courses.filter(content=AutoQuery(q))
         if code:
             courses = courses.filter(code__contains=code)
-        if courses.count() > 300:
-            return HttpResponse('TMD')  # Too many detail
 
-        courses = Course.objects.filter(pk__in=[c.pk for c in courses])
         if code in ['GE', 'GEC']:
             core = request.GET.get(code.lower(), '')
             if core:
                 courses = courses.filter(ge__contains=core)
-
     courses = courses.order_by(rev_sortby)
     paginator = Paginator(courses, page_size)
 
@@ -85,23 +81,44 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses_page = paginator.page(paginator.num_pages)
 
-    courses_list = courses_page.object_list. \
-        values('id', 'no', 'eng_title', 'chi_title', 'note', 'objective',
-               'time', 'time_token', 'teacher', 'room', 'credit',
-               'prerequisite', 'ge', 'code', 'ys')
+    course_list = [
+        {k: v for (k, v) in x.__dict__.items() if not k.startswith('_')}
+        for x in [
+            x if dept_required else x.object for x in courses_page.object_list]
+    ]
 
     result['total'] = courses.count()
     result['page'] = courses_page.number
-    result['courses'] = list(courses_list)
+    result['courses'] = course_list
     result['page_size'] = page_size
 
     return JsonResponse(result)
 
 
+def autocomplete(request):
+    q = request.GET.get('term', '')
+    q = ' '.join(group_words(q))
+    code = request.GET.get('code', '')
+    result = []
+    courses = SearchQuerySet().filter(content=AutoQuery(q))
+
+    if code:
+        courses = courses.filter(code__contains=code)
+    if code in ['GE', 'GEC']:
+        core = request.GET.get(code.lower(), '')
+        if core:
+            courses = courses.filter(ge__contains=core)
+    if courses.count() < 100:
+        course_list = [x.chi_title for x in courses]
+        result = [{'value': c} for c in set(course_list)]
+
+    return JsonResponse(result, safe=False)
+
+
 @cache_page(60 * 60)
 def syllabus(request, no):
     course = get_object_or_404(Course, no=no)
-    return render(request, 'syllabus.html',
+    return render(request, 'search/syllabus.html',
                   {'course': course, 'syllabus_path': request.path})
 
 
@@ -114,21 +131,24 @@ def hit(request, no):
 
 def generate_dept_required_choice():
     choices = (('', '---'),)
-    departments = Department.objects.all()
-    for department in departments:
-        dept_name = department.dept_name
-        year = {'104': '一年級', '103': '二年級', '102': '三年級', '101': '四年級'}. \
-            get(dept_name[4:7], '')
-        degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
-            get(dept_name[7], '')
-        chi_dept_name = degree
+    try:
+        departments = Department.objects.all()
+        for department in departments:
+            dept_name = department.dept_name
+            year = {'105': '一年級', '104': '二年級', '103': '三年級', '102': '四年級'}. \
+                get(dept_name[4:7], '')
+            degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
+                get(dept_name[7], '')
+            chi_dept_name = degree
 
-        if dept_name[7] == 'B':
-            chi_dept_name += year
-            chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
-                get(dept_name[7:], '')
+            if dept_name[7] == 'B':
+                chi_dept_name += year
+                chi_dept_name += {'BA': '清班', 'BB': '華班', 'BC': '梅班'}. \
+                    get(dept_name[7:], '')
 
-        choices += ((dept_name, chi_dept_name),)
+            choices += ((dept_name, chi_dept_name),)
+    except:
+        pass
     return sorted(choices)
 
 
@@ -145,4 +165,4 @@ class CourseSearchForm(forms.Form):
 def table(request):
     render_data = {}
     render_data['search_filter'] = CourseSearchForm(request.GET)
-    return render(request, 'table.html', render_data)
+    return render(request, 'table/table.html', render_data)

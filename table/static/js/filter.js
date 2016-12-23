@@ -148,6 +148,14 @@ $(function() {
     $('#dept-required-option').hide();
   });
 
+  $('#id_q').autocomplete({
+    source: '/search/autocomplete?' + $('#search-filter').serialize(),
+    minLength: 1,
+    select: function() {
+      $('#search-filter').submit();
+    }
+  });
+
   $('#search-filter').on('submit', function(event) {
     event.preventDefault();
     var url = '/search/?' + $(this).serialize() +
@@ -156,10 +164,6 @@ $(function() {
       '&sort=' + scope.predicate +
       '&reverse=' + scope.reverse;
     $.get(url, function(result) {
-      if (result == 'TMD') {
-        toastr.warning('搜尋結果過多，請加強搜尋條件。');
-        return;
-      }
       scope.fetch = result;
       scope.currentPage = 1;
       scope.$apply();

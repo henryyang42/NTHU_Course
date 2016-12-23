@@ -4,8 +4,6 @@ NTHU CCXP Decaptcha
 Requires tesseract >= 3.03
 '''
 
-from __future__ import print_function
-
 import logging
 import re
 import subprocess
@@ -23,7 +21,9 @@ from PIL import Image
 try:
     from utils.config import get_config_section
 except ImportError:
-    captcha_url_base = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/mod/auth_img/auth_img.php'  # noqa
+    captcha_url_base = (
+        'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/'
+        'mod/auth_img/auth_img.php')
 else:
     decaptcha_config = get_config_section('decaptcha')
     captcha_url_base = decaptcha_config['captcha_url_base']
@@ -243,7 +243,7 @@ class AISEntrance(Entrance):
                             result
                         )
                         return True
-            logger.warn(
+            logger.warning(
                 '%(fnstr)r: %(passwd2)r'
                 'cannot find ACIXSTORE for meta/@content',
                 result
@@ -277,10 +277,10 @@ try:
 except (subprocess.CalledProcessError, OSError):
     raise ImportError('%r requires tesseract binary' % __name__)
 else:
-    major, minor = map(
+    major, minor = list(map(
         int,
         versions.splitlines()[0].split()[-1].split(b'.')
-    )[:2]
+    ))[:2]
     # $ tesseract --version
     # tesseract 3.04.00
     #  leptonica-1.72

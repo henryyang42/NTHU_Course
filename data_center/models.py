@@ -4,7 +4,9 @@ from datetime import datetime
 from django.db import models
 from django.utils.http import urlquote
 
-attachment_url_format = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.12/%s.pdf'  # noqa
+attachment_url_format = (
+    'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/'
+    'output/6_6.1_6.1.12/%s.pdf')
 
 
 class Course(models.Model):
@@ -44,7 +46,7 @@ class Department(models.Model):
     required_course = models.ManyToManyField(Course, blank=True)
     ys = models.CharField(max_length=10, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.dept_name
 
 
@@ -59,7 +61,7 @@ class Announcement(models.Model):
     time = models.DateTimeField(default=datetime.now)
     tag = models.CharField(max_length=10, choices=TAG_CHOICE, default='Info')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s|%s' % (self.time, self.tag)
 
 

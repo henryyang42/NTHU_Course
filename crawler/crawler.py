@@ -4,11 +4,12 @@ import re
 import bs4
 import traceback
 import progressbar
-import itertools
+from itertools import zip_longest
 from requests_futures.sessions import FuturesSession
 from django.db import transaction
 from crawler.course import (
-    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus, form_action_url, dept_url, encoding  # noqa
+    curriculum_to_trs, course_from_tr, syllabus_url, course_from_syllabus,
+    form_action_url, dept_url, encoding
 )
 from data_center.models import Course, Department
 from data_center.const import week_dict, course_dict
@@ -61,8 +62,8 @@ def save_syllabus(html, course, ys):
         course.ys = ys
         course.save()
     except:
-        print traceback.format_exc()
-        print course
+        print(traceback.format_exc())
+        print(course)
         return 'QAQ, what can I do?'
 
 
@@ -103,14 +104,13 @@ def crawl_course(acixstore, auth_num, cou_codes, ys):
 
         progress = progressbar.ProgressBar(maxval=len(cou_codes))
         with transaction.atomic():
-            for future, cou_code in progress(
-                itertools.izip(curriculum_futures, cou_codes)
-            ):
+            for future, cou_code in progress(zip(curriculum_futures,
+                                                 cou_codes)):
                 response = future.result()
                 response.encoding = 'cp950'
                 handle_curriculum_html(response.text, cou_code)
 
-    print 'Crawling syllabus...'
+    print('Crawling syllabus...')
     course_list = list(Course.objects.all())
 
     with FuturesSession(max_workers=MAX_WORKERS) as session:
@@ -126,18 +126,17 @@ def crawl_course(acixstore, auth_num, cou_codes, ys):
         ]
 
         progress = progressbar.ProgressBar(maxval=len(course_list))
-        for future, course in progress(itertools.izip_longest(
-            course_futures, course_list
-        )):
+        for future, course in progress(zip_longest(course_futures,
+                                                   course_list)):
             response = future.result()
             response.encoding = 'cp950'
             save_syllabus(response.text, course, ys)
 
-        print 'Total course information: %d' % Course.objects.filter(ys=ys).count()  # noqa
+        print('Total course information: %d' % Course.objects.filter(ys=ys).count())  # noqa
 
 
 def handle_dept_html(html, ys):
-    soup = bs4.BeautifulSoup(html)
+    soup = bs4.BeautifulSoup(html, "lxml")
     divs = soup.find_all('div', class_='newpage')
 
     for div in divs:
@@ -146,7 +145,7 @@ def handle_dept_html(html, ys):
         dept_name = dept_name.replace('B A', 'BA')
         dept_name = dept_name.replace('B B', 'BB')
         try:
-            dept_name = re.search('\((.*?)\)', dept_name).group(1)
+            dept_name = re.search(r'\((.*?)\)', dept_name).group(1)
         except:
             # For all student (Not important for that dept.)
             continue
@@ -163,7 +162,7 @@ def handle_dept_html(html, ys):
                 department.required_course.add(course)
                 department.save()
             except:
-                print cou_no, 'gg'
+                print(cou_no, 'gg')
 
 
 def crawl_dept(acixstore, auth_num, dept_codes, ys):
@@ -180,7 +179,7 @@ def crawl_dept(acixstore, auth_num, dept_codes, ys):
                 response.encoding = encoding
                 handle_dept_html(response.text, ys)
 
-    print 'Total department information: %d' % Department.objects.filter(ys=ys).count()  # noqa
+    print('Total department information: %d' % Department.objects.filter(ys=ys).count())  # noqa
 
 
 def get_token(s):

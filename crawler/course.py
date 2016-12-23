@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import re
-import itertools
+from itertools import zip_longest
 
 import requests
 import lxml.html
@@ -69,7 +69,7 @@ def with_retry(request_function):
 
 
 def get_slfr(text):
-    sl, s, fr = text.partition(u'大一新生保留')
+    sl, s, fr = text.partition(u'新生保留')
     if not sl:
         return None, 0
     sl = int(sl)
@@ -124,7 +124,7 @@ def course_from_tr(main_tr):
         'object': extract_text(tds[9]),
     }
     part['size_limit'], part['fr'] = get_slfr(extract_text(tds[6]))
-    for key, text in itertools.izip_longest(
+    for key, text in zip_longest(
         ('name_zh', 'name_en', 'ge_hint'),
         tds[1].itertext(),
     ):

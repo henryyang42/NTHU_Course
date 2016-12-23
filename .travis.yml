@@ -2,7 +2,7 @@ language: python
 
 
 python:
-    - "2.7"
+    - "3.5"
 
 
 env:
@@ -26,12 +26,6 @@ script:
 
 
 notifications:
-    email:
-        recipients:
-            - z54981220@gmail.com
-            - henryyang42@gmail.com
-        on_success: change
-        on_failure: always
     webhooks:
         urls:
             - https://webhooks.gitter.im/e/70c147dedbec7df5429e
