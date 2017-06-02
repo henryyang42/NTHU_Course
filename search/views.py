@@ -152,7 +152,7 @@ def generate_dept_required_choice():
             choices += ((dept_name, chi_dept_name),)
     except:
         pass
-    return sorted(choices)
+    return sorted(list(set(choices)))
 
 
 class CourseSearchForm(forms.Form):
