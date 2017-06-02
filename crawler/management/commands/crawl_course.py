@@ -9,6 +9,7 @@ except ImportError:
 from data_center.models import Course, Department
 from utils.config import get_config
 
+
 def get_auth_pair(url):
     if Entrance is not None:
         try:
