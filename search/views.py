@@ -138,7 +138,7 @@ def generate_dept_required_choice():
         departments = Department.objects.all()
         for department in departments:
             dept_name = department.dept_name
-            year = {'105': '一年級', '104': '二年級', '103': '三年級', '102': '四年級'}. \
+            year = {'106': '一年級', '105': '二年級', '104': '三年級', '103': '四年級'}. \
                 get(dept_name[4:7], '')
             degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
                 get(dept_name[7], '')
