@@ -11,6 +11,9 @@ from django import forms
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
+from utils.config import get_config
+
+SEMESTER = get_config('crawler', 'semester')
 
 
 def group_words(s):
@@ -42,7 +45,7 @@ def search(request):
     dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
-    ys = request.GET.get('ys', '105|20')
+    ys = request.GET.get('ys', SEMESTER)
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
