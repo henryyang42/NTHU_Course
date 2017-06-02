@@ -15,13 +15,13 @@ A system that fetch the course data and provide service that is instinctive, eas
 - tesseract
     - version: >= 3.03
     - mac: `brew install tesseract --devel # Without --devel, it will install tesseract 3.02`
-    - ubuntu: `sudo apt install tesseract-ocr`
+    - ubuntu: `sudo apt-get install tesseract-ocr`
     - arch linux: `sudo pacman -S tesseract tesseract-data-eng`
 
 - mariadb
     - version: >= 10.0.27
     - mac: `brew install mariadb`
-    - ubuntu: `sudo apt install mariadb-server`
+    - ubuntu: `sudo apt-get install mariadb-server`
     - arch linux: `sudo pacman -S mariadb`
 
 
@@ -29,7 +29,7 @@ A system that fetch the course data and provide service that is instinctive, eas
 
 We highly recommend developers to setup environment with **virtualenv**.
 
-You can install this package by typing `pip install virtualenv` in your console.
+You can install this package by typing `pip3 install virtualenv` in your console.
 
 
 ## Basic Settings for Database
@@ -55,23 +55,25 @@ default-character-set = utf8
 Typing the commands below may help you build this system.
 
 ```bash
-$ pip install -r requirements.txt
-$ python manage.py makemigrations
-$ python manage.py migrate
-$ python manage.py crawl_course
-$ python manage.py update_index
+virtualenv VENV --python=python3
+source VENV/bin/activate
+pip3 install -r requirements.txt
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py crawl_course
+python3 manage.py update_index
 ```
 
-To clear all contents in db, use ``python manage.py crawl_course clear``
+To clear all contents in db, use ``python3 manage.py crawl_course clear``
 
-To update all syllabus, use ``python manage.py update_syllabus``
+To update all syllabus, use ``python3 manage.py update_syllabus``
 
 
 ## Launch
 
 ```bash
-$ python manage.py collectstatic
-$ python manage.py runserver --insecure
+python3 manage.py collectstatic
+python3 manage.py runserver --insecure
 ```
 
 
