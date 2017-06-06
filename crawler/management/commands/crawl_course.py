@@ -7,6 +7,7 @@ try:
 except ImportError:
     Entrance = None
 from data_center.models import Course, Department
+from utils.config import get_config
 
 
 def get_auth_pair(url):
@@ -33,7 +34,7 @@ class Command(BaseCommand):
             import time
             start_time = time.time()
             cou_codes = get_cou_codes()
-            for ys in ['105|20']:
+            for ys in [get_config('crawler', 'semester')]:
                 ACIXSTORE, auth_num = get_auth_pair(
                     'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE'
                     '/JH/6/6.2/6.2.9/JH629001.php'

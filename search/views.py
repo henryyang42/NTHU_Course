@@ -11,6 +11,9 @@ from django import forms
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
+from utils.config import get_config
+
+SEMESTER = get_config('crawler', 'semester')
 
 
 def group_words(s):
@@ -42,7 +45,7 @@ def search(request):
     dept_required = request.GET.get('dept_required', '')
     sortby_param = request.GET.get('sort', '')
     reverse_param = request.GET.get('reverse', '')
-    ys = request.GET.get('ys', '105|20')
+    ys = request.GET.get('ys', SEMESTER)
 
     page_size = size or 10
     sortby = sortby_param or 'time_token'
@@ -135,7 +138,7 @@ def generate_dept_required_choice():
         departments = Department.objects.all()
         for department in departments:
             dept_name = department.dept_name
-            year = {'105': '一年級', '104': '二年級', '103': '三年級', '102': '四年級'}. \
+            year = {'106': '一年級', '105': '二年級', '104': '三年級', '103': '四年級'}. \
                 get(dept_name[4:7], '')
             degree = {'B': '大學部', 'D': '博士班', 'M': '碩士班', 'P': '專班'}. \
                 get(dept_name[7], '')
@@ -149,7 +152,7 @@ def generate_dept_required_choice():
             choices += ((dept_name, chi_dept_name),)
     except:
         pass
-    return sorted(choices)
+    return sorted(list(set(choices)))
 
 
 class CourseSearchForm(forms.Form):
