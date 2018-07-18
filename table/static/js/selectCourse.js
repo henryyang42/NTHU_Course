@@ -1,5 +1,5 @@
 var moduleNTHUCourse = angular.module('ModuleNTHUCourse', ['ui.bootstrap']);
-var semester = '10610';
+var semester = '10710';
 var localStorageName = 'added_course' + semester; // Prevent loading previous data
 moduleNTHUCourse.filter('courseInThatTime', function() {
   return function(input, time) {

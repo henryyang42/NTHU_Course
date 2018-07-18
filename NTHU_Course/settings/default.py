@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = [
     '.nthu-course.cf',
     '.localhost',
+    '139.162.70.107',
 ]
 
 
